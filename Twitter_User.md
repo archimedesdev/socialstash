@@ -20,7 +20,7 @@ location | String
 default_profile_image | Boolean
 withheld_scope | String
 id_str | String
-status | <tweepy.models.Status object at 0x000000000313A2E8>
+status | \<tweepy.models.Status object at 0x000000000313A2E8\>
 utc_offset | Integer
 statuses_count | Integer
 profile_background_color | String
@@ -65,9 +65,9 @@ objectType | ObjectType | true | true | Minimum | Unknown
 Field | Expected Value
 ------------ | -------------
 name | The SnapBundle user account currently logged in
-description | <Twitter Handle>'s Twitter Account
+description | \<Twitter Handle\>'s Twitter Account
 activeFlag | True
-objectUrn | <SnapBundle_User_Account>:twitter:<twitter_handle>
+objectUrn | \<SnapBundle_User_Account\>:twitter:\<twitter_handle\>
 objectType | 'Person'
 
 ## Example SnapBundle Twitter User Object

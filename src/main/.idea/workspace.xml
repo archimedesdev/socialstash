@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="dc7f855c-82e9-481c-850b-8187cfab748b" name="Default" comment="Renamed files" />
+    <list default="true" id="dc7f855c-82e9-481c-850b-8187cfab748b" name="Default" comment="Renamed files">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../Twitter_User.md" afterPath="$PROJECT_DIR$/../../Twitter_User.md" />
+    </list>
     <ignored path="socialStash.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="TRACKING_ENABLED" value="true" />
