@@ -182,9 +182,10 @@ except KeyError:
 
 print "Setting up API"
 api = twitter_authenticate(pr_consumer_key, pr_consumer_secret, twitter_access_tokens[twitter_handle]['token'], twitter_access_tokens[twitter_handle]['token_secret'])
-print "Pulling Twitter user data"
-userData = twitter_pull_user_data(api)
-print userData
+
+#print "Pulling Twitter user data"
+#userData = twitter_pull_user_data(api)
+#print userData
 
 #print "Updating Twitter user data in Snapbundle"
 #twitter_user_update_snapbundle(urn_to_check_for, userData)
@@ -193,52 +194,6 @@ print "Getting Twitter user timeline 20"
 userTimeline = api.user_timeline()
 update_snapbundle_tweets(urn_to_check_for, userTimeline)
 exit()
-
-for tweet in userTimeline:
-    print "---------------------------------------------------------------------------------"
-    print tweet.contributors
-    print tweet.truncated
-    print tweet.retweeted
-    print tweet.retweet_count
-    print tweet.coordinates
-    print tweet.id
-    print tweet.id_str
-    print tweet.in_reply_to_user_id
-    print tweet.in_reply_to_user_id_str
-    print tweet.in_reply_to_screen_name
-    print tweet.in_reply_to_status_id
-    print tweet.in_reply_to_status_id_str
-    print tweet.text
-    print tweet.source
-    print tweet.source_url
-    print tweet.favorited
-    print tweet.favorite_count
-    print tweet.geo
-    print tweet.place
-    print tweet.created_at
-    print tweet.lang
-    #print tweet.possibly_sensitive
-    #'_api': <tweepy.api.API object at 0x0000000002EC78D0>,
-    #'author': <tweepy.models.User object at 0x0000000003014198>,
-    #'entities': {u'symbols': [], u'user_mentions': [], u'hashtags': [],u'urls': [{u'url': u'http://t.co/OkVHIlJPyU', u'indices': [0, 22], u'expanded_url': u'http://amzn.com/k/n79ap3z4TBmT45pOqUaFFQ', u'display_url': u'amzn.com/k/n79ap3z4TBmT\u2026'}]},
-    #'user': <tweepy.models.User object at 0x0000000003014198>,
-    #print tweet.__dict__
-
-
-
-
-# '_api': <tweepy.api.api object="" at="" 0x6bebc50="">,
-# 'user': <tweepy.models.user object="" at="" 0x6c16610="">,
-
-
-
-
-
-
-
-
-
-
 #print str(userData)
 
 #user_json_encoded = json.dumps(userData)
