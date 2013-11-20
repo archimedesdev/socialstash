@@ -128,20 +128,31 @@ def create_get_twitter_snapbundle_device_object(parent_object_urn, source, retwe
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def get_snapbundle_device_type(source):
     source = source.upper()
-    if "WEB" in source:
-        return 'PC'
-    elif "KINDLE" in source:
-        return 'Tablet'
+    # Start specific and get more general
+    if "KINDLE" in source:
+        return 'Kindle'
+    elif "NOOK" in source:
+        return 'Nook'
     elif "IPHONE" in source:
-        return 'Phone'
+        return 'iPhone'
     elif "IPAD" in source:
-        return 'Tablet'
+        return 'iPad'
     elif "BLACKBERRY" in source:
-        return 'Specialized'
+        return 'Blackberry'
     elif "GOODREADS" in source:
         return 'Specialized'
     elif "ANDROID" in source:
         return 'Android'
+    elif "PHONE" in source:
+        return 'Phone'
+    elif "WEB" in source:
+        return 'PC'
+    elif "MAC" in source:
+        return 'PC'
+    elif "TABLET" in source:
+        return 'Tablet'
+    elif "PHONE" in source:
+        return 'Phone'
     else:
         return 'Unknown'
 
