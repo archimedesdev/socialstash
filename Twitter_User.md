@@ -61,11 +61,11 @@ account | IAccount  | true | fase | Full | Generated
 objectUrn | String | true | false | Minimum 
 objectType | ObjectType | true | true | Minimum | Unknown 
 
-## Twitter User, Non-Generated Values:
+## Twitter User as a SnapBundle Object, Non-Generated Values:
 Field | Expected Value
 ------------ | -------------
 name | The SnapBundle user account currently logged in
-description | \<Twitter Handle\>'s Twitter Account
+description | \<twitter_handle\>'s Twitter Account
 activeFlag | True
 objectUrn | \<SnapBundle_User_Account\>:twitter:\<twitter_handle\>
 objectType | 'Person'
@@ -93,4 +93,13 @@ referenceURN | String | true | false | Minimum |
 dataType | MetadataDataType | true | false | Minimum |
 key | String | true | false | Minimum |
 rawValue | byte[] | true | true | Minimum |
+
+## Twitter User Additional Properties as SnapBundle Metadata Objects, Non-Generated Values:
+Field | Expected Value
+------------ | -------------
+entityReferenceType | Object
+referenceURN | \<SnapBundle_User_Account\>:twitter:\<twitter_handle\>
+dataType | Property Dependent
+key | Field Name from Tweepy User Object
+rawValue | Value from Tweepy User Object, run through SnapBundle Metadata Mapper Encoder
 
