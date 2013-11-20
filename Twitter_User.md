@@ -61,7 +61,7 @@ account | IAccount  | true | fase | Full | Generated
 objectUrn | String | true | false | Minimum 
 objectType | ObjectType | true | true | Minimum | Unknown 
 
-For Twitter users, non-generated fields will be:
+## Twitter User, Non-Generated Values:
 Field | Expected Value
 ------------ | -------------
 name | The SnapBundle user account currently logged in
