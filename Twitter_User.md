@@ -71,15 +71,15 @@ objectUrn | \<SnapBundle_User_Account\>:twitter:\<twitter_handle\>
 objectType | 'Person'
 
 ## Example SnapBundle Twitter User Object
-	{
-		description': u"praddc's Twitter Account", 
-		urn': u'urn:uuid:3e36a308-9a6e-4b91-a4c7-75094d2822a2'
-		objectUrn': u'paulr:twitter:praddc'
-		name': u'paulr'
-		activeFlag': True
-		lastModifiedTimestamp': 1384822856192L
-		objectType': u'Person'
-	}
+###	{
+###		description': u"praddc's Twitter Account", 
+###		urn': u'urn:uuid:3e36a308-9a6e-4b91-a4c7-75094d2822a2'
+###		objectUrn': u'paulr:twitter:praddc'
+###		name': u'paulr'
+###		activeFlag': True
+###		lastModifiedTimestamp': 1384822856192L
+###		objectType': u'Person'
+###	}
 
 ## SnapBundle Metadata Fields
 	
