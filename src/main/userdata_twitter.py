@@ -182,8 +182,10 @@ except KeyError:
 
 print "Setting up API"
 api = twitter_authenticate(pr_consumer_key, pr_consumer_secret, twitter_access_tokens[twitter_handle]['token'], twitter_access_tokens[twitter_handle]['token_secret'])
-#print "Pulling Twitter user data"
-#userData = twitter_pull_user_data(api)
+print "Pulling Twitter user data"
+userData = twitter_pull_user_data(api)
+print userData
+
 #print "Updating Twitter user data in Snapbundle"
 #twitter_user_update_snapbundle(urn_to_check_for, userData)
 
