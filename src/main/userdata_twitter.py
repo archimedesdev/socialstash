@@ -4,7 +4,7 @@ import ConfigParser
 import ast
 import tweepy
 import json
-import snapbundle_utils
+import snapbundle_twitter_fxns
 import requests
 
 
@@ -109,46 +109,46 @@ def twitter_pull_user_data(passed_in_api):
 
 #---------------------------------------------------------------------------------------------------------------------
 def twitter_user_update_snapbundle(reference_urn, user):
-    snapbundle_utils.add_update_metadata("Object", reference_urn, "Boolean", "contributors_enabled", user['contributors_enabled'])
-    snapbundle_utils.add_update_metadata("Object", reference_urn, "String", "created_at", user['created_at'])
-    snapbundle_utils.add_update_metadata("Object", reference_urn, "Boolean", "contributors_enabled", user['contributors_enabled'])
-    snapbundle_utils.add_update_metadata("Object", reference_urn, "Boolean", "default_profile", user['default_profile'])
-    snapbundle_utils.add_update_metadata("Object", reference_urn, "Boolean", "default_profile_image", user['default_profile_image'])
-    snapbundle_utils.add_update_metadata("Object", reference_urn, "String", "description", user['description'])
-    snapbundle_utils.add_update_metadata("Object", reference_urn, "Integer", "favourites_count", user['favourites_count'])
-    snapbundle_utils.add_update_metadata("Object", reference_urn, "Boolean", "follow_request_sent", user['follow_request_sent'])
-    snapbundle_utils.add_update_metadata("Object", reference_urn, "Integer", "followers_count", user['followers_count'])
-    snapbundle_utils.add_update_metadata("Object", reference_urn, "Integer", "friends_count", user['friends_count'])
-    snapbundle_utils.add_update_metadata("Object", reference_urn, "Boolean", "geo_enabled", user['geo_enabled'])
-    snapbundle_utils.add_update_metadata("Object", reference_urn, "Long", "id", user['id'])
-    snapbundle_utils.add_update_metadata("Object", reference_urn, "String", "id_str", user['id_str'])
-    snapbundle_utils.add_update_metadata("Object", reference_urn, "Boolean", "is_translator", user['is_translator'])
-    snapbundle_utils.add_update_metadata("Object", reference_urn, "String", "lang", user['lang'])
-    snapbundle_utils.add_update_metadata("Object", reference_urn, "Integer", "listed_count", user['listed_count'])
-    snapbundle_utils.add_update_metadata("Object", reference_urn, "String", "location", user['location'])
-    snapbundle_utils.add_update_metadata("Object", reference_urn, "String", "name", user['name'])
-    snapbundle_utils.add_update_metadata("Object", reference_urn, "String", "profile_background_color", user['profile_background_color'])
-    snapbundle_utils.add_update_metadata("Object", reference_urn, "String", "profile_background_image_url", user['profile_background_image_url'])
-    snapbundle_utils.add_update_metadata("Object", reference_urn, "String", "profile_background_image_url_https", user['profile_background_image_url_https'])
-    snapbundle_utils.add_update_metadata("Object", reference_urn, "Boolean", "profile_background_tile", user['profile_background_tile'])
-    snapbundle_utils.add_update_metadata("Object", reference_urn, "String", "profile_banner_url", user['profile_banner_url'])
-    snapbundle_utils.add_update_metadata("Object", reference_urn, "String", "profile_image_url", user['profile_image_url'])
-    snapbundle_utils.add_update_metadata("Object", reference_urn, "String", "profile_image_url_https", user['profile_image_url_https'])
-    snapbundle_utils.add_update_metadata("Object", reference_urn, "String", "profile_link_color", user['profile_link_color'])
-    snapbundle_utils.add_update_metadata("Object", reference_urn, "String", "profile_sidebar_border_color", user['profile_sidebar_border_color'])
-    snapbundle_utils.add_update_metadata("Object", reference_urn, "String", "profile_sidebar_fill_color", user['profile_sidebar_fill_color'])
-    snapbundle_utils.add_update_metadata("Object", reference_urn, "String", "profile_text_color", user['profile_text_color'])
-    snapbundle_utils.add_update_metadata("Object", reference_urn, "Boolean", "profile_use_background_image", user['profile_use_background_image'])
-    snapbundle_utils.add_update_metadata("Object", reference_urn, "Boolean", "protected", user['protected'])
-    snapbundle_utils.add_update_metadata("Object", reference_urn, "String", "screen_name", user['screen_name'])
-    snapbundle_utils.add_update_metadata("Object", reference_urn, "Boolean", "show_all_inline_media", user['show_all_inline_media'])
-    snapbundle_utils.add_update_metadata("Object", reference_urn, "Integer", "statuses_count", user['statuses_count'])
-    snapbundle_utils.add_update_metadata("Object", reference_urn, "String", "time_zone", user['time_zone'])
-    snapbundle_utils.add_update_metadata("Object", reference_urn, "String", "url", user['url'])
-    snapbundle_utils.add_update_metadata("Object", reference_urn, "Integer", "utc_offset", user['utc_offset'])
-    snapbundle_utils.add_update_metadata("Object", reference_urn, "Boolean", "verified", user['verified'])
-    snapbundle_utils.add_update_metadata("Object", reference_urn, "String", "withheld_in_countries", user['withheld_in_countries'])
-    snapbundle_utils.add_update_metadata("Object", reference_urn, "String", "withheld_scope", user['withheld_scope'])
+    snapbundle_twitter_fxns.add_update_metadata("Object", reference_urn, "Boolean", "contributors_enabled", user['contributors_enabled'])
+    snapbundle_twitter_fxns.add_update_metadata("Object", reference_urn, "String", "created_at", user['created_at'])
+    snapbundle_twitter_fxns.add_update_metadata("Object", reference_urn, "Boolean", "contributors_enabled", user['contributors_enabled'])
+    snapbundle_twitter_fxns.add_update_metadata("Object", reference_urn, "Boolean", "default_profile", user['default_profile'])
+    snapbundle_twitter_fxns.add_update_metadata("Object", reference_urn, "Boolean", "default_profile_image", user['default_profile_image'])
+    snapbundle_twitter_fxns.add_update_metadata("Object", reference_urn, "String", "description", user['description'])
+    snapbundle_twitter_fxns.add_update_metadata("Object", reference_urn, "Integer", "favourites_count", user['favourites_count'])
+    snapbundle_twitter_fxns.add_update_metadata("Object", reference_urn, "Boolean", "follow_request_sent", user['follow_request_sent'])
+    snapbundle_twitter_fxns.add_update_metadata("Object", reference_urn, "Integer", "followers_count", user['followers_count'])
+    snapbundle_twitter_fxns.add_update_metadata("Object", reference_urn, "Integer", "friends_count", user['friends_count'])
+    snapbundle_twitter_fxns.add_update_metadata("Object", reference_urn, "Boolean", "geo_enabled", user['geo_enabled'])
+    snapbundle_twitter_fxns.add_update_metadata("Object", reference_urn, "Long", "id", user['id'])
+    snapbundle_twitter_fxns.add_update_metadata("Object", reference_urn, "String", "id_str", user['id_str'])
+    snapbundle_twitter_fxns.add_update_metadata("Object", reference_urn, "Boolean", "is_translator", user['is_translator'])
+    snapbundle_twitter_fxns.add_update_metadata("Object", reference_urn, "String", "lang", user['lang'])
+    snapbundle_twitter_fxns.add_update_metadata("Object", reference_urn, "Integer", "listed_count", user['listed_count'])
+    snapbundle_twitter_fxns.add_update_metadata("Object", reference_urn, "String", "location", user['location'])
+    snapbundle_twitter_fxns.add_update_metadata("Object", reference_urn, "String", "name", user['name'])
+    snapbundle_twitter_fxns.add_update_metadata("Object", reference_urn, "String", "profile_background_color", user['profile_background_color'])
+    snapbundle_twitter_fxns.add_update_metadata("Object", reference_urn, "String", "profile_background_image_url", user['profile_background_image_url'])
+    snapbundle_twitter_fxns.add_update_metadata("Object", reference_urn, "String", "profile_background_image_url_https", user['profile_background_image_url_https'])
+    snapbundle_twitter_fxns.add_update_metadata("Object", reference_urn, "Boolean", "profile_background_tile", user['profile_background_tile'])
+    snapbundle_twitter_fxns.add_update_metadata("Object", reference_urn, "String", "profile_banner_url", user['profile_banner_url'])
+    snapbundle_twitter_fxns.add_update_metadata("Object", reference_urn, "String", "profile_image_url", user['profile_image_url'])
+    snapbundle_twitter_fxns.add_update_metadata("Object", reference_urn, "String", "profile_image_url_https", user['profile_image_url_https'])
+    snapbundle_twitter_fxns.add_update_metadata("Object", reference_urn, "String", "profile_link_color", user['profile_link_color'])
+    snapbundle_twitter_fxns.add_update_metadata("Object", reference_urn, "String", "profile_sidebar_border_color", user['profile_sidebar_border_color'])
+    snapbundle_twitter_fxns.add_update_metadata("Object", reference_urn, "String", "profile_sidebar_fill_color", user['profile_sidebar_fill_color'])
+    snapbundle_twitter_fxns.add_update_metadata("Object", reference_urn, "String", "profile_text_color", user['profile_text_color'])
+    snapbundle_twitter_fxns.add_update_metadata("Object", reference_urn, "Boolean", "profile_use_background_image", user['profile_use_background_image'])
+    snapbundle_twitter_fxns.add_update_metadata("Object", reference_urn, "Boolean", "protected", user['protected'])
+    snapbundle_twitter_fxns.add_update_metadata("Object", reference_urn, "String", "screen_name", user['screen_name'])
+    snapbundle_twitter_fxns.add_update_metadata("Object", reference_urn, "Boolean", "show_all_inline_media", user['show_all_inline_media'])
+    snapbundle_twitter_fxns.add_update_metadata("Object", reference_urn, "Integer", "statuses_count", user['statuses_count'])
+    snapbundle_twitter_fxns.add_update_metadata("Object", reference_urn, "String", "time_zone", user['time_zone'])
+    snapbundle_twitter_fxns.add_update_metadata("Object", reference_urn, "String", "url", user['url'])
+    snapbundle_twitter_fxns.add_update_metadata("Object", reference_urn, "Integer", "utc_offset", user['utc_offset'])
+    snapbundle_twitter_fxns.add_update_metadata("Object", reference_urn, "Boolean", "verified", user['verified'])
+    snapbundle_twitter_fxns.add_update_metadata("Object", reference_urn, "String", "withheld_in_countries", user['withheld_in_countries'])
+    snapbundle_twitter_fxns.add_update_metadata("Object", reference_urn, "String", "withheld_scope", user['withheld_scope'])
 
     ## STILL NEED TO DO
     #user['entities'] = passed_in_api.me().entities
@@ -159,7 +159,7 @@ def twitter_user_update_snapbundle(reference_urn, user):
 def update_snapbundle_tweets(parent_object_urn, tweet_list):
     for current_tweet in tweet_list:
         #print str(current_tweet.retweeted) + " " + current_tweet.source
-        snapbundle_utils.add_new_twiter_tweet(parent_object_urn, current_tweet)
+        snapbundle_twitter_fxns.add_new_twiter_tweet(parent_object_urn, current_tweet)
         return
 ##-------------------------------------------------------------------------------------------------------------------##
 
@@ -177,7 +177,7 @@ try:
         print response.json()
 except KeyError:
     print "Twitter user Object does not yet exist, creating..."
-    snapbundle_utils.add_new_twiter_user_object(twitter_handle, snapbundle_user_object, twitter_handle + "'s Twitter Account")
+    snapbundle_twitter_fxns.add_new_twiter_user_object(twitter_handle, snapbundle_user_object, twitter_handle + "'s Twitter Account")
 
 
 print "Setting up API"
