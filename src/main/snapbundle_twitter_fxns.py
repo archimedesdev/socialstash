@@ -64,7 +64,7 @@ def add_new_twitter_tweet(parent_object_urn, tweet):
     moniker = parent_object_urn + ":tweets:" + tweet.id_str
     object_interaction = {'object': parent_object_urn,
                           'moniker': moniker,
-                          'device': create_get_twitter_snapbundle_device_object(parent_object_urn, tweet.source, tweet.retweeted),
+                          'device': create_get_twitter_snapbundle_device_object_id(parent_object_urn, tweet.source, tweet.retweeted),
                           'data': tweet.text,
                           'recordedTimestamp': created_at_epoch_utc,
                           'hasGeoLocation': hasGeoLocation,
@@ -113,7 +113,7 @@ def add_new_twitter_tweet(parent_object_urn, tweet):
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def create_get_twitter_snapbundle_device_object(parent_object_urn, source, retweeted):
+def create_get_twitter_snapbundle_device_object_id(parent_object_urn, source, retweeted):
     if retweeted:
         deviceType = 'Unknown'
     else:
