@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="dc7f855c-82e9-481c-850b-8187cfab748b" name="Default" comment="Renamed files" />
+    <list default="true" id="dc7f855c-82e9-481c-850b-8187cfab748b" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+    </list>
     <ignored path="socialStash.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -26,7 +28,7 @@
       <file leaf-file-name="userdata_twitter.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/userdata_twitter.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="137" column="140" selection-start="8254" selection-end="8254" vertical-scroll-proportion="0.0" vertical-offset="1853" max-vertical-offset="4267">
+            <state line="191" column="0" selection-start="11414" selection-end="11414" vertical-scroll-proportion="0.0" vertical-offset="1793" max-vertical-offset="3519">
               <folding>
                 <element signature="e#21#40#0" expanded="true" />
               </folding>
@@ -37,10 +39,19 @@
       <file leaf-file-name="snapbundle_twitter_fxns.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/snapbundle_twitter_fxns.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="201" column="39" selection-start="8378" selection-end="8378" vertical-scroll-proportion="0.97648686" vertical-offset="2711" max-vertical-offset="3689">
+            <state line="75" column="37" selection-start="3366" selection-end="3366" vertical-scroll-proportion="1.440678" vertical-offset="0" max-vertical-offset="3094">
               <folding>
                 <element signature="e#21#32#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="snapbundle_helpers.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/snapbundle_helpers.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="4" column="0" selection-start="49" selection-end="49" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1717">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -69,6 +80,8 @@
         <option value="$PROJECT_DIR$/accounts.txt" />
         <option value="$PROJECT_DIR$/userData.py" />
         <option value="$PROJECT_DIR$/userdata_twitter.py" />
+        <option value="$PROJECT_DIR$/snapbundle_helpers.py" />
+        <option value="$PROJECT_DIR$/snapbundle_twitter_fxns.py" />
       </list>
     </option>
   </component>
@@ -221,6 +234,24 @@
       <ConfigurationWrapper RunnerId="PythonRunner" />
       <method />
     </configuration>
+    <configuration default="false" name="snapbundle_helpers" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="socialStash" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/snapbundle_helpers.py" />
+      <option name="PARAMETERS" value="" />
+      <RunnerSettings RunnerId="PythonRunner" />
+      <ConfigurationWrapper RunnerId="PythonRunner" />
+      <method />
+    </configuration>
     <configuration default="true" type="tests" factoryName="py.test">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -342,18 +373,20 @@
       <option name="USE_PATTERN" value="false" />
       <method />
     </configuration>
-    <list size="4">
+    <list size="5">
       <item index="0" class="java.lang.String" itemvalue="Python.snapbundle" />
       <item index="1" class="java.lang.String" itemvalue="Python.userData" />
       <item index="2" class="java.lang.String" itemvalue="Python.snapbundle_utils" />
       <item index="3" class="java.lang.String" itemvalue="Python.tester" />
+      <item index="4" class="java.lang.String" itemvalue="Python.snapbundle_helpers" />
     </list>
     <recent_temporary>
-      <list size="4">
+      <list size="5">
         <item index="0" class="java.lang.String" itemvalue="Python.userData" />
-        <item index="1" class="java.lang.String" itemvalue="Python.snapbundle" />
-        <item index="2" class="java.lang.String" itemvalue="Python.tester" />
-        <item index="3" class="java.lang.String" itemvalue="Python.snapbundle_utils" />
+        <item index="1" class="java.lang.String" itemvalue="Python.snapbundle_helpers" />
+        <item index="2" class="java.lang.String" itemvalue="Python.snapbundle" />
+        <item index="3" class="java.lang.String" itemvalue="Python.tester" />
+        <item index="4" class="java.lang.String" itemvalue="Python.snapbundle_utils" />
       </list>
     </recent_temporary>
   </component>
@@ -385,28 +418,44 @@
       <created>1384920179694</created>
       <updated>1384920179694</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Updated all the different DeviceTypes for a device">
+      <created>1384923845885</created>
+      <updated>1384923845885</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Removed extra commented out code.">
+      <created>1384923867477</created>
+      <updated>1384923867477</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Updated Files (organized)">
+      <created>1385000970402</created>
+      <updated>1385000970402</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Updated Files (organized)">
+      <created>1385005423190</created>
+      <updated>1385005423190</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="0" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32900432" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.0953125" sideWeight="0.8246753" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.0953125" sideWeight="0.67099565" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32949308" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17532468" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" x="999" y="136" width="871" height="841" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.26298702" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" x="999" y="136" width="871" height="841" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32900432" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -420,12 +469,51 @@
       <TodoPanelSettings />
     </option>
     <MESSAGE value="Renamed files" />
-    <option name="LAST_COMMIT_MESSAGE" value="Renamed files" />
+    <MESSAGE value="Updated all the different DeviceTypes for a device" />
+    <MESSAGE value="Removed extra commented out code." />
+    <MESSAGE value="Updated Files (organized)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated Files (organized)" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/userdata_twitter.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="194" column="1" selection-start="11729" selection-end="11729" vertical-scroll-proportion="0.0" vertical-offset="2604" max-vertical-offset="3502">
+          <folding>
+            <element signature="e#21#40#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/snapbundle_twitter_fxns.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="159" column="21" selection-start="6219" selection-end="6219" vertical-scroll-proportion="0.0" vertical-offset="2703" max-vertical-offset="3825">
+          <folding>
+            <element signature="e#21#32#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/userdata_twitter.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="194" column="1" selection-start="11729" selection-end="11729" vertical-scroll-proportion="0.0" vertical-offset="2834" max-vertical-offset="3502">
+          <folding>
+            <element signature="e#21#40#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/snapbundle_twitter_fxns.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="159" column="21" selection-start="6219" selection-end="6219" vertical-scroll-proportion="0.0" vertical-offset="994" max-vertical-offset="3876">
+          <folding>
+            <element signature="e#21#32#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/userdata_twitter.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="13" column="29" selection-start="352" selection-end="352" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4250">
@@ -482,23 +570,30 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/accounts.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="50" selection-start="661" selection-end="661" vertical-scroll-proportion="0.39266303" vertical-offset="0" max-vertical-offset="736">
+        <state line="17" column="50" selection-start="661" selection-end="661" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="425">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/userdata_twitter.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="137" column="140" selection-start="8254" selection-end="8254" vertical-scroll-proportion="0.0" vertical-offset="1853" max-vertical-offset="4267">
+        <state line="191" column="0" selection-start="11414" selection-end="11414" vertical-scroll-proportion="0.0" vertical-offset="1793" max-vertical-offset="3519">
           <folding>
             <element signature="e#21#40#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/snapbundle_helpers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="4" column="0" selection-start="49" selection-end="49" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1717">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/snapbundle_twitter_fxns.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="201" column="39" selection-start="8378" selection-end="8378" vertical-scroll-proportion="0.97648686" vertical-offset="2711" max-vertical-offset="3689">
+        <state line="75" column="37" selection-start="3366" selection-end="3366" vertical-scroll-proportion="1.440678" vertical-offset="0" max-vertical-offset="3094">
           <folding>
             <element signature="e#21#32#0" expanded="true" />
           </folding>
