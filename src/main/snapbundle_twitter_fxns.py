@@ -4,10 +4,21 @@ import json
 import requests
 import calendar
 import time
+import ConfigParser
+
+# == Import all the account information that is stored in a local file (not sync'd wih public github)
+config_file = 'accounts.txt'
+config = ConfigParser.RawConfigParser()
+config.read(config_file)
+
+# == Snapbundle Variables ==
+snapbundle_username = config.get('SnapbundleCredentials', 'snapbundle_username')
+snapbundle_password = config.get('SnapbundleCredentials', 'snapbundle_password')
+# == End Snapbundle Variables ==
 
 
-username = 'paul@archimedessolutions.com'
-password = 'ohTw33t!'
+#username = 'paul@archimedessolutions.com'
+#password = 'ohTw33t!'
 base_url_objects = 'https://snapbundle.tagdynamics.net/v1/app/objects'
 base_url_object_interaction = 'https://snapbundle.tagdynamics.net/v1/app/interaction'
 base_url_metadata_objects = 'https://snapbundle.tagdynamics.net/v1/app/metadata/Object'
@@ -16,23 +27,31 @@ base_url_metadata_mapper_decode = 'https://snapbundle.tagdynamics.net/v1/public/
 base_url_devicess = 'https://snapbundle.tagdynamics.net/v1/admin/devices'
 
 
-metadataDataTypes = {'STRING': 'StringType',
-                     'DATE': 'DataType',
-                     'INTEGER': 'IntegerType',
-                     'LONG': 'LongType',
-                     'BOOLEAN': 'BooleanType',
-                     'FLOAT': 'FloatType',
-                     'DOUBLE': 'DoubleType',
-                     'JSON': 'JSONType',
-                     'XML': 'XMLType'
-                     }
-
-
 ## --------------------------------------------------------------------------------------------------------------
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def add_new_twiter_user_object(twitter_handle, sb_username, description):
+    object_urn = sb_username + ":twitter:" + twitter_handle
+    json_info = {"moniker": twitter_handle,
+                 "name": sb_username,
+                 "description": description,
+                 "active": "true",
+                 "hasGeoLocation": "false",
+                 "objectUrn": object_urn,
+                 "objectType": "Person"
+                 }
+    url = base_url_objects
+    headers = {'content-type': 'application/json'}
+    payload = json.dumps(json_info)
+    print "Sending to URL: " + str(url)
+    print "Submitting Payload: " + str(payload)
+    response = requests.put(url, data=payload, headers=headers, auth=(snapbundle_username, snapbundle_password))
+    print "Response: " + str(response.status_code) + " <--> "
+    print response
+    print str(response.json())
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def add_new_twiter_tweet(parent_object_urn, tweet):
+def add_new_twitter_tweet(parent_object_urn, tweet):
     ## -- The ObjectInteraction portion of the tweet
     pattern = '%Y-%m-%d %H:%M:%S'
     created_at = tweet.created_at.strftime("%Y-%m-%d %H:%M:%S")
@@ -59,7 +78,7 @@ def add_new_twiter_tweet(parent_object_urn, tweet):
     payload = json.dumps(object_interaction)
     print "Sending to URL: " + str(url)
     print "Submitting Payload: " + str(payload)
-    response = requests.put(url, data=payload, headers=headers, auth=(username, password))
+    response = requests.put(url, data=payload, headers=headers, auth=(snapbundle_username, snapbundle_password))
     print "Response: " + str(response.status_code) + " <--> "
     print response
     print str(response.json())
@@ -113,7 +132,7 @@ def create_get_twitter_snapbundle_device_object(parent_object_urn, source, retwe
     payload = json.dumps(json_info)
     print "Sending to URL: " + str(url)
     print "Submitting Payload: " + str(payload)
-    response = requests.put(url, data=payload, headers=headers, auth=(username, password))
+    response = requests.put(url, data=payload, headers=headers, auth=(snapbundle_username, snapbundle_password))
     print "Response: " + str(response.status_code) + " <--> "
     if response.status_code == 200:
         print "Device " + identification + " already existed!"
@@ -155,69 +174,3 @@ def get_snapbundle_device_type(source):
         return 'Phone'
     else:
         return 'Unknown'
-
-
-## ----------------------------------- FXN ------------------------------------------------------------------------
-def add_new_twiter_user_object(twitter_handle, sb_username, description):
-    object_urn = sb_username + ":twitter:" + twitter_handle
-    json_info = {"moniker": twitter_handle,
-                 "name": sb_username,
-                 "description": description,
-                 "active": "true",
-                 "hasGeoLocation": "false",
-                 "objectUrn": object_urn,
-                 "objectType": "Person"
-                 }
-    url = base_url_objects #+ '/' + referenceURN
-    headers = {'content-type': 'application/json'}
-    payload = json.dumps(json_info)
-    print "Sending to URL: " + str(url)
-    print "Submitting Payload: " + str(payload)
-    response = requests.put(url, data=payload, headers=headers, auth=(username, password))
-    print "Response: " + str(response.status_code) + " <--> "
-    print response
-    print str(response.json())
-
-
-## ----------------------------------- FXN ------------------------------------------------------------------------
-def get_raw_value(var_passed_in, var_type):
-    url = base_url_metadata_mapper_encode + metadataDataTypes[var_type.upper()]
-    payload = str(var_passed_in)
-    if payload == '':
-        payload = 'NULL'
-    headers = {'content-type': 'text/plain'}
-    print "Get_raw_value: Submitting --> " + str(url) + " " + str(payload)
-    response = requests.post(url, data=payload, headers=headers, auth=(username, password))
-    if response.status_code == '404':
-        print "uh oh, 404 error!!"
-    else:
-        print "Get_raw_value: Response: " + str(response)
-        print "Get_raw_value: Response JSON: " + str(response.json())
-        return response.json()['rawValue']
-
-
-## ----------------------------------- FXN ------------------------------------------------------------------------
-def add_update_metadata(reference_type, referenceURN, dataType, key, value):
-    raw_value = get_raw_value(value, dataType)
-    temp_meta_data = dict(
-        entityReferenceType=reference_type,
-        referenceURN=referenceURN,
-        dataType=metadataDataTypes[dataType.upper()],
-        #type=metadataDataTypes[dataType.upper()],
-        key=key,
-        rawValue=str(raw_value)
-    )
-    url = base_url_metadata_objects + '/' + referenceURN
-    headers = {'content-type': 'application/json'}
-    payload = json.dumps([temp_meta_data])
-    print "Sending to URL: " + str(url)
-    print "Submitting Payload: " + str(payload)
-    response = requests.put(url, data=payload, headers=headers, auth=(username, password))
-    print "Response: " + str(response.status_code) + " <--> "
-    print response
-    print str(response.json())
-
-#add_update_metadata("Object", 'praddc', "Boolean", "follow_reqeust_sent", "False")
-#get_raw_value("True", "Boolean")
-## True = 'AQ=='
-## False = 'AA=='
