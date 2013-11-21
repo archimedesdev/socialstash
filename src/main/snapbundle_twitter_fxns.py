@@ -17,8 +17,6 @@ snapbundle_password = config.get('SnapbundleCredentials', 'snapbundle_password')
 # == End Snapbundle Variables ==
 
 
-#username = 'paul@archimedessolutions.com'
-#password = 'ohTw33t!'
 base_url_objects = 'https://snapbundle.tagdynamics.net/v1/app/objects'
 base_url_object_interaction = 'https://snapbundle.tagdynamics.net/v1/app/interaction'
 base_url_metadata_objects = 'https://snapbundle.tagdynamics.net/v1/app/metadata/Object'
