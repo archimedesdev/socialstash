@@ -3,7 +3,6 @@ __author__ = 'prad'
 import ConfigParser
 import ast
 import tweepy
-import json
 import snapbundle_twitter_fxns
 import snapbundle_helpers
 import requests
@@ -184,18 +183,15 @@ except KeyError:
 print "Setting up API"
 api = twitter_authenticate(pr_consumer_key, pr_consumer_secret, twitter_access_tokens[twitter_handle]['token'], twitter_access_tokens[twitter_handle]['token_secret'])
 
-print "Pulling Twitter user data"
-userData = twitter_pull_user_data(api)
-print userData
+#print "Pulling Twitter user data"
+#userData = twitter_pull_user_data(api)
+#print userData
 
-print "Updating Twitter user data in Snapbundle"
-twitter_user_update_snapbundle(urn_to_check_for, userData)
+#print "Updating Twitter user data in Snapbundle"
+#twitter_user_update_snapbundle(urn_to_check_for, userData)
 
-#print "Getting Twitter user timeline 20"
-#userTimeline = api.user_timeline()
-#update_snapbundle_tweets(urn_to_check_for, userTimeline)
+print "Getting Twitter user timeline 20"
+userTimeline = api.user_timeline()
+update_snapbundle_tweets(urn_to_check_for, userTimeline)
 exit()
 #print str(userData)
-
-#user_json_encoded = json.dumps(userData)
-#user_json_decoded = json.loads(user_json_encoded)

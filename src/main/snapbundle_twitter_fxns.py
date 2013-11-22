@@ -11,19 +11,19 @@ config_file = 'accounts.txt'
 config = ConfigParser.RawConfigParser()
 config.read(config_file)
 
-# == Snapbundle Variables ==
+# == Start Snapbundle Variables ==
 snapbundle_username = config.get('SnapbundleCredentials', 'snapbundle_username')
 snapbundle_password = config.get('SnapbundleCredentials', 'snapbundle_password')
 # == End Snapbundle Variables ==
 
-
+# == Start Snapbundle URLs ==
 base_url_objects = 'https://snapbundle.tagdynamics.net/v1/app/objects'
 base_url_object_interaction = 'https://snapbundle.tagdynamics.net/v1/app/interaction'
 base_url_metadata_objects = 'https://snapbundle.tagdynamics.net/v1/app/metadata/Object'
 base_url_metadata_mapper_encode = 'https://snapbundle.tagdynamics.net/v1/public/metadata/mapper/encode/'
 base_url_metadata_mapper_decode = 'https://snapbundle.tagdynamics.net/v1/public/metadata/mapper/decode/'
 base_url_devicess = 'https://snapbundle.tagdynamics.net/v1/admin/devices'
-
+# == End Snapbundle URLs ==
 
 ## --------------------------------------------------------------------------------------------------------------
 ## ----------------------------------- FXN ------------------------------------------------------------------------
@@ -60,9 +60,9 @@ def add_new_twitter_tweet(parent_object_urn, tweet):
         hasGeoLocation = True
 
     moniker = parent_object_urn + ":tweets:" + tweet.id_str
-    object_interaction = {'object': parent_object_urn,
+    object_interaction = {'objectUrn': parent_object_urn,
                           'moniker': moniker,
-                          'device': create_get_twitter_snapbundle_device_object_id(parent_object_urn, tweet.source, tweet.retweeted),
+                          'identification': get_twitter_snapbundle_device_object_id(parent_object_urn, tweet.source, tweet.retweeted),
                           'data': tweet.text,
                           'recordedTimestamp': created_at_epoch_utc,
                           'hasGeoLocation': hasGeoLocation,
@@ -111,7 +111,7 @@ def add_new_twitter_tweet(parent_object_urn, tweet):
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def create_get_twitter_snapbundle_device_object_id(parent_object_urn, source, retweeted):
+def get_twitter_snapbundle_device_object_id(parent_object_urn, source, retweeted):
     if retweeted:
         deviceType = 'Unknown'
     else:
@@ -145,7 +145,8 @@ def create_get_twitter_snapbundle_device_object_id(parent_object_urn, source, re
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def get_snapbundle_device_type(source):
     source = source.upper()
-    # Start specific and get more general
+    # Start specific and get more general as we go down the line.
+    # Looking for key words in the source string
     if "KINDLE" in source:
         return 'Kindle'
     elif "NOOK" in source:
