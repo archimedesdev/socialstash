@@ -129,7 +129,7 @@ try:
         print response.json()
 except KeyError:
     print "Twitter user Object does not yet exist, creating..."
-    snapbundle_twitter_fxns.add_new_twiter_user_object(twitter_handle, snapbundle_user_object, twitter_handle + "'s Twitter Account")
+    snapbundle_twitter_fxns.add_new_twitter_user_object(twitter_handle, snapbundle_user_object, twitter_handle + "'s Twitter Account")
 
 
 print "Setting up API"

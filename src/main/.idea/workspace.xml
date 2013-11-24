@@ -2,6 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="dc7f855c-82e9-481c-850b-8187cfab748b" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/snapbundle_instagram_fxns.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/userdata_instagram.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/snapbundle_helpers.py" afterPath="$PROJECT_DIR$/snapbundle_helpers.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/snapbundle_twitter_fxns.py" afterPath="$PROJECT_DIR$/snapbundle_twitter_fxns.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/userdata_twitter.py" afterPath="$PROJECT_DIR$/userdata_twitter.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
@@ -30,7 +33,16 @@
       <file leaf-file-name="userdata_twitter.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/userdata_twitter.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="179" column="98" selection-start="11035" selection-end="11035" vertical-scroll-proportion="0.0" vertical-offset="2796" max-vertical-offset="3451">
+            <state line="124" column="35" selection-start="5448" selection-end="5476" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2550">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="userdata_instagram.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/userdata_instagram.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="36" column="0" selection-start="1380" selection-end="1756" vertical-scroll-proportion="0.0" vertical-offset="683" max-vertical-offset="1581">
               <folding>
                 <element signature="e#21#40#0" expanded="true" />
               </folding>
@@ -38,11 +50,13 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="snapbundle_twitter_fxns.py" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="snapbundle_twitter_fxns.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/snapbundle_twitter_fxns.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="64" column="41" selection-start="2921" selection-end="2921" vertical-scroll-proportion="0.28504673" vertical-offset="837" max-vertical-offset="3009">
-              <folding />
+            <state line="69" column="0" selection-start="2243" selection-end="4192" vertical-scroll-proportion="0.0" vertical-offset="883" max-vertical-offset="3961">
+              <folding>
+                <element signature="e#21#32#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -50,7 +64,16 @@
       <file leaf-file-name="snapbundle_helpers.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/snapbundle_helpers.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="12" column="58" selection-start="354" selection-end="354" vertical-scroll-proportion="0.0" vertical-offset="765" max-vertical-offset="1717">
+            <state line="105" column="1" selection-start="5161" selection-end="5161" vertical-scroll-proportion="0.0" vertical-offset="1274" max-vertical-offset="1870">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="snapbundle_instagram_fxns.py" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/snapbundle_instagram_fxns.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="69" column="30" selection-start="3628" selection-end="3628" vertical-scroll-proportion="1.5660881" vertical-offset="0" max-vertical-offset="3281">
               <folding>
                 <element signature="e#21#32#0" expanded="true" />
               </folding>
@@ -79,11 +102,13 @@
         <option value="$PROJECT_DIR$/snapbundle.py" />
         <option value="$PROJECT_DIR$/tester.py" />
         <option value="$PROJECT_DIR$/snapbundle_utils.py" />
-        <option value="$PROJECT_DIR$/accounts.txt" />
         <option value="$PROJECT_DIR$/userData.py" />
-        <option value="$PROJECT_DIR$/snapbundle_helpers.py" />
         <option value="$PROJECT_DIR$/userdata_twitter.py" />
+        <option value="$PROJECT_DIR$/accounts.txt" />
         <option value="$PROJECT_DIR$/snapbundle_twitter_fxns.py" />
+        <option value="$PROJECT_DIR$/userdata_instagram.py" />
+        <option value="$PROJECT_DIR$/snapbundle_helpers.py" />
+        <option value="$PROJECT_DIR$/snapbundle_instagram_fxns.py" />
       </list>
     </option>
   </component>
@@ -119,6 +144,7 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -139,18 +165,17 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="options.splitter.main.proportions" value="0.3" />
-    <property name="options.lastSelected" value="vcs.Git" />
     <property name="recentsLimit" value="5" />
-    <property name="restartRequiresConfirmation" value="true" />
+    <property name="options.lastSelected" value="vcs.Git" />
     <property name="last_opened_file_path" value="$USER_HOME$/AppData/Local/GitHub/PortableGit_0f65d050d0c352fd38a0b25d82ee942deb19ef87/bin/git.exe" />
+    <property name="restartRequiresConfirmation" value="true" />
     <property name="FullScreen" value="false" />
-    <property name="options.searchVisible" value="true" />
     <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="options.searchVisible" value="true" />
   </component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
@@ -163,61 +188,7 @@
       <recent name="C:\Users\prad\Desktop\dev\code\socialStash" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.userdata_twitter">
-    <configuration default="false" name="snapbundle" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="socialStash" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/snapbundle.py" />
-      <option name="PARAMETERS" value="" />
-      <RunnerSettings RunnerId="PythonRunner" />
-      <ConfigurationWrapper RunnerId="PythonRunner" />
-      <method />
-    </configuration>
-    <configuration default="false" name="userData" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="socialStash" />
-      <option name="SCRIPT_NAME" value="C:\Users\prad\Documents\GitHub\socialstash\src\main\userdata_twitter.py" />
-      <option name="PARAMETERS" value="" />
-      <RunnerSettings RunnerId="PythonRunner" />
-      <ConfigurationWrapper RunnerId="PythonRunner" />
-      <method />
-    </configuration>
-    <configuration default="false" name="tester" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="socialStash" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/tester.py" />
-      <option name="PARAMETERS" value="" />
-      <RunnerSettings RunnerId="PythonRunner" />
-      <ConfigurationWrapper RunnerId="PythonRunner" />
-      <method />
-    </configuration>
+  <component name="RunManager" selected="Python.userdata_instagram">
     <configuration default="false" name="snapbundle_helpers" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -249,6 +220,24 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="socialStash" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/userdata_twitter.py" />
+      <option name="PARAMETERS" value="" />
+      <RunnerSettings RunnerId="PythonRunner" />
+      <ConfigurationWrapper RunnerId="PythonRunner" />
+      <method />
+    </configuration>
+    <configuration default="false" name="userdata_instagram" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="socialStash" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/userdata_instagram.py" />
       <option name="PARAMETERS" value="" />
       <RunnerSettings RunnerId="PythonRunner" />
       <ConfigurationWrapper RunnerId="PythonRunner" />
@@ -375,20 +364,16 @@
       <option name="USE_PATTERN" value="false" />
       <method />
     </configuration>
-    <list size="5">
-      <item index="0" class="java.lang.String" itemvalue="Python.snapbundle" />
-      <item index="1" class="java.lang.String" itemvalue="Python.userData" />
-      <item index="2" class="java.lang.String" itemvalue="Python.tester" />
-      <item index="3" class="java.lang.String" itemvalue="Python.snapbundle_helpers" />
-      <item index="4" class="java.lang.String" itemvalue="Python.userdata_twitter" />
+    <list size="3">
+      <item index="0" class="java.lang.String" itemvalue="Python.snapbundle_helpers" />
+      <item index="1" class="java.lang.String" itemvalue="Python.userdata_twitter" />
+      <item index="2" class="java.lang.String" itemvalue="Python.userdata_instagram" />
     </list>
     <recent_temporary>
-      <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Python.userdata_twitter" />
-        <item index="1" class="java.lang.String" itemvalue="Python.userData" />
+      <list size="3">
+        <item index="0" class="java.lang.String" itemvalue="Python.userdata_instagram" />
+        <item index="1" class="java.lang.String" itemvalue="Python.userdata_twitter" />
         <item index="2" class="java.lang.String" itemvalue="Python.snapbundle_helpers" />
-        <item index="3" class="java.lang.String" itemvalue="Python.snapbundle" />
-        <item index="4" class="java.lang.String" itemvalue="Python.tester" />
       </list>
     </recent_temporary>
   </component>
@@ -444,28 +429,36 @@
       <created>1385005534182</created>
       <updated>1385005534182</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Fixed ObjectInteraction Code">
+      <created>1385121036513</created>
+      <updated>1385121036513</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Moved User meteadata adding/updating into snapbundle_twitter_fxns.py">
+      <created>1385323714731</created>
+      <updated>1385323714731</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32900432" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.0953125" sideWeight="0.737013" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.0953125" sideWeight="0.85281384" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32949308" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26298702" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" x="999" y="136" width="871" height="841" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.14718615" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" x="999" y="136" width="871" height="841" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -482,116 +475,24 @@
     <MESSAGE value="Updated all the different DeviceTypes for a device" />
     <MESSAGE value="Removed extra commented out code." />
     <MESSAGE value="Updated Files (organized)" />
-    <option name="LAST_COMMIT_MESSAGE" value="Updated Files (organized)" />
+    <MESSAGE value="Fixed ObjectInteraction Code" />
+    <MESSAGE value="Moved User meteadata adding/updating into snapbundle_twitter_fxns.py" />
+    <option name="LAST_COMMIT_MESSAGE" value="Moved User meteadata adding/updating into snapbundle_twitter_fxns.py" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/snapbundle_twitter_fxns.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="0" selection-start="520" selection-end="520" vertical-scroll-proportion="0.0" vertical-offset="306" max-vertical-offset="3060">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/snapbundle_helpers.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="0" selection-start="49" selection-end="49" vertical-scroll-proportion="0.0" vertical-offset="68" max-vertical-offset="1717">
-          <folding>
-            <element signature="e#21#32#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/userdata_twitter.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="194" column="1" selection-start="11729" selection-end="11729" vertical-scroll-proportion="0.0" vertical-offset="2604" max-vertical-offset="3502">
-          <folding>
-            <element signature="e#21#40#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/snapbundle_twitter_fxns.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="159" column="21" selection-start="6219" selection-end="6219" vertical-scroll-proportion="0.0" vertical-offset="2703" max-vertical-offset="3825">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/userdata_twitter.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="194" column="1" selection-start="11729" selection-end="11729" vertical-scroll-proportion="0.0" vertical-offset="2834" max-vertical-offset="3502">
-          <folding>
-            <element signature="e#21#40#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/snapbundle_twitter_fxns.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="159" column="21" selection-start="6219" selection-end="6219" vertical-scroll-proportion="0.0" vertical-offset="994" max-vertical-offset="3876">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/userdata_twitter.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="29" selection-start="352" selection-end="352" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4250">
-          <folding>
-            <element signature="e#21#40#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/snapbundle_twitter_fxns.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="174" column="21" selection-start="7188" selection-end="7188" vertical-scroll-proportion="0.0" vertical-offset="51" max-vertical-offset="3689">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/userdata_twitter.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="248" column="4" selection-start="13705" selection-end="13705" vertical-scroll-proportion="0.0" vertical-offset="4074" max-vertical-offset="4862">
-          <folding>
-            <element signature="e#21#40#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/snapbundle_twitter_fxns.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="29" column="59" selection-start="1289" selection-end="1289" vertical-scroll-proportion="0.0" vertical-offset="493" max-vertical-offset="1734">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/userdata_twitter.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="86" column="8" selection-start="3718" selection-end="3718" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1989">
-          <folding>
-            <element signature="e#21#40#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/snapbundle_twitter_fxns.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="28" column="36" selection-start="886" selection-end="886" vertical-scroll-proportion="0.0" vertical-offset="34" max-vertical-offset="595">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/accounts.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="50" selection-start="661" selection-end="661" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="425" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/snapbundle_helpers.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="58" selection-start="354" selection-end="354" vertical-scroll-proportion="0.0" vertical-offset="765" max-vertical-offset="1717">
           <folding>
             <element signature="e#21#32#0" expanded="true" />
           </folding>
@@ -600,7 +501,85 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/userdata_twitter.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="179" column="98" selection-start="11035" selection-end="11035" vertical-scroll-proportion="0.0" vertical-offset="2796" max-vertical-offset="3451">
+        <state line="194" column="1" selection-start="11729" selection-end="11729" vertical-scroll-proportion="0.0" vertical-offset="2834" max-vertical-offset="3502">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/snapbundle_twitter_fxns.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="159" column="21" selection-start="6219" selection-end="6219" vertical-scroll-proportion="0.0" vertical-offset="994" max-vertical-offset="3876">
+          <folding>
+            <element signature="e#21#32#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/userdata_twitter.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="13" column="29" selection-start="352" selection-end="352" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4250">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/snapbundle_twitter_fxns.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="174" column="21" selection-start="7188" selection-end="7188" vertical-scroll-proportion="0.0" vertical-offset="51" max-vertical-offset="3689">
+          <folding>
+            <element signature="e#21#32#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/userdata_twitter.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="248" column="4" selection-start="13705" selection-end="13705" vertical-scroll-proportion="0.0" vertical-offset="4074" max-vertical-offset="4862">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/snapbundle_twitter_fxns.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="29" column="59" selection-start="1289" selection-end="1289" vertical-scroll-proportion="0.0" vertical-offset="493" max-vertical-offset="1734">
+          <folding>
+            <element signature="e#21#32#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/userdata_twitter.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="86" column="8" selection-start="3718" selection-end="3718" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1989">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/snapbundle_twitter_fxns.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="28" column="36" selection-start="886" selection-end="886" vertical-scroll-proportion="0.0" vertical-offset="34" max-vertical-offset="595">
+          <folding>
+            <element signature="e#21#32#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/userdata_twitter.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="124" column="35" selection-start="5448" selection-end="5476" vertical-scroll-proportion="0.0" vertical-offset="1954" max-vertical-offset="2550">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/accounts.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="23" column="9" selection-start="850" selection-end="850" vertical-scroll-proportion="0.65604025" vertical-offset="0" max-vertical-offset="782">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/userdata_instagram.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="36" column="0" selection-start="1380" selection-end="1756" vertical-scroll-proportion="0.0" vertical-offset="224" max-vertical-offset="1581">
           <folding>
             <element signature="e#21#40#0" expanded="true" />
           </folding>
@@ -609,8 +588,26 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/snapbundle_twitter_fxns.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="64" column="41" selection-start="2921" selection-end="2921" vertical-scroll-proportion="0.28504673" vertical-offset="837" max-vertical-offset="3009">
+        <state line="69" column="0" selection-start="2243" selection-end="4192" vertical-scroll-proportion="0.0" vertical-offset="883" max-vertical-offset="3961">
+          <folding>
+            <element signature="e#21#32#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/snapbundle_helpers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="105" column="1" selection-start="5161" selection-end="5161" vertical-scroll-proportion="0.0" vertical-offset="1274" max-vertical-offset="1870">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/snapbundle_instagram_fxns.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="69" column="30" selection-start="3628" selection-end="3628" vertical-scroll-proportion="1.5660881" vertical-offset="0" max-vertical-offset="3281">
+          <folding>
+            <element signature="e#21#32#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

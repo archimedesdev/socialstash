@@ -12,8 +12,9 @@ config.read(config_file)
 # == Snapbundle Variables ==
 snapbundle_username = config.get('SnapbundleCredentials', 'snapbundle_username')
 snapbundle_password = config.get('SnapbundleCredentials', 'snapbundle_password')
+snapbundle_user_object = config.get('SnapbundleCredentials', 'snapbundle_user_object')
 base_url_objects = 'https://snapbundle.tagdynamics.net/v1/app/objects'
-base_url_object_interaction = 'https://snapbundle.tagdynamics.net/v1/app/interaction'
+base_url_object_interaction = 'https://snapbundle.tagdynamics.net/v1/app/interactions'
 base_url_metadata_objects = 'https://snapbundle.tagdynamics.net/v1/app/metadata/Object'
 base_url_metadata_mapper_encode = 'https://snapbundle.tagdynamics.net/v1/public/metadata/mapper/encode/'
 base_url_metadata_mapper_decode = 'https://snapbundle.tagdynamics.net/v1/public/metadata/mapper/decode/'
@@ -79,8 +80,6 @@ def add_update_metadata(reference_type, referenceURN, dataType, key, value):
     url = base_url_metadata_objects + '/' + referenceURN
     headers = {'content-type': 'application/json'}
     payload = json.dumps([temp_meta_data])
-    print "user: " + snapbundle_username
-    print "pass: " + snapbundle_password
     print "Sending to URL: " + str(url)
     print "Submitting Payload: " + str(payload)
     response = requests.put(url, data=payload, headers=headers, auth=(snapbundle_username, snapbundle_password))
@@ -94,3 +93,15 @@ def add_update_metadata(reference_type, referenceURN, dataType, key, value):
 #raw = get_raw_value_encoded("True", "Boolean")
 #val = get_raw_value_decoded(raw, "Boolean")
 #add_update_metadata("Object", 'paulr:twitter:praddc', "String", "test_metadata", 'Test Successful')
+
+#urn_to_check_for = snapbundle_user_object + ":twitter:" + "praddc"
+#print "Looking for URN: " + str(urn_to_check_for)
+#response = requests.get(base_url_objects + '/' + urn_to_check_for, auth=(snapbundle_username, snapbundle_password))
+#print response.json()
+
+#urn_to_check_for = snapbundle_user_object + ":twitter:" + "praddc"
+#url = base_url_object_interaction + '/' + 'urn:uuid:3f893a56-f145-46f8-9b32-17d515190df9' #urn_to_check_for
+#print "Looking at URL: " + str(url)
+#response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
+#print response.json()
+#print response.json()['moniker']
