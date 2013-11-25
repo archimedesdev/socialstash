@@ -6,6 +6,9 @@ import calendar
 import time
 import ConfigParser
 import snapbundle_helpers
+import logging
+
+logging.debug('Starting: ' + __name__)
 
 # == Import all the account information that is stored in a local file (not sync'd wih public github)
 config_file = 'accounts.txt'
@@ -44,9 +47,9 @@ def add_new_instagram_user_object(instagram_handle, sb_username, description):
     print "Sending to URL: " + str(url)
     print "Submitting Payload: " + str(payload)
     response = requests.put(url, data=payload, headers=headers, auth=(snapbundle_username, snapbundle_password))
-    print "Response: " + str(response.status_code) + " <--> "
-    print response
-    print str(response.json())
+    print "Response (for objectURN " + object_urn + "): " + str(response.status_code) + " <--> " + str(response.json())
+    #print response
+    #print str(response.json())
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
@@ -86,12 +89,11 @@ def add_new_twitter_tweet(parent_object_urn, tweet):
     url = base_url_object_interaction
     headers = {'content-type': 'application/json'}
     payload = json.dumps(object_interaction)
-    print "Sending to URL: " + str(url)
-    print "Submitting Payload: " + str(payload)
+    print "Sending to URL: (" + str(url) + ") payload " + str(payload)
     response = requests.put(url, data=payload, headers=headers, auth=(snapbundle_username, snapbundle_password))
-    print "Response: " + str(response.status_code) + " <--> "
-    print response
-    print str(response.json())
+    print "Response (for moniker " + moniker + "): " + str(response.status_code) + " <--> " + str(response.json())
+    #print response
+    #print str(response.json())
     return
     ## -- The additional metadata portion of the tweet
     #snapbundle_utils.add_update_metadata("Object", reference_urn, "Boolean", "contributors_enabled", user['contributors_enabled'])

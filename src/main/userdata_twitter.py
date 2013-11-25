@@ -4,8 +4,10 @@ import ConfigParser
 import ast
 import tweepy
 import snapbundle_twitter_fxns
-import snapbundle_helpers
 import requests
+import logging
+
+logging.debug('Starting: ' + __name__)
 
 
 # == Import all the account information that is stored in a local file (not sync'd wih public github)

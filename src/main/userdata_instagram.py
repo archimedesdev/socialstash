@@ -5,6 +5,9 @@ import ast
 import requests
 import instagram
 import snapbundle_instagram_fxns
+import logging
+
+logging.debug('Starting: ' + __name__)
 
 # == Import all the account information that is stored in a local file (not sync'd wih public github)
 config_file = 'accounts.txt'
@@ -57,27 +60,27 @@ def update_snapbundle_tweets(parent_object_urn, tweet_list):
 instagram_handle = 'praddc'
 
 urn_to_check_for = snapbundle_user_object + ":instagram:" + instagram_handle
-print "Looking for URN: " + str(urn_to_check_for)
+logging.info("Looking for URN: " + str(urn_to_check_for))
 response = requests.get(snapbundle_base_url_objects + '/' + urn_to_check_for, auth=(snapbundle_username, snapbundle_password))
 try:
     if response.json()['objectUrn'] != urn_to_check_for:
-        print "ObjectURN not found!"
+        logging.info("ObjectURN not found!")
     else:
-        print "Object Exists!!"
-        print response.json()
+        logging.info("Object Exists!!")
+        logging.info(response.json())
 except KeyError:
-    print "Instagram user Object does not yet exist, creating..."
+    logging.info("Instagram user Object does not yet exist, creating...")
     snapbundle_instagram_fxns.add_new_instagram_user_object(instagram_handle, snapbundle_user_object, instagram_handle + "'s Instagram Account")
 
 
-print "Setting up API"
+logging.info("Setting up API")
 api = instagram_authenticate(instagrame_access_tokens[instagram_handle]['access_token'])
 
-print "Pulling Instagram user data"
+logging.info("Pulling Instagram user data")
 userData = instagram_pull_user_data(api)
-print userData
+logging.info(userData)
 
-print "Updating Twitter user data in Snapbundle"
+logging.info("Updating Instagram user data in Snapbundle")
 snapbundle_instagram_fxns.update_instagram_user_object(urn_to_check_for, userData)
 
 #print "Getting Twitter user timeline 20"

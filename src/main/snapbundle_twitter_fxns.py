@@ -6,6 +6,9 @@ import calendar
 import time
 import ConfigParser
 import snapbundle_helpers
+import logging
+
+logging.debug('Starting: ' + __name__)
 
 # == Import all the account information that is stored in a local file (not sync'd wih public github)
 config_file = 'accounts.txt'
