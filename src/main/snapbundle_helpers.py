@@ -114,19 +114,17 @@ def add_update_metadata(reference_type, referenceURN, dataType, key, value):
 #print response.json()
 #print response.json()['moniker']
 
-urn_to_check_for = snapbundle_user_object + ":instagram:" + "praddc"
-url = base_url_metadata_objects_query + '/' + urn_to_check_for + "/id"
-print "Looking at URL: " + str(url)
-response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
-#logging.debug(response.json())
-print response
-exit()
-temp = list((response.json()))
-for item in temp:
-    print str(item)
-    url = base_url_metadata_objects + '/Object/' + urn_to_check_for + "/urn:uuid:e9894cb1-e7ea-4be9-9830-40054302cda7"    #urn_to_check_for
-    print "Looking at URL: " + str(url)
-    #response = requests.delete(url, auth=(snapbundle_username, snapbundle_password))
-    exit()
-
-#/app/metadata/query/{entityReferenceType}/{referenceUrn}
+#urn_to_check_for = snapbundle_user_object + ":instagram:" + "praddc"
+#url = base_url_metadata_objects_query + '/' + urn_to_check_for + "/id"
+#print "Looking at URL: " + str(url)
+#response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
+##logging.debug(response.json())
+#print response
+#exit()
+#temp = list((response.json()))
+#for item in temp:
+#    print str(item)
+#    url = base_url_metadata_objects + '/Object/' + urn_to_check_for + "/urn:uuid:e9894cb1-e7ea-4be9-9830-40054302cda7"    #urn_to_check_for
+#    print "Looking at URL: " + str(url)
+#    #response = requests.delete(url, auth=(snapbundle_username, snapbundle_password))
+#    exit()

@@ -29,10 +29,11 @@ base_url_metadata_mapper_decode = 'https://snapbundle.tagdynamics.net/v1/public/
 base_url_devicess = 'https://snapbundle.tagdynamics.net/v1/admin/devices'
 # == End Snapbundle URLs ==
 
+
 ## --------------------------------------------------------------------------------------------------------------
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def add_new_instagram_user_object(instagram_handle, sb_username, description):
-    object_urn = sb_username + ":instagram:" + instagram_handle
+    object_urn = "urn" + sb_username + ":instagram:" + instagram_handle
     json_info = {"moniker": instagram_handle,
                  "name": sb_username,
                  "description": description,
