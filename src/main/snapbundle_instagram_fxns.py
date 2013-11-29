@@ -30,10 +30,27 @@ base_url_devicess = 'https://snapbundle.tagdynamics.net/v1/admin/devices'
 # == End Snapbundle URLs ==
 
 
+def check_for_object(urn_to_check_for):
+    url = base_url_objects + '/' + urn_to_check_for
+    logging.info("Looking for object at URL: " + str(url))
+    response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
+    logging.info(str(response))
+    try:
+        if response.json()['objectUrn'] != urn_to_check_for:
+            logging.info("ObjectURN not found!")
+            return False
+        else:
+            logging.info("Object Exists!!")
+            logging.info(response.json())
+            return response.json()['urn']
+    except KeyError:
+        logging.info("Instagram user Object does not yet exist in SnapBundle")
+        return False
+
 ## --------------------------------------------------------------------------------------------------------------
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def add_new_instagram_user_object(instagram_handle, sb_username, description):
-    object_urn = "urn" + sb_username + ":instagram:" + instagram_handle
+    object_urn = "urn:" + sb_username + ":instagram:" + instagram_handle
     json_info = {"moniker": instagram_handle,
                  "name": sb_username,
                  "description": description,
@@ -49,8 +66,14 @@ def add_new_instagram_user_object(instagram_handle, sb_username, description):
     print "Submitting Payload: " + str(payload)
     response = requests.put(url, data=payload, headers=headers, auth=(snapbundle_username, snapbundle_password))
     print "Response (for objectURN " + object_urn + "): " + str(response.status_code) + " <--> " + str(response.json())
-    #print response
-    #print str(response.json())
+    if response.status_code == 201:
+        # Created new user
+        urn = response.json()['message']
+        return urn
+    elif response.status_code == 200:
+        # Updating user
+        urn = response.json()['message']
+        return urn
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------

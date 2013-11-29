@@ -5,7 +5,7 @@ import instagram
 import logging
 import ConfigParser
 import requests
-import ast
+import snapbundle_instagram_fxns
 
 logging.debug('Starting: ' + __name__)
 
@@ -36,28 +36,29 @@ class User(object):
       user.access_token
     '''
 
-    def __init__(self, **kwargs):
+    def __init__(self, access_token, **kwargs):
         logging.info("Creating SocialStash Instagram User")
+        self.access_token = access_token
         param_defaults = {
             'id':                           None,
-            'usernmae':                     None,
+            'username':                     None,
             'full_name':                    None,
             'profile_picture':              None,
             'bio':                          None,
             'website':                      None,
             'counts':                       None,
-            'access_token':                 None,
             'api':                          None,
             'snapbundle_user_object':       None,
             'snapbundle_username':          None,
-            'snapbundle_password':          None}
+            'snapbundle_password':          None,
+            'instagram_user_sb_urn':        None}
 
         for (param, default) in param_defaults.iteritems():
             setattr(self, param, kwargs.get(param, default))
 
     def authenticate(self):
         logging.info("Authenticating and setting up Instagram API connection")
-        self._api = instagram.client.InstagramAPI(access_token=self._access_token)
+        self._api = instagram.client.InstagramAPI(access_token=self.access_token)
 
     def set_user_data_from_instagram(self):
         logging.info("Setting SocialStash Instagram User info from Instagram")
@@ -72,16 +73,14 @@ class User(object):
     def check_for_user_in_snapbundle(self):
         urn_to_check_for = "urn:" + self._snapbundle_user_object + ":instagram:" + self._username
         logging.info("Checking SnapBundle for URN: " + str(urn_to_check_for))
-        response = requests.get(snapbundle_base_url_objects + '/' + urn_to_check_for, auth=(self._snapbundle_username, self._snapbundle_password))
-        try:
-            if response.json()['objectUrn'] != urn_to_check_for:
-                logging.info("ObjectURN not found!")
-            else:
-                logging.info("Object Exists!!")
-                logging.info(response.json())
-        except KeyError:
-            logging.info("Instagram user Object does not yet exist in SnapBundle, creating...")
-            instagram_user_sb_urn = snapbundle_instagram_fxns.add_new_instagram_user_object(instagram_handle, self._snapbundle_user_object, instagram_handle + "'s Instagram Account")
+        return snapbundle_instagram_fxns.check_for_object(urn_to_check_for)
+
+    def create_update_user_in_snapbundle(self):
+        self._instagram_user_sb_urn = snapbundle_instagram_fxns.add_new_instagram_user_object(self._username, self._snapbundle_user_object, self._username + "'s Instagram Account")
+        return self._instagram_user_sb_urn
+
+    def get_instagrame_user_sb_urn(self):
+        return self._instagram_user_sb_urn
 
     def get_api(self):
         return self._api
@@ -196,7 +195,7 @@ class User(object):
         if self.id:
           data['id'] = self.id
         if self.username:
-          data['username'] = self.userame
+          data['username'] = self.username
         if self.full_name:
           data['full_name'] = self.full_name
         if self.profile_picture:

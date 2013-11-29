@@ -2,8 +2,6 @@ __author__ = 'prad'
 
 import ConfigParser
 import ast
-import requests
-import snapbundle_instagram_fxns
 import socialstash_instagram
 import logging
 
@@ -33,25 +31,28 @@ snapbundle_user_object = 'paulr'
 #instagram_handle = 'AnEloquentDane'
 instagram_handle = 'praddc'
 
-instagram_user = socialstash_instagram.User(access_token = instagrame_access_tokens[instagram_handle]['access_token'])
+print "Creating SocialStash Instagram User"
+instagram_user = socialstash_instagram.User(access_token=instagrame_access_tokens[instagram_handle]['access_token'],
+                                            snapbundle_user_object=snapbundle_user_object,
+                                            snapbundle_username=snapbundle_username,
+                                            snapbundle_password=snapbundle_password,
+                                            username=instagram_handle)
 
+print "Authenticating to Instagram API"
+instagram_user.authenticate()
 
-urn_to_check_for = "urn:" + snapbundle_user_object + ":instagram:" + instagram_handle
-logging.info("Looking for URN: " + str(urn_to_check_for))
-response = requests.get(snapbundle_base_url_objects + '/' + urn_to_check_for, auth=(snapbundle_username, snapbundle_password))
-try:
-    if response.json()['objectUrn'] != urn_to_check_for:
-        logging.info("ObjectURN not found!")
-    else:
-        logging.info("Object Exists!!")
-        logging.info(response.json())
-except KeyError:
-    logging.info("Instagram user Object does not yet exist in SnapBundle, creating...")
-    instagram_user_sb_urn = snapbundle_instagram_fxns.add_new_instagram_user_object(instagram_handle, snapbundle_user_object, instagram_handle + "'s Instagram Account")
+print "Setting SocialStash user data from API"
+instagram_user.set_user_data_from_instagram()
 
+print "SocialStash Instagram User Info:"
+print str(instagram_user.AsDict())
 
-
-logging.info("Creating/Updating Instagram user data in Snapbundle")
-snapbundle_instagram_fxns.update_instagram_user_object(instagram_user_sb_urn, userData)
-
+print "Checking for SocialStash Instagram User in SnapBundle"
+response = instagram_user.check_for_user_in_snapbundle()
+if not response:
+    print "User not found!  Creating New User"
+    print "User URN: " + str(instagram_user.create_update_user_in_snapbundle())
+else:
+    print "User exists!"
+    print "User URN: " + str(response)
 exit()
