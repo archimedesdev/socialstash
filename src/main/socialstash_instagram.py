@@ -51,6 +51,7 @@ class User(object):
             'snapbundle_user_object':       None,
             'snapbundle_username':          None,
             'snapbundle_password':          None,
+            'instagram_user_sb_object_urn': None,
             'instagram_user_sb_urn':        None}
 
         for (param, default) in param_defaults.iteritems():
@@ -69,14 +70,22 @@ class User(object):
         self._bio = self._api.user().bio
         self._website = self._api.user().website
         self._counts = self._api.user().counts
+        self._instagram_user_sb_object_urn = "urn:" + self._snapbundle_user_object + ":instagram:" + self._username
 
     def check_for_user_in_snapbundle(self):
-        urn_to_check_for = "urn:" + self._snapbundle_user_object + ":instagram:" + self._username
-        logging.info("Checking SnapBundle for URN: " + str(urn_to_check_for))
-        return snapbundle_instagram_fxns.check_for_object(urn_to_check_for)
+        logging.info("Checking SnapBundle for URN: " + self._instagram_user_sb_object_urn)
+        return snapbundle_instagram_fxns.check_for_object(self._instagram_user_sb_object_urn)
+
+    def get_user_data_in_snapbundle(self):
+        logging.info("Getting SnapBundle data for URN: " + self._instagram_user_sb_object_urn)
+        object_data = snapbundle_instagram_fxns.get_object(self._instagram_user_sb_object_urn)
+        object_metadata = snapbundle_instagram_fxns.get_object_metadata(self._instagram_user_sb_object_urn)
+        return str(object_data) + " " + str(object_metadata)
 
     def create_update_user_in_snapbundle(self):
-        self._instagram_user_sb_urn = snapbundle_instagram_fxns.add_new_instagram_user_object(self._username, self._snapbundle_user_object, self._username + "'s Instagram Account")
+        self._instagram_user_sb_urn = snapbundle_instagram_fxns.add_update_new_instagram_user_object(self._username, self._snapbundle_user_object, self._username + "'s Instagram Account")
+        print self.AsDict()
+        snapbundle_instagram_fxns.update_instagram_user_object(self._instagram_user_sb_object_urn, self.AsDict())
         return self._instagram_user_sb_urn
 
     def get_instagrame_user_sb_urn(self):
@@ -200,10 +209,8 @@ class User(object):
           data['full_name'] = self.full_name
         if self.profile_picture:
           data['profile_picture'] = self.profile_picture
-        if self.bio:
-          data['bio'] = self.bio
-        if self.website:
-          data['website'] = self.website
+        data['bio'] = self.bio
+        data['website'] = self.website
         if self.counts is not None:
           data['counts'] = self.counts
 

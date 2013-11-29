@@ -24,12 +24,15 @@ snapbundle_password = config.get('SnapbundleCredentials', 'snapbundle_password')
 base_url_objects = 'https://snapbundle.tagdynamics.net/v1/app/objects'
 base_url_object_interaction = 'https://snapbundle.tagdynamics.net/v1/app/interaction'
 base_url_metadata_objects = 'https://snapbundle.tagdynamics.net/v1/app/metadata/Object'
+base_url_metadata_objects_query = 'https://snapbundle.tagdynamics.net/v1/app/metadata/query/Object'
 base_url_metadata_mapper_encode = 'https://snapbundle.tagdynamics.net/v1/public/metadata/mapper/encode/'
 base_url_metadata_mapper_decode = 'https://snapbundle.tagdynamics.net/v1/public/metadata/mapper/decode/'
 base_url_devicess = 'https://snapbundle.tagdynamics.net/v1/admin/devices'
 # == End Snapbundle URLs ==
 
 
+## --------------------------------------------------------------------------------------------------------------
+## ----------------------------------- FXN ------------------------------------------------------------------------
 def check_for_object(urn_to_check_for):
     url = base_url_objects + '/' + urn_to_check_for
     logging.info("Looking for object at URL: " + str(url))
@@ -42,14 +45,53 @@ def check_for_object(urn_to_check_for):
         else:
             logging.info("Object Exists!!")
             logging.info(response.json())
-            return response.json()['urn']
+            return True
+            #return response.json()#['urn']
     except KeyError:
         logging.info("Instagram user Object does not yet exist in SnapBundle")
         return False
 
+
 ## --------------------------------------------------------------------------------------------------------------
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def add_new_instagram_user_object(instagram_handle, sb_username, description):
+def get_object(urn_to_check_for):
+    url = base_url_objects + '/' + urn_to_check_for
+    logging.info("Looking for object at URL: " + str(url))
+    response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
+    logging.info(str(response))
+    try:
+        if response.json()['objectUrn'] != urn_to_check_for:
+            logging.info("ObjectURN not found!")
+            return False
+        else:
+            logging.info("Object Exists!!")
+            logging.info(response.json())
+            return response.json()#['urn']
+    except KeyError:
+        logging.info("Instagram user Object does not yet exist in SnapBundle")
+        return False
+
+
+## --------------------------------------------------------------------------------------------------------------
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def get_object_metadata(urn_to_check_for):
+    url = base_url_metadata_objects_query + '/' + urn_to_check_for
+    logging.info("Looking for object metadata at URL: " + str(url))
+    response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
+    logging.info(str(response))
+    try:
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return False
+    except KeyError:
+        logging.info("Instagram user Object Metadata does not yet exist in SnapBundle")
+        return False
+
+
+## --------------------------------------------------------------------------------------------------------------
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def add_update_new_instagram_user_object(instagram_handle, sb_username, description):
     object_urn = "urn:" + sb_username + ":instagram:" + instagram_handle
     json_info = {"moniker": instagram_handle,
                  "name": sb_username,
@@ -62,18 +104,17 @@ def add_new_instagram_user_object(instagram_handle, sb_username, description):
     url = base_url_objects
     headers = {'content-type': 'application/json'}
     payload = json.dumps(json_info)
-    print "Sending to URL: " + str(url)
-    print "Submitting Payload: " + str(payload)
+    logging.info("Submitting Payload: " + str(payload))
     response = requests.put(url, data=payload, headers=headers, auth=(snapbundle_username, snapbundle_password))
-    print "Response (for objectURN " + object_urn + "): " + str(response.status_code) + " <--> " + str(response.json())
+    logging.info("Response (for objectURN " + object_urn + "): " + str(response.status_code) + " <--> " + str(response.json()))
     if response.status_code == 201:
         # Created new user
-        urn = response.json()['message']
-        return urn
+        logging.info("Created new user")
     elif response.status_code == 200:
         # Updating user
-        urn = response.json()['message']
-        return urn
+        logging.info("User existed, updated")
+    urn = response.json()['message']
+    return urn
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------

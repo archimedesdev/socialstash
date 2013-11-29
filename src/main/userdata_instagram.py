@@ -54,5 +54,12 @@ if not response:
     print "User URN: " + str(instagram_user.create_update_user_in_snapbundle())
 else:
     print "User exists!"
-    print "User URN: " + str(response)
+    print "SnapBundle Data: " + str(response)
+    #print "Updating anyway"
+    #print "Updated URN: " + str(instagram_user.create_update_user_in_snapbundle())
+
+print "Get data stored in SnapBundle"
+print str(instagram_user.get_user_data_in_snapbundle())
+
+
 exit()
