@@ -47,7 +47,13 @@ metadataDataTypes = {'STRING': 'StringType',
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def get_raw_value_encoded(var_passed_in, var_type):
     url = base_url_metadata_mapper_encode + metadataDataTypes[var_type.upper()]
-    payload = str(var_passed_in)
+    try:
+        payload = str(var_passed_in)
+    except UnicodeEncodeError:
+        logging.critical("GAH, UnicodeEncodeError, don't know what to do!")
+        payload = ''
+        #payload = var_passed_in.encode("utf-8")
+        #payload = unicode(var_passed_in, 'utf8')
     if payload == '':
         payload = 'NULL'
     headers = {'content-type': 'text/plain'}
@@ -93,12 +99,16 @@ def add_update_metadata(reference_type, referenceURN, dataType, key, value):
     logging.debug("Sending to URL: " + str(url))
     logging.debug("Submitting Payload: " + str(payload))
     response = requests.put(url, data=payload, headers=headers, auth=(snapbundle_username, snapbundle_password))
-    logging.info("Response (for key/value " + str(key) + "/" + str(value) + "): " + str(response.status_code) + " <--> " + str(response.json()))
+    try:
+        logging.info("Response (for key/value " + str(key) + "/" + str(value) + "): " + str(response.status_code) + " <--> " + str(response.json()))
+    except UnicodeEncodeError:
+        logging.info("Response (for key/value " + str(key) + "/" + "UnicodeEncodeError Value Here" + "): " + str(response.status_code) + " <--> " + str(response.json()))
 
 ## ----------------------------------- END ------------------------------------------------------------------------
 ## ----------------------------------- END ------------------------------------------------------------------------
 
 #raw = get_raw_value_encoded("True", "Boolean")
+#print raw
 #val = get_raw_value_decoded(raw, "Boolean")
 #add_update_metadata("Object", 'paulr:twitter:praddc', "String", "test_metadata", 'Test Successful')
 

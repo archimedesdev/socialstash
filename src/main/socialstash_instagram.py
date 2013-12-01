@@ -16,6 +16,7 @@ config.read(config_file)
 
 # == Snapbundle Variables ==
 snapbundle_base_url_objects = 'https://snapbundle.tagdynamics.net/v1/app/objects'
+snapbundle_base_urn_instagram_user = "urn:instagram:users:"
 # == End Snapbundle Variables ==
 
 
@@ -42,7 +43,7 @@ class User(object):
         param_defaults = {
             'id':                           None,
             'username':                     None,
-            'full_name':                    None,
+            'full_name':                    '',
             'profile_picture':              None,
             'bio':                          None,
             'website':                      None,
@@ -61,16 +62,20 @@ class User(object):
         logging.info("Authenticating and setting up Instagram API connection")
         self._api = instagram.client.InstagramAPI(access_token=self.access_token)
 
-    def set_user_data_from_instagram(self):
+    def get_id_of_authenticated_user(self):
+        return self._api.user().id
+
+    def set_user_data_from_instagram(self, user_id):
         logging.info("Setting SocialStash Instagram User info from Instagram")
-        self._id = self._api.user().id
-        self._username = self._api.user().username
-        self._full_name = self._api.user().full_name
-        self._profile_picture = self._api.user().profile_picture
-        self._bio = self._api.user().bio
-        self._website = self._api.user().website
-        self._counts = self._api.user().counts
-        self._instagram_user_sb_object_urn = "urn:" + self._snapbundle_user_object + ":instagram:" + self._username
+        self._id = self._api.user(user_id).id
+        self._username = self._api.user(user_id).username
+        self._full_name = self._api.user(user_id).full_name
+        self._profile_picture = self._api.user(user_id).profile_picture
+        self._bio = self._api.user(user_id).bio
+        self._website = self._api.user(user_id).website
+        self._counts = self._api.user(user_id).counts
+        #self._instagram_user_sb_object_urn = "urn:" + self._snapbundle_user_object + ":instagram:" + self._username
+        self._instagram_user_sb_object_urn = snapbundle_base_urn_instagram_user + self._username
 
     def check_for_user_in_snapbundle(self):
         logging.info("Checking SnapBundle for URN: " + self._instagram_user_sb_object_urn)
@@ -80,13 +85,71 @@ class User(object):
         logging.info("Getting SnapBundle data for URN: " + self._instagram_user_sb_object_urn)
         object_data = snapbundle_instagram_fxns.get_object(self._instagram_user_sb_object_urn)
         object_metadata = snapbundle_instagram_fxns.get_object_metadata(self._instagram_user_sb_object_urn)
-        return str(object_data) + " " + str(object_metadata)
+        return_data = {'object': object_data, 'metadata': object_metadata}
+        return return_data
 
-    def create_update_user_in_snapbundle(self):
-        self._instagram_user_sb_urn = snapbundle_instagram_fxns.add_update_new_instagram_user_object(self._username, self._snapbundle_user_object, self._username + "'s Instagram Account")
-        print self.AsDict()
-        snapbundle_instagram_fxns.update_instagram_user_object(self._instagram_user_sb_object_urn, self.AsDict())
+    def create_update_user_in_snapbundle(self, new_user=False):
+        self._instagram_user_sb_urn = snapbundle_instagram_fxns.add_update_new_instagram_user_object(self._username, self._instagram_user_sb_object_urn)
+        snapbundle_instagram_fxns.update_instagram_user_object(self._instagram_user_sb_object_urn, self.AsDict(), new_user)
         return self._instagram_user_sb_urn
+
+    def check_all_users_followed_by_exist_in_snapbundle(self, update_if_found=False):
+        response, next = self._api.user_followed_by()
+        for current in response:
+            try:
+                temp_social_stash_i_user = User(access_token=self.access_token,
+                                                snapbundle_user_object=self._snapbundle_user_object,
+                                                snapbundle_username=self._snapbundle_username,
+                                                snapbundle_password=self._snapbundle_password,
+                                                username=current.username)
+                temp_social_stash_i_user.authenticate()
+                temp_social_stash_i_user.set_user_data_from_instagram(current.id)
+                print "Checking for SocialStash Instagram User " + current.username+" in SnapBundle"
+                response = temp_social_stash_i_user.check_for_user_in_snapbundle()
+                if not response:
+                    print "User not found!  Creating New User"
+                    print "User URN: " + str(temp_social_stash_i_user.create_update_user_in_snapbundle(new_user=True))
+                else:
+                    print "User exists!"
+                    if update_if_found:
+                        print "Updating User " + current.username + " anyway"
+                        print "Updated URN: " + str(temp_social_stash_i_user.create_update_user_in_snapbundle())
+                del temp_social_stash_i_user
+            except instagram.bind.InstagramAPIError:
+                print "Unable to pull data for user " + current.username
+
+    def check_all_users_following_exist_in_snapbundle(self, update_if_found=False):
+        response, next = self._api.user_follows()
+        for current in response:
+            print "Following: " + str(current.username)
+            try:
+                temp_social_stash_i_user = User(access_token=self.access_token,
+                                                snapbundle_user_object=self._snapbundle_user_object,
+                                                snapbundle_username=self._snapbundle_username,
+                                                snapbundle_password=self._snapbundle_password,
+                                                username=current.username)
+                temp_social_stash_i_user.authenticate()
+                temp_social_stash_i_user.set_user_data_from_instagram(current.id)
+                print "Checking for SocialStash Instagram User " + current.username+" in SnapBundle"
+                response = temp_social_stash_i_user.check_for_user_in_snapbundle()
+                if not response:
+                    print "User not found!  Creating New User"
+                    print "User URN: " + str(temp_social_stash_i_user.create_update_user_in_snapbundle(new_user=True))
+                else:
+                    print "User exists!"
+                    if update_if_found:
+                        print "Updating User " + current.username + " anyway"
+                        print "Updated URN: " + str(temp_social_stash_i_user.create_update_user_in_snapbundle())
+                del temp_social_stash_i_user
+            except instagram.bind.InstagramAPIError:
+                print "Unable to pull data for user " + current.username
+
+    def get_feed_from_instagram(self, count):
+        recent_media, url= self._api.user_recent_media(count=count)
+        print recent_media
+        response = requests.get(url)
+        print response.json()
+        return
 
     def get_instagrame_user_sb_urn(self):
         return self._instagram_user_sb_urn
@@ -205,8 +268,7 @@ class User(object):
           data['id'] = self.id
         if self.username:
           data['username'] = self.username
-        if self.full_name:
-          data['full_name'] = self.full_name
+        data['full_name'] = self.full_name
         if self.profile_picture:
           data['profile_picture'] = self.profile_picture
         data['bio'] = self.bio

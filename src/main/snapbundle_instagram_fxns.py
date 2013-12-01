@@ -91,14 +91,10 @@ def get_object_metadata(urn_to_check_for):
 
 ## --------------------------------------------------------------------------------------------------------------
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def add_update_new_instagram_user_object(instagram_handle, sb_username, description):
-    object_urn = "urn:" + sb_username + ":instagram:" + instagram_handle
-    json_info = {"moniker": instagram_handle,
-                 "name": sb_username,
-                 "description": description,
+def add_update_new_instagram_user_object(instagram_handle, instagram_user_sb_object_urn):
+    json_info = {"name": instagram_handle,
                  "active": "true",
-                 "hasGeoLocation": "false",
-                 "objectUrn": object_urn,
+                 "objectUrn": instagram_user_sb_object_urn,
                  "objectType": "Person"
                  }
     url = base_url_objects
@@ -106,7 +102,7 @@ def add_update_new_instagram_user_object(instagram_handle, sb_username, descript
     payload = json.dumps(json_info)
     logging.info("Submitting Payload: " + str(payload))
     response = requests.put(url, data=payload, headers=headers, auth=(snapbundle_username, snapbundle_password))
-    logging.info("Response (for objectURN " + object_urn + "): " + str(response.status_code) + " <--> " + str(response.json()))
+    logging.info("Response (for objectURN " + instagram_user_sb_object_urn + "): " + str(response.status_code) + " <--> " + str(response.json()))
     if response.status_code == 201:
         # Created new user
         logging.info("Created new user")
@@ -118,7 +114,7 @@ def add_update_new_instagram_user_object(instagram_handle, sb_username, descript
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def update_instagram_user_object(reference_urn, user):
+def update_instagram_user_object(reference_urn, user, new_user):
     snapbundle_helpers.add_update_metadata("Object", reference_urn, "String", "id", user['id'])
     snapbundle_helpers.add_update_metadata("Object", reference_urn, "String", "username", user['username'])
     snapbundle_helpers.add_update_metadata("Object", reference_urn, "String", "full_name", user['full_name'])
@@ -126,7 +122,8 @@ def update_instagram_user_object(reference_urn, user):
     snapbundle_helpers.add_update_metadata("Object", reference_urn, "String", "bio", user['bio'])
     snapbundle_helpers.add_update_metadata("Object", reference_urn, "String", "website", user['website'])
     snapbundle_helpers.add_update_metadata("Object", reference_urn, "String", "counts", user['counts'])
-
+    if new_user:
+        snapbundle_helpers.add_update_metadata("Object", reference_urn, "Long", "last_instagram_added", 0)
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def add_new_twitter_tweet(parent_object_urn, tweet):
@@ -190,12 +187,7 @@ def add_new_twitter_tweet(parent_object_urn, tweet):
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def get_twitter_snapbundle_device_object_id(parent_object_urn, source, retweeted):
-    if retweeted:
-        deviceType = 'Unknown'
-    else:
-        deviceType = get_snapbundle_device_type(source)
-
+def get_instagram_snapbundle_device_object_id(parent_object_urn, source):
     identification = parent_object_urn + ":" + deviceType + ":" + source
     json_info = {"moniker": parent_object_urn,
                  "name": source,
