@@ -30,6 +30,8 @@ base_url_metadata_objects_query = 'https://snapbundle.tagdynamics.net/v1/app/met
 base_url_metadata_mapper_encode = 'https://snapbundle.tagdynamics.net/v1/public/metadata/mapper/encode/'
 base_url_metadata_mapper_decode = 'https://snapbundle.tagdynamics.net/v1/public/metadata/mapper/decode/'
 base_url_devicess = 'https://snapbundle.tagdynamics.net/v1/admin/devices'
+base_url_files_metadata_query = 'https://snapbundle.tagdynamics.net/v1/app/files/query/Metadata/'
+base_url_files = 'https://snapbundle.tagdynamics.net/v1/app/files'
 # == End Snapbundle Variables ==
 
 metadataDataTypes = {'STRING': 'StringType',
@@ -103,6 +105,34 @@ def add_update_metadata(reference_type, referenceURN, dataType, key, value):
         logging.info("Response (for key/value " + str(key) + "/" + str(value) + "): " + str(response.status_code) + " <--> " + str(response.json()))
     except UnicodeEncodeError:
         logging.info("Response (for key/value " + str(key) + "/" + "UnicodeEncodeError Value Here" + "): " + str(response.status_code) + " <--> " + str(response.json()))
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def add_file_from_url(reference_type, referenceURN, mimeType, filename, source_url):
+    temp_data = dict(
+        entityReferenceType=reference_type,
+        referenceURN=referenceURN,
+        mimeType=mimeType,
+        filename=filename,
+        source_url=source_url
+    )
+    url = base_url_files
+    headers = {'content-type': 'application/json'}
+    payload = json.dumps([temp_data])
+    logging.debug("Sending to URL: " + str(url))
+    logging.debug("Submitting Payload: " + str(payload))
+    response = requests.put(url, data=payload, headers=headers, auth=(snapbundle_username, snapbundle_password))
+    logging.info("Response for url (" + str(url) + "): " + str(response.status_code) + " <--> " + str(response.json()))
+    if response.status_code in (200, 201):
+        return True
+    else:
+        return False
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def add_file_from_url_jpg(reference_type, referenceURN, filename, source_url):
+    return add_file_from_url(reference_type, referenceURN, "image/jpg", filename, source_url)
+
 
 ## ----------------------------------- END ------------------------------------------------------------------------
 ## ----------------------------------- END ------------------------------------------------------------------------

@@ -93,6 +93,9 @@ class User(object):
         snapbundle_instagram_fxns.update_instagram_user_object(self._instagram_user_sb_object_urn, self.AsDict(), new_user)
         return self._instagram_user_sb_urn
 
+    def check_and_update_profile_pic(self):
+        return snapbundle_instagram_fxns.check_update_user_profile_pic(self._username, self._profile_picture)
+
     def check_all_users_followed_by_exist_in_snapbundle(self, update_if_found=False):
         response, next = self._api.user_followed_by()
         for current in response:
