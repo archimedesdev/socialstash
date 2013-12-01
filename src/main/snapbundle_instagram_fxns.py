@@ -19,6 +19,7 @@ config.read(config_file)
 snapbundle_username = config.get('SnapbundleCredentials', 'snapbundle_username')
 snapbundle_password = config.get('SnapbundleCredentials', 'snapbundle_password')
 snapbundle_base_urn_instagram_user = "urn:instagram:users:"
+snapbundle_base_urn_instagram_filter = "urn:instagram:filters:"
 # == End Snapbundle Variables ==
 
 # == Start Snapbundle URLs ==
@@ -138,6 +139,19 @@ def check_update_user_profile_pic(username, current_pic_url):
     except KeyError:
         logging.info("Instagram user Object Profile Pic Metadata does not yet exist in SnapBundle")
         return False
+
+
+## --------------------------------------------------------------------------------------------------------------
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def get_tag_urn_list(tag_list):
+    print "This is where we take a list of tags, and return a cooresponding list of URNs for those tags in SnapBundle"
+
+
+## --------------------------------------------------------------------------------------------------------------
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def get_filter_urn(filter_name):
+    tag_name = snapbundle_base_urn_instagram_filter + filter_name.upper()
+    return snapbundle_helpers.check_create_get_tag_urn(tag_name, filter_name)
 
 
 ## --------------------------------------------------------------------------------------------------------------
