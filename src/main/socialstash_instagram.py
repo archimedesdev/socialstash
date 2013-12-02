@@ -15,7 +15,6 @@ config = ConfigParser.RawConfigParser()
 config.read(config_file)
 
 # == Snapbundle Variables ==
-snapbundle_base_url_objects = 'https://snapbundle.tagdynamics.net/v1/app/objects'
 snapbundle_base_urn_instagram_user = "urn:instagram:users:"
 # == End Snapbundle Variables ==
 
@@ -97,6 +96,7 @@ class User(object):
     def create_update_user_in_snapbundle(self, new_user=False):
         self._instagram_user_sb_urn = snapbundle_instagram_fxns.add_update_new_instagram_user_object(self._username, self._instagram_user_sb_object_urn)
         snapbundle_instagram_fxns.update_instagram_user_object(self._instagram_user_sb_object_urn, self.AsDict(), new_user)
+        self.check_and_update_profile_pic()
         return self._instagram_user_sb_urn
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------

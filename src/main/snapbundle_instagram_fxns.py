@@ -19,19 +19,21 @@ config.read(config_file)
 snapbundle_username = config.get('SnapbundleCredentials', 'snapbundle_username')
 snapbundle_password = config.get('SnapbundleCredentials', 'snapbundle_password')
 snapbundle_base_urn_instagram_user = "urn:instagram:users:"
-snapbundle_base_urn_instagram_filter = "urn:instagram:filters:"
+snapbundle_base_instagram_filter_name = "instagram:filters:"
 # == End Snapbundle Variables ==
 
 # == Start Snapbundle URLs ==
-base_url_objects = 'https://snapbundle.tagdynamics.net/v1/app/objects'
-base_url_object_interaction = 'https://snapbundle.tagdynamics.net/v1/app/interaction'
-base_url_metadata_objects = 'https://snapbundle.tagdynamics.net/v1/app/metadata/Object'
-base_url_metadata_objects_query = 'https://snapbundle.tagdynamics.net/v1/app/metadata/query/Object'
-base_url_metadata_mapper_encode = 'https://snapbundle.tagdynamics.net/v1/public/metadata/mapper/encode/'
-base_url_metadata_mapper_decode = 'https://snapbundle.tagdynamics.net/v1/public/metadata/mapper/decode/'
-base_url_devicess = 'https://snapbundle.tagdynamics.net/v1/admin/devices'
-base_url_files_metadata_query = 'https://snapbundle.tagdynamics.net/v1/app/files/query/Metadata/'
-base_url_files = 'https://snapbundle.tagdynamics.net/v1/app/files'
+base_url_server = 'snapbundle'
+#base_url_server = 'stage'
+base_url_objects = 'https://' + base_url_server + '.tagdynamics.net/v1/app/objects'
+base_url_object_interaction = 'https://' + base_url_server + '.tagdynamics.net/v1/app/interaction'
+base_url_metadata_objects = 'https://' + base_url_server + '.tagdynamics.net/v1/app/metadata/Object'
+base_url_metadata_objects_query = 'https://' + base_url_server + '.tagdynamics.net/v1/app/metadata/query/Object'
+base_url_metadata_mapper_encode = 'https://' + base_url_server + '.tagdynamics.net/v1/public/metadata/mapper/encode/'
+base_url_metadata_mapper_decode = 'https://' + base_url_server + '.tagdynamics.net/v1/public/metadata/mapper/decode/'
+base_url_devicess = 'https://' + base_url_server + '.tagdynamics.net/v1/admin/devices'
+base_url_files_metadata_query = 'https://' + base_url_server + '.tagdynamics.net/v1/app/files/query/Metadata/'
+base_url_files = 'https://' + base_url_server + '.tagdynamics.net/v1/app/files'
 # == End Snapbundle URLs ==
 
 
@@ -96,10 +98,10 @@ def get_object_metadata(urn_to_check_for):
 ## --------------------------------------------------------------------------------------------------------------
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def check_update_user_profile_pic(username, current_pic_url):
-    url = base_url_metadata_objects_query + '/' + snapbundle_base_urn_instagram_user + username
+    url = base_url_metadata_objects_query + '/' + snapbundle_base_urn_instagram_user + username + "/profile_picture"
     logging.info("Looking for object profile pic metadata at URL: " + str(url))
     response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
-    logging.info(str(response))
+    logging.info(str(response.json()))
     try:
         if response.status_code == 200:
             logging.info("Profile Pic Metadata Exists for User " + username)
@@ -107,33 +109,34 @@ def check_update_user_profile_pic(username, current_pic_url):
             # 1) Decode the existing value and compare it to the value passed in
             # 2) If the value is the same, make sure the actual file lives in SnapBundle
             # 3) If the value is different, we need to create a new File object in SnapBundle, and get the file in there
-            existing_stored_urn = response.json()['urn']
-            existing_stored_url = snapbundle_helpers.get_raw_value_decoded(response.json()['value'], 'String')
+            existing_stored_urn = str(response.json()['urn'])
+            existing_stored_url = snapbundle_helpers.get_raw_value_decoded(response.json()['rawValue'], 'String')
+            print "URN: " + existing_stored_urn
+            print "URL: " + existing_stored_url
             need_to_upload_url = False
             if existing_stored_url == current_pic_url:
                 logging.info("Existing stored profile pic URL matches current URL for user " + username + ".  Checking to see if file exists in SnapBundle")
                 # Check to see if a file exists in SB for this
-                url = base_url_files_metadata_query + existing_stored_urn
-                file_response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
-                if file_response.status_code == 200:
-                    # Some files are associated with this metadata object, need to check if they match the URL
-                    print "CURRENT FILES INFO associated with the metadata, NEED TO SEE IF ONE MATCHES"
-                    print file_response.json()
-                    for current_file_response in file_response.json():
-                        if current_file_response['filename'] == current_pic_url:
-                            # The file already exists, we can just return true
-                            return True
-                    # If we exhaust our uploaded options, no match, need to upload it
-                    need_to_upload_url = True
-                else:
-                    # No files are associated with this metadata object, need to upload it
+                try:
+                    existing_stored_file_urn = str(response.json()['moniker'])
+                    if existing_stored_file_urn == "":
+                        need_to_upload_url = True
+                    else:
+                        logging.info("Moniker found.  Existing profile pic urn: " + str(existing_stored_file_urn))
+                except KeyError:
+                    logging.info("Moniker key not set in metadata: No file urn found, need to upload the file")
                     need_to_upload_url = True
             else:
                 # Need to create a new File object with this picture
                 need_to_upload_url = True
 
             if need_to_upload_url:
-                return snapbundle_helpers.add_file_from_url_jpg("Metadata", existing_stored_urn, current_pic_url, current_pic_url)
+                file_urn = snapbundle_helpers.add_file_from_url_jpg("Metadata", existing_stored_urn, current_pic_url)
+                logging.info("File uploaded, urn: " + file_urn)
+                reference_urn = snapbundle_base_urn_instagram_user + username
+                logging.info("Updating profile pic metadata to include latest file urn")
+                snapbundle_helpers.add_update_metadata("Object", reference_urn, "String", "profile_picture", current_pic_url, file_urn)
+                return file_urn
         else:
             return False
     except KeyError:
@@ -143,15 +146,16 @@ def check_update_user_profile_pic(username, current_pic_url):
 
 ## --------------------------------------------------------------------------------------------------------------
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def get_tag_urn_list(tag_list):
-    print "This is where we take a list of tags, and return a cooresponding list of URNs for those tags in SnapBundle"
+def set_instagram_tags(referenceURN, tag_list):
+    for tag in tag_list:
+        snapbundle_helpers.create_tag_association("ObjectAssociation", referenceURN, tag)
 
 
 ## --------------------------------------------------------------------------------------------------------------
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def get_filter_urn(filter_name):
-    tag_name = snapbundle_base_urn_instagram_filter + filter_name.upper()
-    return snapbundle_helpers.check_create_get_tag_urn(tag_name, filter_name)
+def set_filter_tag(referenceURN, filter_name):
+    tag_name = snapbundle_base_instagram_filter_name + filter_name.upper()
+    return snapbundle_helpers.create_tag_association("ObjectAssociation", referenceURN, filter_name)
 
 
 ## --------------------------------------------------------------------------------------------------------------
@@ -189,6 +193,7 @@ def update_instagram_user_object(reference_urn, user, new_user):
     snapbundle_helpers.add_update_metadata("Object", reference_urn, "String", "counts", user['counts'])
     if new_user:
         snapbundle_helpers.add_update_metadata("Object", reference_urn, "Long", "last_instagram_added", 0)
+
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def add_new_twitter_tweet(parent_object_urn, tweet):

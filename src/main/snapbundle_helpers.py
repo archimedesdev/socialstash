@@ -23,16 +23,18 @@ config.read(config_file)
 snapbundle_username = config.get('SnapbundleCredentials', 'snapbundle_username')
 snapbundle_password = config.get('SnapbundleCredentials', 'snapbundle_password')
 snapbundle_user_object = config.get('SnapbundleCredentials', 'snapbundle_user_object')
-base_url_objects = 'https://snapbundle.tagdynamics.net/v1/app/objects'
-base_url_object_interaction = 'https://snapbundle.tagdynamics.net/v1/app/interactions'
-base_url_metadata_objects = 'https://snapbundle.tagdynamics.net/v1/app/metadata/Object'
-base_url_metadata_objects_query = 'https://snapbundle.tagdynamics.net/v1/app/metadata/query/Object'
-base_url_metadata_mapper_encode = 'https://snapbundle.tagdynamics.net/v1/public/metadata/mapper/encode/'
-base_url_metadata_mapper_decode = 'https://snapbundle.tagdynamics.net/v1/public/metadata/mapper/decode/'
-base_url_devicess = 'https://snapbundle.tagdynamics.net/v1/admin/devices'
-base_url_files_metadata_query = 'https://snapbundle.tagdynamics.net/v1/app/files/query/Metadata/'
-base_url_files = 'https://snapbundle.tagdynamics.net/v1/app/files'
-base_url_tags = 'https://snapbundle.tagdynamics.net/v1/app/tags'
+base_url_server = 'snapbundle'
+#base_url_server = 'stage'
+base_url_objects = 'https://' + base_url_server + '.tagdynamics.net/v1/app/objects'
+base_url_object_interaction = 'https://' + base_url_server + '.tagdynamics.net/v1/app/interactions'
+base_url_metadata_objects = 'https://' + base_url_server + '.tagdynamics.net/v1/app/metadata/Object'
+base_url_metadata_objects_query = 'https://' + base_url_server + '.tagdynamics.net/v1/app/metadata/query/Object'
+base_url_metadata_mapper_encode = 'https://' + base_url_server + '.tagdynamics.net/v1/public/metadata/mapper/encode/'
+base_url_metadata_mapper_decode = 'https://' + base_url_server + '.tagdynamics.net/v1/public/metadata/mapper/decode/'
+base_url_devicess = 'https://' + base_url_server + '.tagdynamics.net/v1/admin/devices'
+base_url_files_metadata_query = 'https://' + base_url_server + '.tagdynamics.net/v1/app/files/query/Metadata/'
+base_url_files = 'https://' + base_url_server + '.tagdynamics.net/v1/app/files'
+base_url_tags = 'https://' + base_url_server + '.tagdynamics.net/v1/app/tags'
 # == End Snapbundle Variables ==
 
 metadataDataTypes = {'STRING': 'StringType',
@@ -83,18 +85,19 @@ def get_raw_value_decoded(var_passed_in, var_type):
     else:
         logging.debug("Get_raw_value: Decoded Response: " + str(response))
         logging.debug("Get_raw_value: Decoded Response JSON: " + str(response.json()))
-        return response.json()['rawValue']
+        return response.json()['decodedValue']
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def add_update_metadata(reference_type, referenceURN, dataType, key, value):
+def add_update_metadata(reference_type, referenceURN, dataType, key, value, moniker=''):
     raw_value = get_raw_value_encoded(value, dataType)
     temp_meta_data = dict(
         entityReferenceType=reference_type,
         referenceURN=referenceURN,
         dataType=metadataDataTypes[dataType.upper()],
         key=key,
-        rawValue=str(raw_value)
+        rawValue=str(raw_value),
+        moniker=moniker
     )
     url = base_url_metadata_objects + '/' + referenceURN
     headers = {'content-type': 'application/json'}
@@ -109,15 +112,36 @@ def add_update_metadata(reference_type, referenceURN, dataType, key, value):
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def add_file_from_url(reference_type, referenceURN, mimeType, filename, source_url):
-    temp_data = dict(
-        entityReferenceType=reference_type,
-        referenceURN=referenceURN,
-        mimeType=mimeType,
-        filename=filename,
-        source_url=source_url
-    )
+def add_file_from_url(reference_type, referenceURN, mimeType, source_url):
+    temp_data = {"entityReferenceType": reference_type,
+                 "referenceUrn": referenceURN,
+                 "mimeType": mimeType,
+                 "contentUrl": source_url}
     url = base_url_files
+    headers = {'content-type': 'application/json'}
+    payload = json.dumps(temp_data)
+    #payload = temp_data
+    print payload
+    logging.debug("Sending to URL: " + str(url))
+    logging.debug("Submitting Payload: " + str(payload))
+    response = requests.put(url, data=payload, headers=headers, auth=(snapbundle_username, snapbundle_password))
+    print response
+    logging.info("Response for url (" + str(url) + "): " + str(response.status_code) + " <--> " + str(response.json()))
+    if response.status_code in (200, 201):
+        return response.json()['message']
+    else:
+        return False
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def add_file_from_url_jpg(reference_type, referenceURN, source_url):
+    return add_file_from_url(reference_type, referenceURN, "image/jpeg", source_url)
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def create_tag_association(entity_reference_type, reference_urn, name):
+    temp_data = dict(name=name)
+    url = base_url_tags + "/" + entity_reference_type + "/" + reference_urn
     headers = {'content-type': 'application/json'}
     payload = json.dumps([temp_data])
     logging.debug("Sending to URL: " + str(url))
@@ -130,37 +154,13 @@ def add_file_from_url(reference_type, referenceURN, mimeType, filename, source_u
         return False
 
 
-## ----------------------------------- FXN ------------------------------------------------------------------------
-def add_file_from_url_jpg(reference_type, referenceURN, filename, source_url):
-    return add_file_from_url(reference_type, referenceURN, "image/jpg", filename, source_url)
-
-
-## ----------------------------------- FXN ------------------------------------------------------------------------
-def check_create_get_tag_urn(name, moniker='', description=''):
-    temp_data = dict(
-        name=name,
-        monkiker=moniker,
-        description=description
-    )
-    url = base_url_tags
-    headers = {'content-type': 'application/json'}
-    payload = json.dumps([temp_data])
-    logging.debug("Sending to URL: " + str(url))
-    logging.debug("Submitting Payload: " + str(payload))
-    response = requests.put(url, data=payload, headers=headers, auth=(snapbundle_username, snapbundle_password))
-    logging.info("Response for url (" + str(url) + "): " + str(response.status_code) + " <--> " + str(response.json()))
-    if response.status_code in (200, 201):
-        return response.json()['urn']
-    else:
-        return False
-
-
 ## ----------------------------------- END ------------------------------------------------------------------------
 ## ----------------------------------- END ------------------------------------------------------------------------
 
 #raw = get_raw_value_encoded("True", "Boolean")
 #print raw
-#val = get_raw_value_decoded(raw, "Boolean")
+#val = get_raw_value_decoded("Nzk4NjM1Ng==", "String")
+#print val
 #add_update_metadata("Object", 'paulr:twitter:praddc', "String", "test_metadata", 'Test Successful')
 
 #urn_to_check_for = snapbundle_user_object + ":twitter:" + "praddc"
