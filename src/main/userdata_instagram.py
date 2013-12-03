@@ -65,11 +65,11 @@ else:
 #print "Get data stored in SnapBundle"
 #print str(instagram_user.get_user_data_in_snapbundle())
 
-#print 'checking for users following me'
-#instagram_user.check_all_users_followed_by_exist_in_snapbundle()
+print 'checking for users following me'
+instagram_user.check_all_users_followed_by_exist_in_snapbundle()
 
-#print "checking for users I'm following"
-#instagram_user.check_all_users_following_exist_in_snapbundle(update_if_found=True)
+print "checking for users I'm following"
+instagram_user.check_all_users_following_exist_in_snapbundle(update_if_found=True)
 
 #print "Getting recent media, count = 1"
 #instagram_user.get_feed_from_instagram(1)

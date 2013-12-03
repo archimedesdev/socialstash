@@ -124,7 +124,7 @@ class User(object):
                     print "User exists!"
                     if update_if_found:
                         print "Updating User " + current.username + " anyway"
-                        print "Updated URN: " + str(temp_social_stash_i_user.create_update_user_in_snapbundle())
+                        print "Updated User URN: " + str(temp_social_stash_i_user.create_update_user_in_snapbundle())
                 temp_social_stash_i_user.check_and_update_profile_pic()
                 del temp_social_stash_i_user
             except instagram.bind.InstagramAPIError:

@@ -98,10 +98,11 @@ def get_object_metadata(urn_to_check_for):
 ## --------------------------------------------------------------------------------------------------------------
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def check_update_user_profile_pic(username, current_pic_url):
-    url = base_url_metadata_objects_query + '/' + snapbundle_base_urn_instagram_user + username + "/profile_picture"
+    url = base_url_metadata_objects_query + '/' + snapbundle_base_urn_instagram_user + username + "/profile_picture?view=Full"
     logging.info("Looking for object profile pic metadata at URL: " + str(url))
     response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
     logging.info(str(response.json()))
+
     try:
         if response.status_code == 200:
             logging.info("Profile Pic Metadata Exists for User " + username)
@@ -111,15 +112,14 @@ def check_update_user_profile_pic(username, current_pic_url):
             # 3) If the value is different, we need to create a new File object in SnapBundle, and get the file in there
             existing_stored_urn = str(response.json()['urn'])
             existing_stored_url = snapbundle_helpers.get_raw_value_decoded(response.json()['rawValue'], 'String')
-            print "URN: " + existing_stored_urn
-            print "URL: " + existing_stored_url
             need_to_upload_url = False
             if existing_stored_url == current_pic_url:
                 logging.info("Existing stored profile pic URL matches current URL for user " + username + ".  Checking to see if file exists in SnapBundle")
                 # Check to see if a file exists in SB for this
                 try:
                     existing_stored_file_urn = str(response.json()['moniker'])
-                    if existing_stored_file_urn == "":
+                    if existing_stored_file_urn in ("None", ''):
+                        logging.info("Moniker key not set in metadata: No file urn found, need to upload the file")
                         need_to_upload_url = True
                     else:
                         logging.info("Moniker found.  Existing profile pic urn: " + str(existing_stored_file_urn))

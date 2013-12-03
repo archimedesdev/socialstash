@@ -89,16 +89,28 @@ def get_raw_value_decoded(var_passed_in, var_type):
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def add_update_metadata(reference_type, referenceURN, dataType, key, value, moniker=''):
+def add_update_metadata(reference_type, referenceURN, dataType, key, value, moniker=None):
+    # Moniker check test hopefully temp
+    if moniker is None:
+        url = base_url_metadata_objects_query + '/' + referenceURN + "/" + key + "?view=Full"
+        response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
+        try:
+            moniker = str(response.json()['moniker'])
+        except KeyError:
+            moniker = None
+
+    # Back to normal application
     raw_value = get_raw_value_encoded(value, dataType)
     temp_meta_data = dict(
         entityReferenceType=reference_type,
         referenceURN=referenceURN,
         dataType=metadataDataTypes[dataType.upper()],
         key=key,
-        rawValue=str(raw_value),
-        moniker=moniker
+        rawValue=str(raw_value)
     )
+    if moniker is not None:
+        temp_meta_data['moniker'] = moniker
+
     url = base_url_metadata_objects + '/' + referenceURN
     headers = {'content-type': 'application/json'}
     payload = json.dumps([temp_meta_data])
