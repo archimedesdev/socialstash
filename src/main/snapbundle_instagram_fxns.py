@@ -196,6 +196,16 @@ def update_instagram_user_object(reference_urn, user, new_user):
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
+def check_add_update_followed_by(reference_urn, relatedReferenceURN):
+    return snapbundle_helpers.check_add_update_relationship('Object', reference_urn, 'FollowedBy', 'Object', relatedReferenceURN)
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def check_add_update_follows(reference_urn, relatedReferenceURN):
+    return snapbundle_helpers.check_add_update_relationship('Object', reference_urn, 'Follows', 'Object', relatedReferenceURN)
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
 def add_new_twitter_tweet(parent_object_urn, tweet):
     ## -- The ObjectInteraction portion of the tweet
     pattern = '%Y-%m-%d %H:%M:%S'

@@ -5,6 +5,7 @@ import instagram
 import logging
 import ConfigParser
 import requests
+import simplejson
 import snapbundle_instagram_fxns
 
 logging.debug('Starting: ' + __name__)
@@ -52,7 +53,8 @@ class User(object):
             'snapbundle_username':          None,
             'snapbundle_password':          None,
             'instagram_user_sb_object_urn': None,
-            'instagram_user_sb_urn':        None}
+            'instagram_user_sb_urn':        None,
+            'search_follow_depth':          1}
 
         for (param, default) in param_defaults.iteritems():
             setattr(self, param, kwargs.get(param, default))
@@ -112,7 +114,8 @@ class User(object):
                                                 snapbundle_user_object=self._snapbundle_user_object,
                                                 snapbundle_username=self._snapbundle_username,
                                                 snapbundle_password=self._snapbundle_password,
-                                                username=current.username)
+                                                username=current.username,
+                                                search_follow_depth=self.search_follow_depth-1)
                 temp_social_stash_i_user.authenticate()
                 temp_social_stash_i_user.set_user_data_from_instagram(current.id)
                 print "Checking for SocialStash Instagram User " + current.username+" in SnapBundle"
@@ -125,7 +128,12 @@ class User(object):
                     if update_if_found:
                         print "Updating User " + current.username + " anyway"
                         print "Updated User URN: " + str(temp_social_stash_i_user.create_update_user_in_snapbundle())
+                # Time to check the profile pic
                 temp_social_stash_i_user.check_and_update_profile_pic()
+
+                # Time to check and add a relationship
+                snapbundle_instagram_fxns.check_add_update_followed_by(self.get_instagrame_user_sb_object_urn(), temp_social_stash_i_user.get_instagrame_user_sb_object_urn())
+
                 del temp_social_stash_i_user
             except instagram.bind.InstagramAPIError:
                 print "Unable to pull data for user " + current.username
@@ -153,7 +161,14 @@ class User(object):
                     if update_if_found:
                         print "Updating User " + current.username + " anyway"
                         print "Updated URN: " + str(temp_social_stash_i_user.create_update_user_in_snapbundle())
+
+                # Time to check the profile pic
                 temp_social_stash_i_user.check_and_update_profile_pic()
+
+                # Time to check and add a relationship
+                snapbundle_instagram_fxns.check_add_update_follows(self.get_instagrame_user_sb_object_urn(), temp_social_stash_i_user.get_instagrame_user_sb_object_urn())
+
+
                 del temp_social_stash_i_user
             except instagram.bind.InstagramAPIError:
                 print "Unable to pull data for user " + current.username
@@ -169,6 +184,9 @@ class User(object):
 ## ----------------------------------- FXN ------------------------------------------------------------------------
     def get_instagrame_user_sb_urn(self):
         return self._instagram_user_sb_urn
+
+    def get_instagrame_user_sb_object_urn(self):
+        return self._instagram_user_sb_object_urn
 
     def get_api(self):
         return self._api

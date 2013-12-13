@@ -27,6 +27,7 @@ base_url_server = 'snapbundle'
 #base_url_server = 'stage'
 base_url_objects = 'https://' + base_url_server + '.tagdynamics.net/v1/app/objects'
 base_url_object_interaction = 'https://' + base_url_server + '.tagdynamics.net/v1/app/interactions'
+base_url_relationship = 'https://' + base_url_server + '.tagdynamics.net/v1/app/relationship'
 base_url_metadata_objects = 'https://' + base_url_server + '.tagdynamics.net/v1/app/metadata/Object'
 base_url_metadata_objects_query = 'https://' + base_url_server + '.tagdynamics.net/v1/app/metadata/query/Object'
 base_url_metadata_mapper_encode = 'https://' + base_url_server + '.tagdynamics.net/v1/public/metadata/mapper/encode/'
@@ -92,12 +93,13 @@ def get_raw_value_decoded(var_passed_in, var_type):
 def add_update_metadata(reference_type, referenceURN, dataType, key, value, moniker=None):
     # Moniker check test hopefully temp
     if moniker is None:
-        url = base_url_metadata_objects_query + '/' + referenceURN + "/" + key + "?view=Full"
+        # First need to see if this object even has any metadata, if not, don't want to cause a 500 response
+        url = base_url_metadata_objects_query + '/' + referenceURN + '?view=full'
         response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
-        try:
-            moniker = str(response.json()['moniker'])
-        except KeyError:
-            moniker = None
+        for list_item in response.json():
+            if list_item['key'] == 'moniker':
+                moniker = list_item['rawValue']
+                break
 
     # Back to normal application
     raw_value = get_raw_value_encoded(value, dataType)
@@ -121,6 +123,42 @@ def add_update_metadata(reference_type, referenceURN, dataType, key, value, moni
         logging.info("Response (for key/value " + str(key) + "/" + str(value) + "): " + str(response.status_code) + " <--> " + str(response.json()))
     except UnicodeEncodeError:
         logging.info("Response (for key/value " + str(key) + "/" + "UnicodeEncodeError Value Here" + "): " + str(response.status_code) + " <--> " + str(response.json()))
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def check_add_update_relationship(entityReferenceType, referenceURN, relationshipType, relatedEntityReferenceType, relatedReferenceURN):
+
+    # First check to see if it exists before add/update
+    url = base_url_relationship + '/' + entityReferenceType + '/' + referenceURN + '/' + relatedEntityReferenceType + '/' + relatedReferenceURN + '/' + relationshipType
+    logging.debug("Sending to URL: " + str(url))
+    response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
+    logging.info("Response: " + str(response.status_code))
+    if response.status_code == 404:
+        # Relationship doesn't exist, do it
+        temp_meta_data = dict(
+            entityReferenceType=entityReferenceType,
+            referenceURN=referenceURN,
+            relationshipType=relationshipType,
+            relatedEntityReferenceType=relatedEntityReferenceType,
+            relatedReferenceUrn=relatedReferenceURN
+        )
+
+        url = base_url_relationship + '/' + entityReferenceType + '/' + referenceURN
+        headers = {'content-type': 'application/json'}
+        payload = json.dumps(temp_meta_data)
+        logging.debug("Sending to URL: " + str(url))
+        logging.debug("Submitting Payload: " + str(payload))
+        response = requests.put(url, data=payload, headers=headers, auth=(snapbundle_username, snapbundle_password))
+        try:
+            logging.info("Response (for relationship " + str(referenceURN) + " " + str(relationshipType) + " " + str(relatedReferenceURN) + "): " + str(response.status_code) + " <--> " + str(response.json()))
+        except UnicodeEncodeError:
+            logging.info("Response (for relationship " + str(referenceURN) + " " + str(relationshipType) + " " + str(relatedReferenceURN) + "): " + str(response.status_code) + " <--> " + str(response.json()))
+    elif response.status_code == 200:
+        return True
+    elif response.status_code == 201:
+        return True
+    else:
+        return False
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
