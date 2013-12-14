@@ -67,11 +67,9 @@ else:
 
 print "checking for users I'm following"
 instagram_user.check_relationship_users_exist_in_snapbundle(relationship='FOLLOWING', update_if_found=False)
-#instagram_user.check_all_users_following_exist_in_snapbundle(update_if_found=False)
 
 print 'checking for users following me'
 instagram_user.check_relationship_users_exist_in_snapbundle(relationship='FOLLOWED_BY', update_if_found=False)
-#instagram_user.check_all_users_followed_by_exist_in_snapbundle(update_if_found=False)
 
 
 #print "Getting recent media, count = 1"
