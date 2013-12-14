@@ -230,15 +230,20 @@ class User(object):
         for key in post_dictionary:
             current = post_dictionary[key]['data']
             temp_post = {}
+            temp_post['parent_urn'] = self._instagram_user_sb_object_urn
             temp_post['id'] = current['id']
             temp_post['type'] = current['type']
             temp_post['created_time'] = current['created_time']
             temp_post['link'] = current['link']
             temp_post['user'] = current['user']
+            temp_post['location'] = current['location']
+            temp_post['attribution'] = current['attribution']
 
+            #FIGURE OUT THE OTHER LOCATION INFO to send before creating t
+            #FIGURE OUT THE ATTRIBUTION PART TOO
 
-            post_urn = FUNCTION CALL HERE
-            snapbundle_instagram_fxns.set_filter_tag(post_urn, current['filter'])
+            #post_urn = FUNCTION CALL HERE
+            #snapbundle_instagram_fxns.set_filter_tag(post_urn, current['filter'])
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------

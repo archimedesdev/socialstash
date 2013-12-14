@@ -19,6 +19,7 @@ config.read(config_file)
 snapbundle_username = config.get('SnapbundleCredentials', 'snapbundle_username')
 snapbundle_password = config.get('SnapbundleCredentials', 'snapbundle_password')
 snapbundle_base_urn_instagram_user = "urn:instagram:users:"
+snapbundle_base_urn_instagram_post = "urn:instagram:posts"
 snapbundle_base_instagram_filter_name = "instagram:filters:"
 # == End Snapbundle Variables ==
 
@@ -98,7 +99,7 @@ def get_object_metadata(urn_to_check_for):
 ## --------------------------------------------------------------------------------------------------------------
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def check_update_user_profile_pic(username, current_pic_url):
-    url = base_url_metadata_objects_query + '/' + snapbundle_base_urn_instagram_user + username + "/profile_picture?view=Full"
+    url = base_url_metadata_objects_query + '/' + snapbundle_base_urn_instagram_user + username + "/profile_pic ture?view=Full"
     logging.info("Looking for object profile pic metadata at URL: " + str(url))
     response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
     logging.info(str(response.json()))
@@ -196,26 +197,41 @@ def update_instagram_user_object(reference_urn, user, new_user):
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def add_update_new_instagram_post_object(instagram_handle, instagram_user_sb_object_urn):
-    json_info = {"name": instagram_handle,
-                 "active": "true",
-                 "objectUrn": instagram_user_sb_object_urn,
-                 "objectType": "Person"
-                 }
-    url = base_url_objects
+def add_update_new_instagram_post_object(post):
+
+    if post['location'] is None:
+        hasGeo = False
+    else:
+        hasGeo = True
+
+    moniker = snapbundle_base_urn_instagram_post + ":" + post['id']
+    object_interaction = {'objectUrn': post['parent_urn'],
+                          'moniker': moniker,
+                          'identification': moniker,
+                          'data': post['link'],
+                          'recordedTimestamp': post['created_time'],
+                          'hasGeoLocation': hasGeo,
+                          'lat': '',
+                          'lon': '',
+                          'alt': ''
+                          }
+
+    url = base_url_object_interaction
     headers = {'content-type': 'application/json'}
-    payload = json.dumps(json_info)
-    logging.info("Submitting Payload: " + str(payload))
+    payload = json.dumps(object_interaction)
+    print "Sending to URL: " + str(url)
+    print "Submitting Payload: " + str(payload)
     response = requests.put(url, data=payload, headers=headers, auth=(snapbundle_username, snapbundle_password))
-    logging.info("Response (for objectURN " + instagram_user_sb_object_urn + "): " + str(response.status_code) + " <--> " + str(response.json()))
+    logging.info("Response (for objectURN " + moniker + "): " + str(response.status_code) + " <--> " + str(response.json()))
     if response.status_code == 201:
         # Created new user
-        logging.info("Created new user")
+        logging.info("Created new post")
     elif response.status_code == 200:
         # Updating user
-        logging.info("User existed, updated")
-    urn = response.json()['message']
-    return urn
+        logging.info("Post existed")
+    post_urn = response.json()['message']
+
+    ## -- The additional metadata portion of the tweet
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------

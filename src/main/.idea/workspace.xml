@@ -4,7 +4,6 @@
     <list default="true" id="dc7f855c-82e9-481c-850b-8187cfab748b" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/snapbundle_instagram_fxns.py" afterPath="$PROJECT_DIR$/snapbundle_instagram_fxns.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/socialstash_instagram.py" afterPath="$PROJECT_DIR$/socialstash_instagram.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/userdata_instagram.py" afterPath="$PROJECT_DIR$/userdata_instagram.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="socialStash.iws" />
@@ -31,7 +30,7 @@
       <file leaf-file-name="userdata_twitter.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/userdata_twitter.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="114" column="102" selection-start="4792" selection-end="4792" vertical-scroll-proportion="0.0" vertical-offset="1938" max-vertical-offset="2788">
+            <state line="114" column="102" selection-start="4792" selection-end="4792" vertical-scroll-proportion="0.0" vertical-offset="1805" max-vertical-offset="2703">
               <folding />
             </state>
           </provider>
@@ -40,7 +39,7 @@
       <file leaf-file-name="snapbundle_twitter_fxns.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/snapbundle_twitter_fxns.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="187" column="81" selection-start="11494" selection-end="11494" vertical-scroll-proportion="0.0" vertical-offset="3179" max-vertical-offset="4012">
+            <state line="138" column="0" selection-start="8665" selection-end="9207" vertical-scroll-proportion="0.0" vertical-offset="1581" max-vertical-offset="3910">
               <folding />
             </state>
           </provider>
@@ -49,7 +48,7 @@
       <file leaf-file-name="snapbundle_helpers.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/snapbundle_helpers.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="155" column="0" selection-start="8436" selection-end="8436" vertical-scroll-proportion="0.0" vertical-offset="2550" max-vertical-offset="4148">
+            <state line="155" column="0" selection-start="8436" selection-end="8436" vertical-scroll-proportion="0.0" vertical-offset="1326" max-vertical-offset="4148">
               <folding />
             </state>
           </provider>
@@ -58,16 +57,16 @@
       <file leaf-file-name="userdata_instagram.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/userdata_instagram.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="77" column="0" selection-start="3223" selection-end="3223" vertical-scroll-proportion="0.0" vertical-offset="462" max-vertical-offset="1428">
+            <state line="77" column="0" selection-start="3223" selection-end="3223" vertical-scroll-proportion="0.0" vertical-offset="204" max-vertical-offset="1428">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="socialstash_instagram.py" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="socialstash_instagram.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/socialstash_instagram.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="95" column="43" selection-start="3804" selection-end="3804" vertical-scroll-proportion="0.39175257" vertical-offset="1273" max-vertical-offset="6647">
+            <state line="245" column="13" selection-start="12952" selection-end="12952" vertical-scroll-proportion="-12.32" vertical-offset="3857" max-vertical-offset="6732">
               <folding>
                 <element signature="e#41#57#0" expanded="true" />
               </folding>
@@ -75,10 +74,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="snapbundle_instagram_fxns.py" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="snapbundle_instagram_fxns.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/snapbundle_instagram_fxns.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="23" column="0" selection-start="727" selection-end="727" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="5933">
+            <state line="162" column="0" selection-start="8504" selection-end="8504" vertical-scroll-proportion="0.01920904" vertical-offset="2635" max-vertical-offset="6205">
               <folding />
             </state>
           </provider>
@@ -113,8 +112,8 @@
         <option value="$PROJECT_DIR$/socialstash_instagram_obj.py" />
         <option value="$PROJECT_DIR$/snapbundle_helpers.py" />
         <option value="$PROJECT_DIR$/userdata_instagram.py" />
-        <option value="$PROJECT_DIR$/snapbundle_instagram_fxns.py" />
         <option value="$PROJECT_DIR$/socialstash_instagram.py" />
+        <option value="$PROJECT_DIR$/snapbundle_instagram_fxns.py" />
       </list>
     </option>
   </component>
@@ -549,13 +548,18 @@
       <created>1387003489214</created>
       <updated>1387003489214</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="Started working on individual posts">
+      <created>1387045304326</created>
+      <updated>1387045304326</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -570,7 +574,6 @@
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32900432" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -602,7 +605,8 @@
     <MESSAGE value="Added relationships between instagram users&#10;&#10;Still need to put the updates in the right place and add a certain level of updates..." />
     <MESSAGE value="Created a better function for relationships that reuses code, pre deleting the individual functions" />
     <MESSAGE value="Finished first level relationship making&#10;" />
-    <option name="LAST_COMMIT_MESSAGE" value="Finished first level relationship making&#10;" />
+    <MESSAGE value="Started working on individual posts" />
+    <option name="LAST_COMMIT_MESSAGE" value="Started working on individual posts" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -641,20 +645,6 @@
         <state line="23" column="9" selection-start="850" selection-end="850" vertical-scroll-proportion="0.65604025" vertical-offset="0" max-vertical-offset="782" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/snapbundle_twitter_fxns.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="187" column="81" selection-start="11494" selection-end="11494" vertical-scroll-proportion="0.0" vertical-offset="2830" max-vertical-offset="3910">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/userdata_twitter.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="114" column="102" selection-start="4792" selection-end="4792" vertical-scroll-proportion="0.0" vertical-offset="1668" max-vertical-offset="2788">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://C:/Python27/Lib/site-packages/python_twitter-1.1-py2.7.egg!/twitter.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="24" column="0" selection-start="781" selection-end="781" vertical-scroll-proportion="-7.26789" vertical-offset="4369" max-vertical-offset="87125">
@@ -684,9 +674,16 @@
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="708" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/snapbundle_helpers.py">
+    <entry file="file://$PROJECT_DIR$/userdata_twitter.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="155" column="0" selection-start="8436" selection-end="8436" vertical-scroll-proportion="0.0" vertical-offset="2550" max-vertical-offset="4148">
+        <state line="114" column="102" selection-start="4792" selection-end="4792" vertical-scroll-proportion="0.0" vertical-offset="1668" max-vertical-offset="2788">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/snapbundle_twitter_fxns.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="138" column="0" selection-start="8665" selection-end="9207" vertical-scroll-proportion="0.0" vertical-offset="1581" max-vertical-offset="3910">
           <folding />
         </state>
       </provider>
@@ -698,19 +695,26 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/snapbundle_instagram_fxns.py">
+    <entry file="file://$PROJECT_DIR$/socialstash_instagram.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="23" column="0" selection-start="727" selection-end="727" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="5933">
+        <state line="245" column="13" selection-start="12952" selection-end="12952" vertical-scroll-proportion="-12.32" vertical-offset="3857" max-vertical-offset="6732">
+          <folding>
+            <element signature="e#41#57#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/snapbundle_helpers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="155" column="0" selection-start="8436" selection-end="8436" vertical-scroll-proportion="0.0" vertical-offset="1326" max-vertical-offset="4148">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/socialstash_instagram.py">
+    <entry file="file://$PROJECT_DIR$/snapbundle_instagram_fxns.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="95" column="43" selection-start="3804" selection-end="3804" vertical-scroll-proportion="0.39175257" vertical-offset="1273" max-vertical-offset="6647">
-          <folding>
-            <element signature="e#41#57#0" expanded="true" />
-          </folding>
+        <state line="162" column="0" selection-start="8504" selection-end="8504" vertical-scroll-proportion="0.01920904" vertical-offset="2635" max-vertical-offset="6205">
+          <folding />
         </state>
       </provider>
     </entry>
