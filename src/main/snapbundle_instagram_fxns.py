@@ -155,7 +155,7 @@ def set_instagram_tags(referenceURN, tag_list):
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def set_filter_tag(referenceURN, filter_name):
     tag_name = snapbundle_base_instagram_filter_name + filter_name.upper()
-    return snapbundle_helpers.create_tag_association("ObjectAssociation", referenceURN, filter_name)
+    return snapbundle_helpers.create_tag_association("ObjectAssociation", referenceURN, tag_name)
 
 
 ## --------------------------------------------------------------------------------------------------------------
@@ -193,6 +193,29 @@ def update_instagram_user_object(reference_urn, user, new_user):
     snapbundle_helpers.add_update_metadata("Object", reference_urn, "String", "counts", user['counts'])
     if new_user:
         snapbundle_helpers.add_update_metadata("Object", reference_urn, "Long", "last_instagram_added", 0)
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def add_update_new_instagram_post_object(instagram_handle, instagram_user_sb_object_urn):
+    json_info = {"name": instagram_handle,
+                 "active": "true",
+                 "objectUrn": instagram_user_sb_object_urn,
+                 "objectType": "Person"
+                 }
+    url = base_url_objects
+    headers = {'content-type': 'application/json'}
+    payload = json.dumps(json_info)
+    logging.info("Submitting Payload: " + str(payload))
+    response = requests.put(url, data=payload, headers=headers, auth=(snapbundle_username, snapbundle_password))
+    logging.info("Response (for objectURN " + instagram_user_sb_object_urn + "): " + str(response.status_code) + " <--> " + str(response.json()))
+    if response.status_code == 201:
+        # Created new user
+        logging.info("Created new user")
+    elif response.status_code == 200:
+        # Updating user
+        logging.info("User existed, updated")
+    urn = response.json()['message']
+    return urn
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
