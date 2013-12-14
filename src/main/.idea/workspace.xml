@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="dc7f855c-82e9-481c-850b-8187cfab748b" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/socialstash_instagram.py" afterPath="$PROJECT_DIR$/socialstash_instagram.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/userdata_instagram.py" afterPath="$PROJECT_DIR$/userdata_instagram.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="socialStash.iws" />
@@ -540,12 +538,16 @@
       <created>1386982681996</created>
       <updated>1386982681996</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="Finished first level relationship making&#10;">
+      <created>1387003297147</created>
+      <updated>1387003297147</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -592,7 +594,8 @@
     <MESSAGE value="Fixed moniker field workaround for metadata creation/update.&#10;Fixed instagram profile_pic update" />
     <MESSAGE value="Added relationships between instagram users&#10;&#10;Still need to put the updates in the right place and add a certain level of updates..." />
     <MESSAGE value="Created a better function for relationships that reuses code, pre deleting the individual functions" />
-    <option name="LAST_COMMIT_MESSAGE" value="Created a better function for relationships that reuses code, pre deleting the individual functions" />
+    <MESSAGE value="Finished first level relationship making&#10;" />
+    <option name="LAST_COMMIT_MESSAGE" value="Finished first level relationship making&#10;" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
