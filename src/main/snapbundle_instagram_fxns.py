@@ -99,7 +99,7 @@ def get_object_metadata(urn_to_check_for):
 ## --------------------------------------------------------------------------------------------------------------
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def check_update_user_profile_pic(username, current_pic_url):
-    url = base_url_metadata_objects_query + '/' + snapbundle_base_urn_instagram_user + username + "/profile_pic ture?view=Full"
+    url = base_url_metadata_objects_query + '/' + snapbundle_base_urn_instagram_user + username + "/profile_picture?view=Full"
     logging.info("Looking for object profile pic metadata at URL: " + str(url))
     response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
     logging.info(str(response.json()))

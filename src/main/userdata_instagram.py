@@ -59,21 +59,21 @@ if not response:
 else:
     print "User exists!"
     print "SnapBundle Data: " + str(response)
-#    print "Updating anyway"
-#    print "Updated URN: " + str(instagram_user.create_update_user_in_snapbundle())
+    print "Updating anyway"
+    print "Updated URN: " + str(instagram_user.create_update_user_in_snapbundle())
 
 #print "Get data stored in SnapBundle"
 #print str(instagram_user.get_user_data_in_snapbundle())
 
-print "checking for users I'm following"
-instagram_user.check_relationship_users_exist_in_snapbundle(relationship='FOLLOWING',
-                                                            update_if_found=False,
-                                                            go_to_max_depth=False)
+#print "checking for users I'm following"
+#instagram_user.check_relationship_users_exist_in_snapbundle(relationship='FOLLOWING',
+#                                                            update_if_found=True,
+#                                                            go_to_max_depth=False)
 
 print 'checking for users following me'
 instagram_user.check_relationship_users_exist_in_snapbundle(relationship='FOLLOWED_BY',
-                                                            update_if_found=False,
-                                                            go_to_max_depth=False)
+                                                            update_if_found=True,
+                                                            go_to_max_depth=True)
 
 
 #print "Getting recent media, count = 1"

@@ -26,9 +26,9 @@ instagram_record_count = 50
 # number of feed records to get per request
 instagram_feed_record_count = 10
 # If the follows/following count is higher than this, don't bother going down the chain
-instagram_max_follow_count = 10
+instagram_max_follow_count = 20
 # number of layers out to go when recursively searching
-instagram_max_search_depth = 1
+instagram_max_search_depth = 2
 # == End Instagram Variables ==
 
 
@@ -82,7 +82,7 @@ class User(object):
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
     def set_user_data_from_instagram(self, user_id):
-        logging.info("Setting SocialStash Instagram User info from Instagram")
+        logging.info("Setting SocialStash Instagram User info from Instagram for user " + self._api.user(user_id).username)
         self._id = self._api.user(user_id).id
         self._username = self._api.user(user_id).username
         self._full_name = self._api.user(user_id).full_name
@@ -91,6 +91,7 @@ class User(object):
         self._website = self._api.user(user_id).website
         self._counts = self._api.user(user_id).counts
         self._instagram_user_sb_object_urn = snapbundle_instagram_fxns.snapbundle_base_urn_instagram_user + self._username
+        logging.info("Initial search depth: " + str(self.current_search_depth))
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
     def check_for_user_in_snapbundle(self):
@@ -126,9 +127,9 @@ class User(object):
         while keep_going:
             # Get this set of users
             if relationship.upper() == followed_by_string:
-                response, next_url = self._api.user_followed_by(count=instagram_record_count, cursor=next_cursor)
+                response, next_url = self._api.user_followed_by(user_id=self._id, count=instagram_record_count, cursor=next_cursor)
             elif relationship.upper() == following_string:
-                response, next_url = self._api.user_follows(count=instagram_record_count, cursor=next_cursor)
+                response, next_url = self._api.user_follows(user_id=self._id, count=instagram_record_count, cursor=next_cursor)
 
             # Add them to a dictionarry
             for current in response:
@@ -157,10 +158,10 @@ class User(object):
                                                 snapbundle_username=self._snapbundle_username,
                                                 snapbundle_password=self._snapbundle_password,
                                                 username=current.username,
-                                                search_follow_depth=self.current_search_depth-1)
+                                                current_search_depth=(self.current_search_depth - 1))
                 temp_social_stash_i_user.authenticate()
                 temp_social_stash_i_user.set_user_data_from_instagram(current.id)
-                print "Checking for SocialStash Instagram User " + current.username+" in SnapBundle"
+                print "Checking for SocialStash Instagram User " + current.username + " in SnapBundle"
                 response = temp_social_stash_i_user.check_for_user_in_snapbundle()
                 do_updates = False
                 if not response:
@@ -177,13 +178,20 @@ class User(object):
                 if do_updates:
                     # Time to check the profile pic
                     temp_social_stash_i_user.check_and_update_profile_pic()
-                    # Time to check and add a relationship
+                    # Time to check and add a relationships.  Remember, they actually go both ways, so either way,
+                    # we're adding/updating two relationships
+                    # A -- Follows ------> B
+                    # B -- Followed by --> A
                     if relationship.upper() == followed_by_string:
                         snapbundle_instagram_fxns.check_add_update_followed_by(self.get_instagrame_user_sb_object_urn(),
                                                                                temp_social_stash_i_user.get_instagrame_user_sb_object_urn())
+                        snapbundle_instagram_fxns.check_add_update_follows(temp_social_stash_i_user.get_instagrame_user_sb_object_urn(),
+                                                                           self.get_instagrame_user_sb_object_urn())
                     elif relationship.upper() == following_string:
                         snapbundle_instagram_fxns.check_add_update_follows(self.get_instagrame_user_sb_object_urn(),
                                                                            temp_social_stash_i_user.get_instagrame_user_sb_object_urn())
+                        snapbundle_instagram_fxns.check_add_update_followed_by(temp_social_stash_i_user.get_instagrame_user_sb_object_urn(),
+                                                                               self.get_instagrame_user_sb_object_urn())
 
                 # Check to see if we need to keep going down this follower/following thing recursively
                 if go_to_max_depth and ((self.current_search_depth - 1) > 0):
@@ -193,12 +201,16 @@ class User(object):
                     elif relationship.upper() == following_string:
                         count_to_check = temp_counts['follows']
 
+                    logging.info(current.username + "'s count: " + str(count_to_check) + " (max_follow: " + str(instagram_max_follow_count) + "), depth: " + str((self.current_search_depth-1)))
                     if count_to_check <= instagram_max_follow_count:
-                        logging.info(current.username + "'s count: " + str(count_to_check) + "<=" + str(instagram_max_follow_count) + ", depth: " + str(self.current_search_depth-1) + ">0")
+                        logging.info(current.username + "'s count: " + str(count_to_check) + "<=" + str(instagram_max_follow_count) + ", depth: " + str((self.current_search_depth-1)) + ">0")
                         logging.info("Continuing down the follow recursion")
                         temp_social_stash_i_user.check_relationship_users_exist_in_snapbundle(relationship,
                                                                                               update_if_found,
                                                                                               go_to_max_depth)
+                        exit()
+                    else:
+                        logging.info("Not continuing down the follow recursion...")
 
                 del temp_social_stash_i_user
             except instagram.bind.InstagramAPIError:
@@ -388,3 +400,23 @@ class User(object):
 
         return data
 
+## ----------------------------------- FXN ------------------------------------------------------------------------
+    def test_one_thing(self):
+        user_dictionary = {}
+        keep_going = True
+        next_cursor = None
+        while keep_going:
+            # Get this set of users
+            response, next_url = self._api.user_follows(user_id=34379259, count=instagram_record_count, cursor=next_cursor)
+
+            # Add them to a dictionarry
+            for current in response:
+                if current.username.encode() not in user_dictionary.keys():
+                    user_dictionary[current.username.encode()] = current
+            if next_url is None:
+                keep_going = False
+            else:
+                # There are more we need to get, so here's the next cursor to start at
+                next_cursor = str(urlparse.parse_qs(urlparse.urlparse(next_url).query)['cursor'][0])
+
+        print "following " + str(len(user_dictionary)) + " people"
