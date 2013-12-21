@@ -65,6 +65,7 @@ else:
 #print "Get data stored in SnapBundle"
 #print str(instagram_user.get_user_data_in_snapbundle())
 
+print "Saved API Calls: " + str(instagram_user.get_global_count_saved_api_calls())
 print "checking for users I'm following"
 instagram_user.check_relationship_users_exist_in_snapbundle(relationship='FOLLOWING',
                                                             update_user_profile_if_found=False,
@@ -72,6 +73,7 @@ instagram_user.check_relationship_users_exist_in_snapbundle(relationship='FOLLOW
                                                             update_user_followedby_if_found=True,
                                                             go_to_max_depth=True)
 
+print "Saved API Calls: " + str(instagram_user.get_global_count_saved_api_calls())
 print 'checking for users following me'
 instagram_user.check_relationship_users_exist_in_snapbundle(relationship='FOLLOWED_BY',
                                                             update_user_profile_if_found=False,

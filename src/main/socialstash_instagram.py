@@ -107,7 +107,21 @@ class User(object):
             global_instagram_user_dictionary[self._username] = self
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-    def set_user_data_from_snapbundle_data(self):
+    def set_user_data_from_cached_or_snapbundle_data(self):
+        global global_instagram_user_dictionary
+        global global_count_saved_api_calls
+        global_count_saved_api_calls += 7
+        if self._username in global_instagram_user_dictionary.keys():
+            logging.info("Setting SocialStash Instagram User info from Cached Data for user " + self.username)
+            cache_data = global_instagram_user_dictionary[self._username]
+            self.id = cache_data.id
+            self.full_name = cache_data.full_name
+            self.profile_picture = cache_data.profile_picture
+            self.bio = cache_data.bio
+            self.website = cache_data.website
+            self.counts = cache_data.counts
+            return
+
         logging.info("Setting SocialStash Instagram User info from SnapBundle for user " + self.username)
         data = self.get_user_data_in_snapbundle()
         metadata = data['metadata']
@@ -117,10 +131,6 @@ class User(object):
         self.bio = metadata['bio']
         self.website = metadata['website']
         self.counts = metadata['counts']
-
-        global global_instagram_user_dictionary
-        global global_count_saved_api_calls
-        global_count_saved_api_calls += 7
         if self._username not in global_instagram_user_dictionary:
             global_instagram_user_dictionary[self._username] = self
 
@@ -154,6 +164,7 @@ class User(object):
         followed_by_string = 'FOLLOWED_BY'
         global global_instagram_user_dictionary
         global global_count_saved_api_calls
+        # We might already have this information cached in our current Python session, and if told to, let's use it
         if use_cached_users:
             if ((relationship.upper() == followed_by_string) and
                     (global_instagram_user_dictionary[self.username].get_followedby_dict() is not None)):
@@ -254,7 +265,7 @@ class User(object):
                     temp_social_stash_i_user.check_and_update_profile_pic()
                 else:
                     # We need to pull the data from SnapBundle instead of the Instagram API
-                    temp_social_stash_i_user.set_user_data_from_snapbundle_data()
+                    temp_social_stash_i_user.set_user_data_from_cached_or_snapbundle_data()
 
                 if new_user or update_user_following_if_found or update_user_followedby_if_found:
                     # Time to check and add a relationships.  Remember, they actually go both ways, so either way,
@@ -358,7 +369,6 @@ class User(object):
 
             #post_urn = FUNCTION CALL HERE
             #snapbundle_instagram_fxns.set_filter_tag(post_urn, current['filter'])
-
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
     def get_feed_from_instagram(self, count):
@@ -522,7 +532,7 @@ class User(object):
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
     @staticmethod
-    def get_global_count_saved_api_calls(self):
+    def get_global_count_saved_api_calls():
         global global_count_saved_api_calls
         return global_count_saved_api_calls
 
