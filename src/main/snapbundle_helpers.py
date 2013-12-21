@@ -39,14 +39,23 @@ base_url_tags = 'https://' + base_url_server + '.tagdynamics.net/v1/app/tags'
 # == End Snapbundle Variables ==
 
 metadataDataTypes = {'STRING': 'StringType',
+                     'STRINGTYPE': 'StringType',
                      'DATE': 'DataType',
+                     'DATETYPE': 'DataType',
                      'INTEGER': 'IntegerType',
+                     'INTEGERTYPE': 'IntegerType',
                      'LONG': 'LongType',
+                     'LONGTYPE': 'LongType',
                      'BOOLEAN': 'BooleanType',
+                     'BOOLEANTYPE': 'BooleanType',
                      'FLOAT': 'FloatType',
+                     'FLOATTYPE': 'FloatType',
                      'DOUBLE': 'DoubleType',
+                     'DOUBLETYPE': 'DoubleType',
                      'JSON': 'JSONType',
-                     'XML': 'XMLType'
+                     'JSONTYPE': 'JSONType',
+                     'XML': 'XMLType',
+                     'XMLTYPE': 'XMLType'
                      }
 
 
@@ -204,8 +213,21 @@ def create_tag_association(entity_reference_type, reference_urn, name):
         return False
 
 
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def count_objects():
+    url = base_url_objects
+    print "Looking at URL: " + str(url)
+    count = 0
+    response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
+    for record in response.json():
+        count += 1
+    print "Count: " + str(count)
+
+
 ## ----------------------------------- END ------------------------------------------------------------------------
 ## ----------------------------------- END ------------------------------------------------------------------------
+
+#count_objects()
 
 #raw = get_raw_value_encoded("True", "Boolean")
 #print raw
@@ -220,9 +242,6 @@ def create_tag_association(entity_reference_type, reference_urn, name):
 
 #urn_to_check_for = snapbundle_user_object + ":twitter:" + "praddc"
 #url = base_url_object_interaction + '/' + 'urn:uuid:3f893a56-f145-46f8-9b32-17d515190df9' #urn_to_check_for
-#print "Looking at URL: " + str(url)
-#response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
-#print response.json()
 #print response.json()['moniker']
 
 #urn_to_check_for = snapbundle_user_object + ":instagram:" + "praddc"

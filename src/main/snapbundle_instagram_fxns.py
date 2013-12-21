@@ -7,6 +7,7 @@ import time
 import ConfigParser
 import snapbundle_helpers
 import logging
+import ast
 
 logging.debug('Starting: ' + __name__)
 
@@ -52,7 +53,7 @@ def check_for_object(urn_to_check_for):
         else:
             logging.info("Object Exists!!")
             logging.info(response.json())
-            return True
+            return response.json()
             #return response.json()#['urn']
     except KeyError:
         logging.info("Instagram user Object does not yet exist in SnapBundle")
@@ -89,6 +90,34 @@ def get_object_metadata(urn_to_check_for):
     try:
         if response.status_code == 200:
             return response.json()
+        else:
+            return False
+    except KeyError:
+        logging.info("Instagram user Object Metadata does not yet exist in SnapBundle")
+        return False
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def get_object_metadata_dictionary(urn_to_check_for):
+    url = base_url_metadata_objects_query + '/' + urn_to_check_for
+    logging.info("Looking for object metadata at URL: " + str(url))
+    response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
+    logging.info(str(response))
+    try:
+        if response.status_code == 200:
+            temp_dict = {}
+            for current in response.json():
+                value = str(snapbundle_helpers.get_raw_value_decoded(current['rawValue'], str(current['dataType'])))
+                # Check to see if it's really a dictionary stored as a string
+                # If so, clear off all the unicode u'' crap from the beginning
+                if (value[0] == '{') and (value[-1] == '}'):
+                    value = ast.literal_eval(value)
+                    non_unicode_value = {}
+                    for key in value.keys():
+                        non_unicode_value[str(key)] = str(value[key])
+                    value = non_unicode_value
+                temp_dict[str(current['key'])] = value
+            return temp_dict
         else:
             return False
     except KeyError:
