@@ -17,10 +17,6 @@ config_file = 'accounts.txt'
 config = ConfigParser.RawConfigParser()
 config.read(config_file)
 
-# == Snapbundle Variables ==
-snapbundle_base_urn_instagram_user = "urn:instagram:users:"
-# == End Snapbundle Variables ==
-
 # == Instagram Variables ==
 # number of records to get per request
 instagram_record_count = 100
