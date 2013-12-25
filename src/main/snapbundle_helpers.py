@@ -60,6 +60,26 @@ metadataDataTypes = {'STRING': 'StringType',
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
+def check_for_object(urn_to_check_for):
+    url = base_url_objects + '/' + urn_to_check_for
+    logging.info("Looking for object at URL: " + str(url))
+    response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
+    logging.info(str(response))
+    try:
+        if response.json()['objectUrn'] != urn_to_check_for:
+            logging.info("ObjectURN not found!")
+            return False
+        else:
+            logging.info("Object Exists!!")
+            logging.info(response.json())
+            return response.json()
+            #return response.json()#['urn']
+    except KeyError:
+        logging.info("Instagram user Object does not yet exist in SnapBundle")
+        return False
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
 def get_raw_value_encoded(var_passed_in, var_type):
     url = base_url_metadata_mapper_encode + metadataDataTypes[var_type.upper()]
     try:
@@ -227,7 +247,7 @@ def count_objects():
 ## ----------------------------------- END ------------------------------------------------------------------------
 ## ----------------------------------- END ------------------------------------------------------------------------
 
-#count_objects()
+#scount_objects()
 
 #raw = get_raw_value_encoded("True", "Boolean")
 #print raw

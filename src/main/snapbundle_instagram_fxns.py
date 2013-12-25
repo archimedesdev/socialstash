@@ -42,22 +42,11 @@ base_url_files = 'https://' + base_url_server + '.tagdynamics.net/v1/app/files'
 ## --------------------------------------------------------------------------------------------------------------
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def check_for_object(urn_to_check_for):
-    url = base_url_objects + '/' + urn_to_check_for
-    logging.info("Looking for object at URL: " + str(url))
-    response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
-    logging.info(str(response))
-    try:
-        if response.json()['objectUrn'] != urn_to_check_for:
-            logging.info("ObjectURN not found!")
-            return False
-        else:
-            logging.info("Object Exists!!")
-            logging.info(response.json())
-            return response.json()
-            #return response.json()#['urn']
-    except KeyError:
-        logging.info("Instagram user Object does not yet exist in SnapBundle")
-        return False
+    return_value = snapbundle_helpers.check_for_object(urn_to_check_for)
+    if not return_value:
+        logging.info("Instagram user Object (" + str(urn_to_check_for) + ")does not yet exist in SnapBundle")
+    else:
+        return return_value
 
 
 ## --------------------------------------------------------------------------------------------------------------
