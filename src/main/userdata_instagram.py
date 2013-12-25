@@ -5,6 +5,7 @@ import ast
 import socialstash_instagram
 import logging
 
+
 logging.debug('Starting: ' + __name__)
 
 # == Import all the account information that is stored in a local file (not sync'd wih public github)
@@ -65,6 +66,11 @@ else:
 #print "Get data stored in SnapBundle"
 #print str(instagram_user.get_user_data_in_snapbundle())
 
+#################################################################################################################
+instagram_user.print_relationship_node_list(manual_pull_from_snapbundle=False, relationship='FOLLOWING', depth=2)
+exit()
+
+#################################################################################################################
 print "Saved API Calls: " + str(instagram_user.get_global_count_saved_api_calls())
 print "checking for users I'm following"
 instagram_user.check_relationship_users_exist_in_snapbundle(relationship='FOLLOWING',
@@ -75,10 +81,10 @@ instagram_user.check_relationship_users_exist_in_snapbundle(relationship='FOLLOW
 
 print "Saved API Calls: " + str(instagram_user.get_global_count_saved_api_calls())
 print "Calls Dictionary: " + str(instagram_user.get_global_counts_dict())
-exit()
 
 
-print 'checking for users following me'
+#################################################################################################################
+# print 'checking for users following me'
 instagram_user.check_relationship_users_exist_in_snapbundle(relationship='FOLLOWED_BY',
                                                             update_user_profile_if_found=False,
                                                             update_user_following_if_found=True,

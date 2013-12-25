@@ -263,9 +263,9 @@ def get_object_relationship_urn_list(urn_to_check_for, relationship):
                 temp_dict[str(value)] = str(current['urn'])
             return temp_dict
         else:
-            return False
+            return {}
     except KeyError:
-        return False
+        return {}
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------

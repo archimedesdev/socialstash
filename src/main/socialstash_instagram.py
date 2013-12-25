@@ -9,6 +9,9 @@ import simplejson
 import urlparse
 import snapbundle_instagram_fxns
 import traceback
+import networkx as nx
+import matplotlib.pyplot as plt
+
 
 logging.debug('Starting: ' + __name__)
 
@@ -32,6 +35,7 @@ instagram_max_search_depth = 2
 # Need this one to save us calls to the instagram API (limited to 5000 per hour)
 global_instagram_user_dictionary = {}
 global_count_saved_api_calls = 0
+global_relationship_node_list = []
 global_counts_dictionary = {}
 global_counts_dictionary['api_calls'] = 0
 global_counts_dictionary['snapbundle_calls'] = 0
@@ -167,6 +171,30 @@ class User(object):
 ## ----------------------------------- FXN ------------------------------------------------------------------------
     def check_and_update_profile_pic(self):
         return snapbundle_instagram_fxns.check_update_user_profile_pic(self._username, self._profile_picture)
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+    def update_relationship_node_list_snapbundle(self, relationship, depth=1, user=None, user_dictionary=None):
+        global global_counts_dictionary
+        global global_relationship_node_list
+        global_counts_dictionary['snapbundle_calls'] += 1
+        if not user:
+            user = str(self.username)
+
+        if not user_dictionary:
+            user_dictionary = snapbundle_instagram_fxns.get_object_relationships(self._instagram_user_sb_object_urn,
+                                                                                 relationship)
+        print relationship + " " + str(len(user_dictionary)) + " pairs (SnapBundle)"
+        for current_name in user_dictionary.keys():
+            temp_set = (user, current_name)
+            if temp_set not in global_relationship_node_list:
+                global_relationship_node_list.append(temp_set)
+            if (depth - 1) > 0:
+                sub_sb_object_urn = snapbundle_instagram_fxns.get_urn_from_username(current_name)
+                subuser_dictionary = snapbundle_instagram_fxns.get_object_relationships(sub_sb_object_urn, relationship)
+                if subuser_dictionary != {}:
+                    self.update_relationship_node_list_snapbundle(relationship, depth-1, current_name, subuser_dictionary)
+
+        print "Global Relationship Node List length: " + str(len(global_relationship_node_list))
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
     def get_follow_list_snapbundle(self, relationship):
@@ -362,11 +390,48 @@ class User(object):
 
         # Time to go through our snapbundle relationships dictionary to see if there are any we need to delete
         global global_counts_dictionary
+        global global_relationship_node_list
         for current_check_delete in snapbundle_follow_user_dictoinary.keys():
             if snapbundle_follow_user_dictoinary[current_check_delete] != 'VALID':
+                # This relationship needs to be deleted in SnapBundle
                 logging.info("Deleting SnapBundle relationship: " + self.username + ' ' + relationship + ' ' + current_check_delete)
                 snapbundle_instagram_fxns.delete_relationship(snapbundle_follow_user_dictoinary[current_check_delete])
                 global_counts_dictionary['snapbundle_deletes'] += 1
+            else:
+                # It's a valid relationship, so let's add it to our network graph!
+                temp_set = (str(self.username), current_check_delete)
+                if temp_set not in global_relationship_node_list:
+                        global_relationship_node_list.append(temp_set)
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+    def print_relationship_node_list(self, manual_pull_from_snapbundle=False, relationship=None, depth=1):
+        if manual_pull_from_snapbundle and (relationship is not None):
+            self.update_relationship_node_list_snapbundle(relationship, depth)
+
+        graph = self.get_global_relationship_node_list()
+        print str(graph)
+
+
+        # extract nodes from graph
+        nodes = set([n1 for n1, n2 in graph] + [n2 for n1, n2 in graph])
+
+        # create networkx graph
+        G = nx.Graph()
+
+        # add nodes
+        for node in nodes:
+            G.add_node(node)
+
+        # add edges
+        for edge in graph:
+            G.add_edge(edge[0], edge[1])
+
+        # draw graph
+        pos = nx.shell_layout(G)
+        nx.draw(G, pos)
+
+        # show graph
+        plt.show()
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
     def check_recent_media_exists_in_snapbundle(self, update_if_found=False):
@@ -580,6 +645,12 @@ class User(object):
     def get_global_counts_dict():
         global global_counts_dictionary
         return global_counts_dictionary
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+    @staticmethod
+    def get_global_relationship_node_list():
+        global global_relationship_node_list
+        return global_relationship_node_list
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
     def test_one_thing(self):

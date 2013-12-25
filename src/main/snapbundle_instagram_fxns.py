@@ -19,7 +19,7 @@ config.read(config_file)
 snapbundle_username = config.get('SnapbundleCredentials', 'snapbundle_username')
 snapbundle_password = config.get('SnapbundleCredentials', 'snapbundle_password')
 snapbundle_base_urn_instagram_user = "urn:instagram:users:"
-snapbundle_base_urn_instagram_post = "urn:instagram:posts"
+snapbundle_base_urn_instagram_post = "urn:instagram:posts:"
 snapbundle_base_instagram_filter_name = "instagram:filters:"
 # == End Snapbundle Variables ==
 
@@ -244,6 +244,12 @@ def check_add_update_followed_by(reference_urn, relatedReferenceURN):
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def check_add_update_follows(reference_urn, relatedReferenceURN):
     return snapbundle_helpers.check_add_update_relationship('Object', reference_urn, 'Follows', 'Object', relatedReferenceURN)
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def get_urn_from_username(username):
+    return snapbundle_base_urn_instagram_user + username
+
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
