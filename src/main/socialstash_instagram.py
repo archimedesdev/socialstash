@@ -174,6 +174,8 @@ class User(object):
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
     def update_relationship_node_list_snapbundle(self, relationship, depth=1, user=None, user_dictionary=None):
+        following_string = 'FOLLOWING'
+        followed_by_string = 'FOLLOWED_BY'
         global global_counts_dictionary
         global global_relationship_node_list
         global_counts_dictionary['snapbundle_calls'] += 1
@@ -185,7 +187,11 @@ class User(object):
                                                                                  relationship)
         print relationship + " " + str(len(user_dictionary)) + " pairs (SnapBundle)"
         for current_name in user_dictionary.keys():
-            temp_set = (user, current_name)
+            if relationship.upper() == followed_by_string:
+                temp_set = (current_name, user)
+            elif relationship.upper() == following_string:
+                temp_set = (user, current_name)
+
             if temp_set not in global_relationship_node_list:
                 global_relationship_node_list.append(temp_set)
             if (depth - 1) > 0:

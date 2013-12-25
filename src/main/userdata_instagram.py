@@ -67,7 +67,8 @@ else:
 #print str(instagram_user.get_user_data_in_snapbundle())
 
 #################################################################################################################
-instagram_user.print_relationship_node_list(manual_pull_from_snapbundle=False, relationship='FOLLOWING', depth=2)
+instagram_user.print_relationship_node_list(manual_pull_from_snapbundle=True, relationship='FOLLOWING', depth=1)
+instagram_user.print_relationship_node_list(manual_pull_from_snapbundle=True, relationship='FOLLOWED_BY', depth=1)
 exit()
 
 #################################################################################################################
