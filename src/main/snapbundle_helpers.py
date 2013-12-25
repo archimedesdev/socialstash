@@ -4,6 +4,7 @@ import json
 import requests
 import ConfigParser
 import logging
+import ast
 
 # == Start the logger ==
 # == Because of this logger, this should be the first library we import ==
@@ -28,6 +29,7 @@ base_url_server = 'snapbundle'
 base_url_objects = 'https://' + base_url_server + '.tagdynamics.net/v1/app/objects'
 base_url_object_interaction = 'https://' + base_url_server + '.tagdynamics.net/v1/app/interactions'
 base_url_relationship = 'https://' + base_url_server + '.tagdynamics.net/v1/app/relationship'
+base_url_relationship_query_object = 'https://' + base_url_server + '.tagdynamics.net/v1/app/relationship/query/Object'
 base_url_metadata_objects = 'https://' + base_url_server + '.tagdynamics.net/v1/app/metadata/Object'
 base_url_metadata_objects_query = 'https://' + base_url_server + '.tagdynamics.net/v1/app/metadata/query/Object'
 base_url_metadata_mapper_encode = 'https://' + base_url_server + '.tagdynamics.net/v1/public/metadata/mapper/encode/'
@@ -73,9 +75,67 @@ def check_for_object(urn_to_check_for):
             logging.info("Object Exists!!")
             logging.info(response.json())
             return response.json()
-            #return response.json()#['urn']
     except KeyError:
-        logging.info("Instagram user Object does not yet exist in SnapBundle")
+        return False
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def get_object(urn_to_check_for):
+    url = base_url_objects + '/' + urn_to_check_for
+    logging.info("Looking for object at URL: " + str(url))
+    response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
+    logging.info(str(response))
+    try:
+        if response.json()['objectUrn'] != urn_to_check_for:
+            logging.info("ObjectURN not found!")
+            return False
+        else:
+            logging.info("Object Exists!!")
+            logging.info(response.json())
+            return response.json()
+    except KeyError:
+        return False
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def get_object_metadata(urn_to_check_for):
+    url = base_url_metadata_objects_query + '/' + urn_to_check_for
+    logging.info("Looking for object metadata at URL: " + str(url))
+    response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
+    logging.info(str(response))
+    try:
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return False
+    except KeyError:
+        return False
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def get_object_metadata_dictionary(urn_to_check_for):
+    url = base_url_metadata_objects_query + '/' + urn_to_check_for
+    logging.info("Looking for object metadata at URL: " + str(url))
+    response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
+    logging.info(str(response))
+    try:
+        if response.status_code == 200:
+            temp_dict = {}
+            for current in response.json():
+                value = str(get_raw_value_decoded(current['rawValue'], str(current['dataType'])))
+                # Check to see if it's really a dictionary stored as a string
+                # If so, clear off all the unicode u'' crap from the beginning
+                if (value[0] == '{') and (value[-1] == '}'):
+                    value = ast.literal_eval(value)
+                    non_unicode_value = {}
+                    for key in value.keys():
+                        non_unicode_value[str(key)] = str(value[key])
+                    value = non_unicode_value
+                temp_dict[str(current['key'])] = value
+            return temp_dict
+        else:
+            return False
+    except KeyError:
         return False
 
 
@@ -156,7 +216,6 @@ def add_update_metadata(reference_type, referenceURN, dataType, key, value, moni
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def check_add_update_relationship(entityReferenceType, referenceURN, relationshipType, relatedEntityReferenceType, relatedReferenceURN):
-
     # First check to see if it exists before add/update
     url = base_url_relationship + '/' + entityReferenceType + '/' + referenceURN + '/' + relatedEntityReferenceType + '/' + relatedReferenceURN + '/' + relationshipType
     logging.debug("Sending to URL: " + str(url))
@@ -191,6 +250,37 @@ def check_add_update_relationship(entityReferenceType, referenceURN, relationshi
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
+def get_object_relationship_urn_list(urn_to_check_for, relationship):
+    url = base_url_relationship_query_object + '/' + urn_to_check_for + '?relationshipType=' + relationship
+    logging.info("Looking for object relationships at URL: " + str(url))
+    response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
+    logging.info(str(response))
+    try:
+        if response.status_code == 200:
+            temp_dict = {}
+            for current in response.json():
+                value = str(current['relatedReferenceURN'])
+                temp_dict[str(value)] = str(current['urn'])
+            return temp_dict
+        else:
+            return False
+    except KeyError:
+        return False
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def delete_relationship(urn_to_delete):
+    url = base_url_relationship + '/' + urn_to_delete
+    logging.info("Looking to delete relationship at URL: " + str(url))
+    response = requests.delete(url, auth=(snapbundle_username, snapbundle_password))
+    logging.info("Response for url (" + str(url) + "): " + str(response.status_code))
+    if response.status_code == 204:
+        return True
+    else:
+        return False
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
 def add_file_from_url(reference_type, referenceURN, mimeType, source_url):
     temp_data = {"entityReferenceType": reference_type,
                  "referenceUrn": referenceURN,
@@ -199,7 +289,6 @@ def add_file_from_url(reference_type, referenceURN, mimeType, source_url):
     url = base_url_files
     headers = {'content-type': 'application/json'}
     payload = json.dumps(temp_data)
-    #payload = temp_data
     print payload
     logging.debug("Sending to URL: " + str(url))
     logging.debug("Submitting Payload: " + str(payload))

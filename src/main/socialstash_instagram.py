@@ -32,6 +32,11 @@ instagram_max_search_depth = 2
 # Need this one to save us calls to the instagram API (limited to 5000 per hour)
 global_instagram_user_dictionary = {}
 global_count_saved_api_calls = 0
+global_counts_dictionary = {}
+global_counts_dictionary['api_calls'] = 0
+global_counts_dictionary['snapbundle_calls'] = 0
+global_counts_dictionary['cache_calls'] = 0
+global_counts_dictionary['snapbundle_deletes'] = 0
 
 class User(object):
     '''A class representing the Instagram User structure used by SocialStash.
@@ -99,6 +104,8 @@ class User(object):
         self._instagram_user_sb_object_urn = snapbundle_instagram_fxns.snapbundle_base_urn_instagram_user + self._username
         logging.info("Initial user (" + self._username + ") search depth: " + str(self.current_search_depth))
         global global_instagram_user_dictionary
+        global global_counts_dictionary
+        global_counts_dictionary['api_calls'] += 7
         if self._username not in global_instagram_user_dictionary:
             global_instagram_user_dictionary[self._username] = self
 
@@ -106,7 +113,8 @@ class User(object):
     def set_user_data_from_cached_or_snapbundle_data(self):
         global global_instagram_user_dictionary
         global global_count_saved_api_calls
-        global_count_saved_api_calls += 7
+        global global_counts_dictionary
+        global_count_saved_api_calls += 6
         if self._username in global_instagram_user_dictionary.keys():
             logging.info("Setting SocialStash Instagram User info from Cached Data for user " + self.username)
             cache_data = global_instagram_user_dictionary[self._username]
@@ -116,6 +124,7 @@ class User(object):
             self.bio = cache_data.bio
             self.website = cache_data.website
             self.counts = cache_data.counts
+            global_counts_dictionary['cache_calls'] += 6
             return
 
         logging.info("Setting SocialStash Instagram User info from SnapBundle for user " + self.username)
@@ -127,16 +136,21 @@ class User(object):
         self.bio = metadata['bio']
         self.website = metadata['website']
         self.counts = metadata['counts']
+        global_counts_dictionary['snapbundle_calls'] += 6
         if self._username not in global_instagram_user_dictionary:
             global_instagram_user_dictionary[self._username] = self
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
     def check_for_user_in_snapbundle(self):
+        global global_counts_dictionary
+        global_counts_dictionary['snapbundle_calls'] += 1
         logging.info("Checking SnapBundle for URN: " + self._instagram_user_sb_object_urn)
         return snapbundle_instagram_fxns.check_for_object(self._instagram_user_sb_object_urn)
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
     def get_user_data_in_snapbundle(self):
+        global global_counts_dictionary
+        global_counts_dictionary['snapbundle_calls'] += 1
         logging.info("Getting SnapBundle data for URN: " + self._instagram_user_sb_object_urn)
         object_data = snapbundle_instagram_fxns.get_object(self._instagram_user_sb_object_urn)
         object_metadata_dict = snapbundle_instagram_fxns.get_object_metadata_dictionary(self._instagram_user_sb_object_urn)
@@ -155,21 +169,33 @@ class User(object):
         return snapbundle_instagram_fxns.check_update_user_profile_pic(self._username, self._profile_picture)
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-    def get_follow_list(self, relationship, use_cached_users=True):
+    def get_follow_list_snapbundle(self, relationship):
+        global global_counts_dictionary
+        global_counts_dictionary['snapbundle_calls'] += 1
+        user_dictionary = snapbundle_instagram_fxns.get_object_relationships(self._instagram_user_sb_object_urn,
+                                                                             relationship)
+        print relationship + " " + str(len(user_dictionary)) + " people (SnapBundle)"
+        return user_dictionary
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+    def get_follow_list_instagram(self, relationship, use_cached_users=True):
         following_string = 'FOLLOWING'
         followed_by_string = 'FOLLOWED_BY'
         global global_instagram_user_dictionary
         global global_count_saved_api_calls
+        global global_counts_dictionary
         # We might already have this information cached in our current Python session, and if told to, let's use it
         if use_cached_users:
             if ((relationship.upper() == followed_by_string) and
                     (global_instagram_user_dictionary[self.username].get_followedby_dict() is not None)):
                 global_count_saved_api_calls += 1
+                global_counts_dictionary['cache_calls'] += 1
                 print "Using cached copy of Followed By for " + self.username
                 return global_instagram_user_dictionary[self.username].get_followedby_dict()
             elif ((relationship.upper() == following_string) and
                     (global_instagram_user_dictionary[self.username].get_following_dict() is not None)):
                 global_count_saved_api_calls += 1
+                global_counts_dictionary['cache_calls'] += 1
                 print "Using cached copy of Following for " + self.username
                 return global_instagram_user_dictionary[self.username].get_following_dict()
 
@@ -198,7 +224,7 @@ class User(object):
                 # There are more we need to get, so here's the next cursor to start at
                 next_cursor = str(urlparse.parse_qs(urlparse.urlparse(next_url).query)['cursor'][0])
 
-        print relationship + " " + str(len(user_dictionary)) + " people"
+        print relationship + " " + str(len(user_dictionary)) + " people (Instagram)"
 
         # Set or add the info to the global dictionary
         if relationship.upper() == followed_by_string:
@@ -208,6 +234,7 @@ class User(object):
             self.set_following_dict(user_dictionary)
             global_instagram_user_dictionary[self.username] = self
 
+        global_counts_dictionary['api_calls'] += 1
         return user_dictionary
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
@@ -220,16 +247,24 @@ class User(object):
 
         following_string = 'FOLLOWING'
         followed_by_string = 'FOLLOWED_BY'
-        user_dictionary = self.get_follow_list(relationship, use_cached_users)
+        instagram_follow_user_dictionary = self.get_follow_list_instagram(relationship, use_cached_users)
+        snapbundle_follow_user_dictoinary = self.get_follow_list_snapbundle(relationship)
+
+        print str(snapbundle_follow_user_dictoinary)
 
         # Now start going through all the users and checking to see if they exist
         # We will do this recursively, using the search_follow_depth variable
-        for key in user_dictionary:
-            current = user_dictionary[key]
+        for key in instagram_follow_user_dictionary:
+            current = instagram_follow_user_dictionary[key]
             if relationship.upper() == followed_by_string:
                 print "Followed by: " + str(current.username)
             elif relationship.upper() == following_string:
                 print "Following: " + str(current.username)
+
+            # We need to keep track of any users that are in SnapBundle and not Instagram, so if we see him in
+            # Instagram list we can make note of it so we don't later delete that relationship from SnapBundle
+            if current.username in snapbundle_follow_user_dictoinary.keys():
+                snapbundle_follow_user_dictoinary[current.username] = 'VALID'
 
             try:
                 temp_social_stash_i_user = User(access_token=self.access_token,
@@ -324,6 +359,14 @@ class User(object):
 #            except KeyError:
 #                print "Unable to pull data for user " + current.username + ".  Weird KeyError"
 #                logging.info("Unable to pull data for user " + current.username + ".  Weird KeyError")
+
+        # Time to go through our snapbundle relationships dictionary to see if there are any we need to delete
+        global global_counts_dictionary
+        for current_check_delete in snapbundle_follow_user_dictoinary.keys():
+            if snapbundle_follow_user_dictoinary[current_check_delete] != 'VALID':
+                logging.info("Deleting SnapBundle relationship: " + self.username + ' ' + relationship + ' ' + current_check_delete)
+                snapbundle_instagram_fxns.delete_relationship(snapbundle_follow_user_dictoinary[current_check_delete])
+                global_counts_dictionary['snapbundle_deletes'] += 1
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
     def check_recent_media_exists_in_snapbundle(self, update_if_found=False):
@@ -531,6 +574,12 @@ class User(object):
     def get_global_count_saved_api_calls():
         global global_count_saved_api_calls
         return global_count_saved_api_calls
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+    @staticmethod
+    def get_global_counts_dict():
+        global global_counts_dictionary
+        return global_counts_dictionary
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
     def test_one_thing(self):
