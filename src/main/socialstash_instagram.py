@@ -396,18 +396,12 @@ class User(object):
 
         # Time to go through our snapbundle relationships dictionary to see if there are any we need to delete
         global global_counts_dictionary
-        global global_relationship_node_list
         for current_check_delete in snapbundle_follow_user_dictoinary.keys():
             if snapbundle_follow_user_dictoinary[current_check_delete] != 'VALID':
                 # This relationship needs to be deleted in SnapBundle
                 logging.info("Deleting SnapBundle relationship: " + self.username + ' ' + relationship + ' ' + current_check_delete)
                 snapbundle_instagram_fxns.delete_relationship(snapbundle_follow_user_dictoinary[current_check_delete])
                 global_counts_dictionary['snapbundle_deletes'] += 1
-            else:
-                # It's a valid relationship, so let's add it to our network graph!
-                temp_set = (str(self.username), current_check_delete)
-                if temp_set not in global_relationship_node_list:
-                        global_relationship_node_list.append(temp_set)
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
     def print_relationship_node_list(self, manual_pull_from_snapbundle=False, relationship=None, depth=1):
