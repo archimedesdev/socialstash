@@ -24,17 +24,15 @@ snapbundle_base_instagram_filter_name = "instagram:filters:"
 # == End Snapbundle Variables ==
 
 # == Start Snapbundle URLs ==
-base_url_server = 'snapbundle'
-#base_url_server = 'stage'
-base_url_objects = 'https://' + base_url_server + '.tagdynamics.net/v1/app/objects'
-base_url_object_interaction = 'https://' + base_url_server + '.tagdynamics.net/v1/app/interaction'
-base_url_metadata_objects = 'https://' + base_url_server + '.tagdynamics.net/v1/app/metadata/Object'
-base_url_metadata_objects_query = 'https://' + base_url_server + '.tagdynamics.net/v1/app/metadata/query/Object'
-base_url_metadata_mapper_encode = 'https://' + base_url_server + '.tagdynamics.net/v1/public/metadata/mapper/encode/'
-base_url_metadata_mapper_decode = 'https://' + base_url_server + '.tagdynamics.net/v1/public/metadata/mapper/decode/'
-base_url_devicess = 'https://' + base_url_server + '.tagdynamics.net/v1/admin/devices'
-base_url_files_metadata_query = 'https://' + base_url_server + '.tagdynamics.net/v1/app/files/query/Metadata/'
-base_url_files = 'https://' + base_url_server + '.tagdynamics.net/v1/app/files'
+base_url_objects = snapbundle_helpers.base_url_objects
+base_url_object_interaction = snapbundle_helpers.base_url_object_interaction
+base_url_metadata_objects = snapbundle_helpers.base_url_metadata_objects
+base_url_metadata_objects_query = snapbundle_helpers.base_url_metadata_objects_query
+base_url_metadata_mapper_encode = snapbundle_helpers.base_url_metadata_mapper_encode
+base_url_metadata_mapper_decode = snapbundle_helpers.base_url_metadata_mapper_decode
+base_url_devicess = snapbundle_helpers.base_url_devicess
+base_url_files_metadata_query = snapbundle_helpers.base_url_files_metadata_query
+base_url_files = snapbundle_helpers.base_url_files
 # == End Snapbundle URLs ==
 
 

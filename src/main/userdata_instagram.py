@@ -54,6 +54,7 @@ print str(instagram_user.AsDict())
 
 print "Checking for SocialStash Instagram User in SnapBundle"
 response = instagram_user.check_for_user_in_snapbundle()
+
 if not response:
     print "User not found!  Creating New User"
     print "User URN: " + str(instagram_user.create_update_user_in_snapbundle(new_user=True))

@@ -26,18 +26,19 @@ snapbundle_password = config.get('SnapbundleCredentials', 'snapbundle_password')
 snapbundle_user_object = config.get('SnapbundleCredentials', 'snapbundle_user_object')
 base_url_server = 'snapbundle'
 #base_url_server = 'stage'
-base_url_objects = 'https://' + base_url_server + '.tagdynamics.net/v1/app/objects'
-base_url_object_interaction = 'https://' + base_url_server + '.tagdynamics.net/v1/app/interactions'
-base_url_relationship = 'https://' + base_url_server + '.tagdynamics.net/v1/app/relationship'
-base_url_relationship_query_object = 'https://' + base_url_server + '.tagdynamics.net/v1/app/relationship/query/Object'
-base_url_metadata_objects = 'https://' + base_url_server + '.tagdynamics.net/v1/app/metadata/Object'
-base_url_metadata_objects_query = 'https://' + base_url_server + '.tagdynamics.net/v1/app/metadata/query/Object'
-base_url_metadata_mapper_encode = 'https://' + base_url_server + '.tagdynamics.net/v1/public/metadata/mapper/encode/'
-base_url_metadata_mapper_decode = 'https://' + base_url_server + '.tagdynamics.net/v1/public/metadata/mapper/decode/'
-base_url_devicess = 'https://' + base_url_server + '.tagdynamics.net/v1/admin/devices'
-base_url_files_metadata_query = 'https://' + base_url_server + '.tagdynamics.net/v1/app/files/query/Metadata/'
-base_url_files = 'https://' + base_url_server + '.tagdynamics.net/v1/app/files'
-base_url_tags = 'https://' + base_url_server + '.tagdynamics.net/v1/app/tags'
+url_server = 'http://' + base_url_server + '.tagdynamics.net:8080'
+base_url_objects = url_server + '/v1/app/objects'
+base_url_object_interaction = url_server + '/v1/app/interactions'
+base_url_relationship = url_server + '/v1/app/relationship'
+base_url_relationship_query_object = url_server + '/v1/app/relationship/query/Object'
+base_url_metadata_objects = url_server + '/v1/app/metadata/Object'
+base_url_metadata_objects_query = url_server + '/v1/app/metadata/query/Object'
+base_url_metadata_mapper_encode = url_server + '/v1/public/metadata/mapper/encode/'
+base_url_metadata_mapper_decode = url_server + '/v1/public/metadata/mapper/decode/'
+base_url_devicess = url_server + '/v1/admin/devices'
+base_url_files_metadata_query = url_server + '/v1/app/files/query/Metadata/'
+base_url_files = url_server + '/v1/app/files'
+base_url_tags = url_server + '/v1/app/tags'
 # == End Snapbundle Variables ==
 
 metadataDataTypes = {'STRING': 'StringType',
@@ -68,7 +69,8 @@ def check_for_object(urn_to_check_for):
     response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
     logging.info(str(response))
     try:
-        if response.json()['objectUrn'] != urn_to_check_for:
+        print
+        if (response.status_code == 404) or (response.json()['objectUrn'] != urn_to_check_for):
             logging.info("ObjectURN not found!")
             return False
         else:
@@ -86,7 +88,7 @@ def get_object(urn_to_check_for):
     response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
     logging.info(str(response))
     try:
-        if response.json()['objectUrn'] != urn_to_check_for:
+        if (response.status_code == 404) or (response.json()['objectUrn'] != urn_to_check_for):
             logging.info("ObjectURN not found!")
             return False
         else:
@@ -336,7 +338,7 @@ def count_objects():
 ## ----------------------------------- END ------------------------------------------------------------------------
 ## ----------------------------------- END ------------------------------------------------------------------------
 
-#scount_objects()
+#count_objects()
 
 #raw = get_raw_value_encoded("True", "Boolean")
 #print raw
