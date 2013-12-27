@@ -72,6 +72,7 @@ instagram_user.print_relationship_node_list(manual_pull_from_snapbundle=True, re
 instagram_user.print_relationship_node_list(manual_pull_from_snapbundle=True, relationship='FOLLOWED_BY', depth=1)
 exit()
 
+
 #################################################################################################################
 print "Saved API Calls: " + str(instagram_user.get_global_count_saved_api_calls())
 print "checking for users I'm following"
