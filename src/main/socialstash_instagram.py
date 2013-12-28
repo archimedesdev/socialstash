@@ -133,8 +133,7 @@ class User(object):
 
         logging.info("Setting SocialStash Instagram User info from SnapBundle for user " + self.username)
         data = self.get_user_data_in_snapbundle()
-        print str(data)
-        exit()
+        #print str(data)
         metadata = data['metadata']
         self.id = metadata['id']
         self.full_name = metadata['full_name']
@@ -349,6 +348,7 @@ class User(object):
                                                                            temp_social_stash_i_user.get_instagrame_user_sb_object_urn())
                         snapbundle_instagram_fxns.check_add_update_followed_by(temp_social_stash_i_user.get_instagrame_user_sb_object_urn(),
                                                                                self.get_instagrame_user_sb_object_urn())
+
 
                 # Check to see if we need to keep going down this follower/following thing recursively
                 if go_to_max_depth and ((self.current_search_depth - 1) > 0):

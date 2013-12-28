@@ -30,7 +30,7 @@ url_server = 'http://' + base_url_server + '.tagdynamics.net:8080'
 base_url_objects = url_server + '/objects'
 base_url_object_interaction = url_server + '/interactions'
 base_url_relationship = url_server + '/relationships'
-base_url_relationship_query_object = url_server + '/relationships/query/Object'
+base_url_relationship_query_object = url_server + '/relationships/Object'
 base_url_metadata_objects = url_server + '/metadata/Object'
 base_url_metadata_objects_query = url_server + '/metadata/Object'
 base_url_metadata_mapper_encode = url_server + '/metadata/mapper/encode/'
@@ -245,7 +245,7 @@ def check_add_update_relationship(entityReferenceType, referenceURN, relationshi
     logging.debug("Sending to URL: " + str(url))
     response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
     logging.info("Response: " + str(response.status_code))
-    if response.status_code == 404:
+    if response.status_code == 204:
         # Relationship doesn't exist, do it
         temp_meta_data = dict(
             entityReferenceType=entityReferenceType,
@@ -275,7 +275,7 @@ def check_add_update_relationship(entityReferenceType, referenceURN, relationshi
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def get_object_relationship_urn_list(urn_to_check_for, relationship):
-    url = base_url_relationship_query_object + '/' + urn_to_check_for + '?relationshipType=' + relationship
+    url = base_url_relationship_query_object + '/' + urn_to_check_for + '/' + relationship
     logging.info("Looking for object relationships at URL: " + str(url))
     response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
     logging.info(str(response))
