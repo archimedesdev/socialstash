@@ -27,18 +27,18 @@ snapbundle_user_object = config.get('SnapbundleCredentials', 'snapbundle_user_ob
 base_url_server = 'snapbundle'
 #base_url_server = 'stage'
 url_server = 'http://' + base_url_server + '.tagdynamics.net:8080'
-base_url_objects = url_server + '/v1/app/objects'
-base_url_object_interaction = url_server + '/v1/app/interactions'
-base_url_relationship = url_server + '/v1/app/relationship'
-base_url_relationship_query_object = url_server + '/v1/app/relationship/query/Object'
-base_url_metadata_objects = url_server + '/v1/app/metadata/Object'
-base_url_metadata_objects_query = url_server + '/v1/app/metadata/query/Object'
-base_url_metadata_mapper_encode = url_server + '/v1/public/metadata/mapper/encode/'
-base_url_metadata_mapper_decode = url_server + '/v1/public/metadata/mapper/decode/'
-base_url_devicess = url_server + '/v1/admin/devices'
-base_url_files_metadata_query = url_server + '/v1/app/files/query/Metadata/'
-base_url_files = url_server + '/v1/app/files'
-base_url_tags = url_server + '/v1/app/tags'
+base_url_objects = url_server + '/objects'
+base_url_object_interaction = url_server + '/interactions'
+base_url_relationship = url_server + '/relationship'
+base_url_relationship_query_object = url_server + '/relationship/query/Object'
+base_url_metadata_objects = url_server + '/metadata/Object'
+base_url_metadata_objects_query = url_server + '/metadata/Object'
+base_url_metadata_mapper_encode = url_server + '/metadata/mapper/encode/'
+base_url_metadata_mapper_decode = url_server + '/metadata/mapper/decode/'
+base_url_devicess = url_server + '/devices'
+base_url_files_metadata_query = url_server + '/files/query/Metadata/'
+base_url_files = url_server + '/files'
+base_url_tags = url_server + '/tags'
 # == End Snapbundle Variables ==
 
 metadataDataTypes = {'STRING': 'StringType',
@@ -69,7 +69,7 @@ def check_for_object(urn_to_check_for):
     response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
     logging.info(str(response))
     try:
-        print
+        print response
         if (response.status_code == 404) or (response.json()['objectUrn'] != urn_to_check_for):
             logging.info("ObjectURN not found!")
             return False
@@ -79,6 +79,29 @@ def check_for_object(urn_to_check_for):
             return response.json()
     except KeyError:
         return False
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def add_update_object(name, objectUrn, objectType):
+    json_info = {"name": name,
+                 "active": "true",
+                 "objectUrn": objectUrn,
+                 "objectType": objectType
+                 }
+    url = base_url_objects
+    headers = {'content-type': 'application/json'}
+    payload = json.dumps(json_info)
+    logging.info("Submitting Payload: " + str(payload))
+    response = requests.put(url, data=payload, headers=headers, auth=(snapbundle_username, snapbundle_password))
+    logging.info("Response (for objectURN " + objectUrn + "): " + str(response.status_code) + " <--> " + str(response.json()))
+    if response.status_code == 201:
+        # Created new user
+        logging.info("Created new object")
+    elif response.status_code == 200:
+        # Updating user
+        logging.info("Object existed, updated")
+    urn = response.json()['message']
+    return urn
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
@@ -185,8 +208,10 @@ def add_update_metadata(reference_type, referenceURN, dataType, key, value, moni
     # Moniker check test hopefully temp
     if moniker is None:
         # First need to see if this object even has any metadata, if not, don't want to cause a 500 response
-        url = base_url_metadata_objects_query + '/' + referenceURN + '?view=full'
+        url = base_url_metadata_objects_query + '/' + referenceURN + '?view=Full'
         response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
+        print url
+        print response
         for list_item in response.json():
             if list_item['key'] == 'moniker':
                 moniker = list_item['rawValue']

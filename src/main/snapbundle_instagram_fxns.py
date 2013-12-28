@@ -24,15 +24,10 @@ snapbundle_base_instagram_filter_name = "instagram:filters:"
 # == End Snapbundle Variables ==
 
 # == Start Snapbundle URLs ==
-base_url_objects = snapbundle_helpers.base_url_objects
 base_url_object_interaction = snapbundle_helpers.base_url_object_interaction
 base_url_metadata_objects = snapbundle_helpers.base_url_metadata_objects
 base_url_metadata_objects_query = snapbundle_helpers.base_url_metadata_objects_query
-base_url_metadata_mapper_encode = snapbundle_helpers.base_url_metadata_mapper_encode
-base_url_metadata_mapper_decode = snapbundle_helpers.base_url_metadata_mapper_decode
 base_url_devicess = snapbundle_helpers.base_url_devicess
-base_url_files_metadata_query = snapbundle_helpers.base_url_files_metadata_query
-base_url_files = snapbundle_helpers.base_url_files
 # == End Snapbundle URLs ==
 
 
@@ -74,10 +69,14 @@ def get_object_metadata_dictionary(urn_to_check_for):
 ## --------------------------------------------------------------------------------------------------------------
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def check_update_user_profile_pic(username, current_pic_url):
-    url = base_url_metadata_objects_query + '/' + snapbundle_base_urn_instagram_user + username + "/profile_picture?view=Full"
+    #url = base_url_metadata_objects_query + '/' + snapbundle_base_urn_instagram_user + username + "/profile_picture?view=Full"
+    url = base_url_metadata_objects_query + '/' + snapbundle_base_urn_instagram_user + username + "?view=Full"
     logging.info("Looking for object profile pic metadata at URL: " + str(url))
     response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
     logging.info(str(response.json()))
+
+    print str(response.json()['profile_picture  '])
+    exit()
 
     try:
         if response.status_code == 200:
@@ -162,25 +161,7 @@ def set_filter_tag(referenceURN, filter_name):
 ## --------------------------------------------------------------------------------------------------------------
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def add_update_new_instagram_user_object(instagram_handle, instagram_user_sb_object_urn):
-    json_info = {"name": instagram_handle,
-                 "active": "true",
-                 "objectUrn": instagram_user_sb_object_urn,
-                 "objectType": "Person"
-                 }
-    url = base_url_objects
-    headers = {'content-type': 'application/json'}
-    payload = json.dumps(json_info)
-    logging.info("Submitting Payload: " + str(payload))
-    response = requests.put(url, data=payload, headers=headers, auth=(snapbundle_username, snapbundle_password))
-    logging.info("Response (for objectURN " + instagram_user_sb_object_urn + "): " + str(response.status_code) + " <--> " + str(response.json()))
-    if response.status_code == 201:
-        # Created new user
-        logging.info("Created new user")
-    elif response.status_code == 200:
-        # Updating user
-        logging.info("User existed, updated")
-    urn = response.json()['message']
-    return urn
+    return snapbundle_helpers.add_update_object(instagram_handle, instagram_user_sb_object_urn, "Person")
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
