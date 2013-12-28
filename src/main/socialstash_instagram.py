@@ -133,6 +133,8 @@ class User(object):
 
         logging.info("Setting SocialStash Instagram User info from SnapBundle for user " + self.username)
         data = self.get_user_data_in_snapbundle()
+        print str(data)
+        exit()
         metadata = data['metadata']
         self.id = metadata['id']
         self.full_name = metadata['full_name']

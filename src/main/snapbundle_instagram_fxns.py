@@ -69,15 +69,10 @@ def get_object_metadata_dictionary(urn_to_check_for):
 ## --------------------------------------------------------------------------------------------------------------
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def check_update_user_profile_pic(username, current_pic_url):
-    #url = base_url_metadata_objects_query + '/' + snapbundle_base_urn_instagram_user + username + "/profile_picture?view=Full"
-    url = base_url_metadata_objects_query + '/' + snapbundle_base_urn_instagram_user + username + "?view=Full"
+    url = base_url_metadata_objects_query + '/' + snapbundle_base_urn_instagram_user + username + "?key=profile_picture&view=Full"
     logging.info("Looking for object profile pic metadata at URL: " + str(url))
     response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
     logging.info(str(response.json()))
-
-    print str(response.json()['profile_picture  '])
-    exit()
-
     try:
         if response.status_code == 200:
             logging.info("Profile Pic Metadata Exists for User " + username)
@@ -107,11 +102,15 @@ def check_update_user_profile_pic(username, current_pic_url):
 
             if need_to_upload_url:
                 file_urn = snapbundle_helpers.add_file_from_url_jpg("Metadata", existing_stored_urn, current_pic_url)
-                logging.info("File uploaded, urn: " + file_urn)
-                reference_urn = snapbundle_base_urn_instagram_user + username
-                logging.info("Updating profile pic metadata to include latest file urn")
-                snapbundle_helpers.add_update_metadata("Object", reference_urn, "String", "profile_picture", current_pic_url, file_urn)
-                return file_urn
+                if not file_urn:
+                    logging.info("File could not be uploaded for some reason.")
+                    return 'n/a'
+                else:
+                    logging.info("File uploaded, urn: " + file_urn)
+                    reference_urn = snapbundle_base_urn_instagram_user + username
+                    logging.info("Updating profile pic metadata to include latest file urn")
+                    snapbundle_helpers.add_update_metadata("Object", reference_urn, "String", "profile_picture", current_pic_url, file_urn)
+                    return file_urn
         else:
             return False
     except KeyError:

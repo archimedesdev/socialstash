@@ -68,22 +68,22 @@ else:
 #print str(instagram_user.get_user_data_in_snapbundle())
 
 #################################################################################################################
-instagram_user.print_relationship_node_list(manual_pull_from_snapbundle=True, relationship='FOLLOWING', depth=1)
-instagram_user.print_relationship_node_list(manual_pull_from_snapbundle=True, relationship='FOLLOWED_BY', depth=1)
-exit()
+#instagram_user.print_relationship_node_list(manual_pull_from_snapbundle=True, relationship='FOLLOWING', depth=1)
+#instagram_user.print_relationship_node_list(manual_pull_from_snapbundle=True, relationship='FOLLOWED_BY', depth=1)
 
 
 #################################################################################################################
 print "Saved API Calls: " + str(instagram_user.get_global_count_saved_api_calls())
 print "checking for users I'm following"
 instagram_user.check_relationship_users_exist_in_snapbundle(relationship='FOLLOWING',
-                                                            update_user_profile_if_found=False,
+                                                            update_user_profile_if_found=True,
                                                             update_user_following_if_found=True,
                                                             update_user_followedby_if_found=True,
                                                             go_to_max_depth=False)
 
 print "Saved API Calls: " + str(instagram_user.get_global_count_saved_api_calls())
 print "Calls Dictionary: " + str(instagram_user.get_global_counts_dict())
+exit()
 
 
 #################################################################################################################

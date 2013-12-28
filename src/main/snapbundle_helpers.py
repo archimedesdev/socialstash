@@ -29,8 +29,8 @@ base_url_server = 'snapbundle'
 url_server = 'http://' + base_url_server + '.tagdynamics.net:8080'
 base_url_objects = url_server + '/objects'
 base_url_object_interaction = url_server + '/interactions'
-base_url_relationship = url_server + '/relationship'
-base_url_relationship_query_object = url_server + '/relationship/query/Object'
+base_url_relationship = url_server + '/relationships'
+base_url_relationship_query_object = url_server + '/relationships/query/Object'
 base_url_metadata_objects = url_server + '/metadata/Object'
 base_url_metadata_objects_query = url_server + '/metadata/Object'
 base_url_metadata_mapper_encode = url_server + '/metadata/mapper/encode/'
@@ -64,12 +64,11 @@ metadataDataTypes = {'STRING': 'StringType',
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def check_for_object(urn_to_check_for):
-    url = base_url_objects + '/' + urn_to_check_for
+    url = base_url_objects + '/object/' + urn_to_check_for
     logging.info("Looking for object at URL: " + str(url))
     response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
     logging.info(str(response))
     try:
-        print response
         if (response.status_code == 404) or (response.json()['objectUrn'] != urn_to_check_for):
             logging.info("ObjectURN not found!")
             return False
@@ -210,8 +209,6 @@ def add_update_metadata(reference_type, referenceURN, dataType, key, value, moni
         # First need to see if this object even has any metadata, if not, don't want to cause a 500 response
         url = base_url_metadata_objects_query + '/' + referenceURN + '?view=Full'
         response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
-        print url
-        print response
         for list_item in response.json():
             if list_item['key'] == 'moniker':
                 moniker = list_item['rawValue']
@@ -316,11 +313,11 @@ def add_file_from_url(reference_type, referenceURN, mimeType, source_url):
     url = base_url_files
     headers = {'content-type': 'application/json'}
     payload = json.dumps(temp_data)
-    print payload
+    #print payload
     logging.debug("Sending to URL: " + str(url))
     logging.debug("Submitting Payload: " + str(payload))
     response = requests.put(url, data=payload, headers=headers, auth=(snapbundle_username, snapbundle_password))
-    print response
+    #print response
     logging.info("Response for url (" + str(url) + "): " + str(response.status_code) + " <--> " + str(response.json()))
     if response.status_code in (200, 201):
         return response.json()['message']
