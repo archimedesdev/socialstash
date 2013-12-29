@@ -11,7 +11,7 @@ import snapbundle_instagram_fxns
 import traceback
 import networkx as nx
 import matplotlib.pyplot as plt
-
+import pylab
 
 logging.debug('Starting: ' + __name__)
 
@@ -35,6 +35,7 @@ instagram_max_search_depth = 2
 # Need this one to save us calls to the instagram API (limited to 5000 per hour)
 global_instagram_user_dictionary = {}
 global_count_saved_api_calls = 0
+global_relationship_edge_list = []
 global_relationship_node_list = []
 global_counts_dictionary = {}
 global_counts_dictionary['api_calls'] = 0
@@ -178,6 +179,7 @@ class User(object):
         following_string = 'FOLLOWING'
         followed_by_string = 'FOLLOWED_BY'
         global global_counts_dictionary
+        global global_relationship_edge_list
         global global_relationship_node_list
         global_counts_dictionary['snapbundle_calls'] += 1
         if not user:
@@ -187,21 +189,33 @@ class User(object):
             user_dictionary = snapbundle_instagram_fxns.get_object_relationships(self._instagram_user_sb_object_urn,
                                                                                  relationship)
         print relationship + " " + str(len(user_dictionary)) + " pairs (SnapBundle)"
+
+        # Add the current node name into the node list if it doesn't exist
+        if user not in global_relationship_node_list:
+            global_relationship_node_list.append(user)
+
+
         for current_name in user_dictionary.keys():
             if relationship.upper() == followed_by_string:
                 temp_set = (current_name, user)
             elif relationship.upper() == following_string:
                 temp_set = (user, current_name)
 
-            if temp_set not in global_relationship_node_list:
-                global_relationship_node_list.append(temp_set)
+            # Add the node into the node list if it doesn't exist
+            if current_name not in global_relationship_node_list:
+                global_relationship_node_list.append(current_name)
+
+            # Add the edge into the edge list if it doesn't exist
+            if temp_set not in global_relationship_edge_list:
+                global_relationship_edge_list.append(temp_set)
+
             if (depth - 1) > 0:
                 sub_sb_object_urn = snapbundle_instagram_fxns.get_urn_from_username(current_name)
                 subuser_dictionary = snapbundle_instagram_fxns.get_object_relationships(sub_sb_object_urn, relationship)
                 if subuser_dictionary != {}:
                     self.update_relationship_node_list_snapbundle(relationship, depth-1, current_name, subuser_dictionary)
 
-        print "Global Relationship Node List length: " + str(len(global_relationship_node_list))
+        print "Global Relationship Node List length: " + str(len(global_relationship_edge_list))
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
     def get_follow_list_snapbundle(self, relationship):
@@ -436,6 +450,49 @@ class User(object):
         plt.show()
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
+    def output_relationship_node_gml(self, filename='output.gml', depth=1):
+        global global_relationship_node_list
+        global global_relationship_edge_list
+        self.update_relationship_node_list_snapbundle('FOLLOWING', depth)
+        self.update_relationship_node_list_snapbundle('FOLLOWED_BY', depth)
+
+        tab = '\t'
+        linesep = '\n'
+        f = open(filename, 'w')
+        f.write("graph [" + linesep)
+        f.write(tab + 'comment "This is a sample graph"' + linesep)
+        f.write(tab + 'directed 1' + linesep)
+        f.write(tab + 'id 42' + linesep)
+        f.write(tab + 'label "Hello, I am a sample graph"' + linesep)
+
+        for current_node in global_relationship_node_list:
+            f.write(tab + "node [" + linesep)
+            f.write(tab + tab + "id " + str(global_relationship_node_list.index(current_node)) + linesep)
+            f.write(tab + tab + 'label "' + current_node + '"' + linesep)
+            f.write(tab + ']' + linesep)
+
+        for current_edge in global_relationship_edge_list:
+            f.write(tab + "edge [" + linesep)
+            f.write(tab + tab + "source " + str(global_relationship_node_list.index(current_edge[0])) + linesep)
+            f.write(tab + tab + "target " + str(global_relationship_node_list.index(current_edge[1])) + linesep)
+            f.write(tab + tab + 'label "' + current_edge[0] + ' follows ' + current_edge[1] + '"' + linesep)
+            f.write(tab + ']' + linesep)
+
+        f.write("]" + linesep)
+        f.close()
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+    @staticmethod
+    def graph_relationship_gml(filename='output.gml'):
+        # read the graph (gml format)
+        G = nx.read_gml(filename, relabel=True)
+
+        # drawing the full network
+        pylab.figure(1)
+        nx.draw_spring(G, node_size=0, node_color='w', edge_color='b', alpha=.2, font_size=8, iterations=50)
+        pylab.show()
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
     def check_recent_media_exists_in_snapbundle(self, update_if_found=False):
         post_dictionary = {}
         keep_going = True
@@ -651,8 +708,8 @@ class User(object):
 ## ----------------------------------- FXN ------------------------------------------------------------------------
     @staticmethod
     def get_global_relationship_node_list():
-        global global_relationship_node_list
-        return global_relationship_node_list
+        global global_relationship_edge_list
+        return global_relationship_edge_list
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
     def test_one_thing(self):

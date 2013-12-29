@@ -68,8 +68,11 @@ else:
 #print str(instagram_user.get_user_data_in_snapbundle())
 
 #################################################################################################################
-instagram_user.print_relationship_node_list(manual_pull_from_snapbundle=True, relationship='FOLLOWING', depth=1)
-instagram_user.print_relationship_node_list(manual_pull_from_snapbundle=True, relationship='FOLLOWED_BY', depth=1)
+#instagram_user.print_relationship_node_list(manual_pull_from_snapbundle=True, relationship='FOLLOWING', depth=1)
+#instagram_user.print_relationship_node_list(manual_pull_from_snapbundle=True, relationship='FOLLOWED_BY', depth=1)
+filename = 'test.gml'
+instagram_user.output_relationship_node_gml(filename=filename, depth=2)
+instagram_user.graph_relationship_gml(filename=filename)
 exit()
 
 #################################################################################################################
@@ -79,7 +82,7 @@ instagram_user.check_relationship_users_exist_in_snapbundle(relationship='FOLLOW
                                                             update_user_profile_if_found=False,
                                                             update_user_following_if_found=True,
                                                             update_user_followedby_if_found=True,
-                                                            go_to_max_depth=False)
+                                                            go_to_max_depth=True)
 
 print "Saved API Calls: " + str(instagram_user.get_global_count_saved_api_calls())
 print "Calls Dictionary: " + str(instagram_user.get_global_counts_dict())
@@ -91,7 +94,7 @@ instagram_user.check_relationship_users_exist_in_snapbundle(relationship='FOLLOW
                                                             update_user_profile_if_found=False,
                                                             update_user_following_if_found=True,
                                                             update_user_followedby_if_found=True,
-                                                            go_to_max_depth=False)
+                                                            go_to_max_depth=True)
 
 print "Saved API Calls: " + str(instagram_user.get_global_count_saved_api_calls())
 
