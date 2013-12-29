@@ -18,8 +18,9 @@ config.read(config_file)
 # == Start Snapbundle Variables ==
 snapbundle_username = config.get('SnapbundleCredentials', 'snapbundle_username')
 snapbundle_password = config.get('SnapbundleCredentials', 'snapbundle_password')
-snapbundle_base_urn_instagram_user = "urn:instagram:users:"
-snapbundle_base_urn_instagram_post = "urn:instagram:posts:"
+snapbundle_base_urn_instagram = "urn:instagram:"
+snapbundle_base_urn_instagram_user = snapbundle_base_urn_instagram + "users:"
+snapbundle_base_urn_instagram_post = snapbundle_base_urn_instagram + "posts:"
 snapbundle_base_instagram_filter_name = "instagram:filters:"
 # == End Snapbundle Variables ==
 

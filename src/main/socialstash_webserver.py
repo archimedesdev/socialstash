@@ -10,6 +10,70 @@ PORT_NUMBER = 9000
 
 
 class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+    @staticmethod
+    def write_instagram_user_info(s, urn):
+        #urn = snapbundle_instagram_fxns.get_urn_from_username(username)
+        s.wfile.write("<b>Object urn:</b> %s" % urn)
+
+        response = snapbundle_instagram_fxns.check_for_object(urn)
+        if response:
+            s.wfile.write('<table border="3">')
+            s.wfile.write('<CAPTION>' + "<b>Object Info (" + str(len(response)) + ")" + '</b></CAPTION>')
+            s.wfile.write('<TR><TH>Key</TH><TH>Value</TH></TR>')
+            for current in sorted(response.keys()):
+                s.wfile.write("<TR><TD>" + str(current) + "</TD><TD>" + str(response[current]) + "</TD></TR>")
+            s.wfile.write('</table><BR>')
+        else:
+            s.wfile.write('<BR>No Object Info Found <BR>')
+
+#            response = snapbundle_instagram_fxns.get_object_metadata_dictionary(urn)
+#            if response:
+#                s.wfile.write('<TABLE BORDER="3">')
+#                s.wfile.write('<CAPTION>' + "<b>Metadata Info (" + str(len(response)) + ")" + '</b></CAPTION>')
+#                for current in sorted(response.keys()):
+#                    s.wfile.write("<TR><TD>" + str(current) + "</TD><TD>" + str(response[current]) + "</TD></TR>")
+#                s.wfile.write('</TABLE><BR>')
+#            else:
+#                s.wfile.write('<BR>No Metadata Info Found <BR>')
+
+        response = snapbundle_instagram_fxns.get_object_metadata(urn)
+        if response:
+            s.wfile.write('<TABLE BORDER="3">')
+            s.wfile.write('<CAPTION>' + "<b>Metadata Info (" + str(len(response)) + ")" + '</b></CAPTION>')
+            s.wfile.write('<TR><TH>Key</TH><TH>Decoded Value</TH><TH>URN</TH><TH>Moniker</TH></TR>')
+            for current in response:
+                s.wfile.write("<TR><TD>" + str(current['key'])
+                              + "</TD><TD>" + str(snapbundle_helpers.get_raw_value_decoded(current['rawValue'], current['dataType']))
+                              + "</TD><TD>" + str(current['urn'])
+                              + "</TD><TD>" + str(current['moniker'])
+                              + "</TD></TR>")
+            s.wfile.write('</TABLE><BR>')
+        else:
+            s.wfile.write('<BR>No Metadata Info Found <BR>')
+
+        response = snapbundle_instagram_fxns.get_object_relationships(urn, 'FOLLOWING')
+        if response:
+            s.wfile.write('<TABLE BORDER="3">')
+            s.wfile.write('<CAPTION>' + "<b>Following Users (" + str(len(response)) + ")" + '</b></CAPTION>')
+            s.wfile.write('<TR><TH>User</TH><TH>URN</TH></TR>')
+
+            for current in sorted(response.keys()):
+                s.wfile.write("<TR><TD>" + str(current) + "</TD><TD>" + str(response[current]) + "</TD></TR>")
+            s.wfile.write('</TABLE><BR>')
+        else:
+            s.wfile.write('<BR>No Following Users Info Found <BR>')
+
+        response = snapbundle_instagram_fxns.get_object_relationships(urn, 'FOLLOWED_BY')
+        if response:
+            s.wfile.write('<TABLE BORDER="3">')
+            s.wfile.write('<CAPTION>' + "<b>Followed By Users (" + str(len(response)) + ")" + '</b></CAPTION>')
+            s.wfile.write('<TR><TH>User</TH><TH>URN</TH></TR>')
+            for current in sorted(response.keys()):
+                s.wfile.write("<TR><TD>" + str(current) + "</TD><TD>" + str(response[current]) + "</TD></TR>")
+            s.wfile.write('</TABLE><BR>')
+        else:
+            s.wfile.write('<BR>No Followed By Users Info Found <BR>')
+
     def do_HEAD(s):
         s.send_response(200)
         s.send_header("Content-type", "text/html")
@@ -29,71 +93,32 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         path_list = path_list.split('/')
         application = path_list[1]
         if application == 'instagram':
-            username = path_list[2]
-
-            urn = snapbundle_instagram_fxns.get_urn_from_username(username)
-            s.wfile.write("<b>Object urn:</b> %s" % urn)
-
-            response = snapbundle_instagram_fxns.check_for_object(urn)
-            if response:
-                s.wfile.write('<table border="3">')
-                s.wfile.write('<CAPTION>' + "<b>Object Info (" + str(len(response)) + ")" + '</b></CAPTION>')
-                s.wfile.write('<TR><TH>Key</TH><TH>Value</TH></TR>')
-                for current in sorted(response.keys()):
-                    s.wfile.write("<TR><TD>" + str(current) + "</TD><TD>" + str(response[current]) + "</TD></TR>")
-                s.wfile.write('</table><BR>')
-            else:
-                s.wfile.write('<BR>No Object Info Found <BR>')
-
-#            response = snapbundle_instagram_fxns.get_object_metadata_dictionary(urn)
-#            if response:
-#                s.wfile.write('<TABLE BORDER="3">')
-#                s.wfile.write('<CAPTION>' + "<b>Metadata Info (" + str(len(response)) + ")" + '</b></CAPTION>')
-#                for current in sorted(response.keys()):
-#                    s.wfile.write("<TR><TD>" + str(current) + "</TD><TD>" + str(response[current]) + "</TD></TR>")
-#                s.wfile.write('</TABLE><BR>')
-#            else:
-#                s.wfile.write('<BR>No Metadata Info Found <BR>')
-
-            response = snapbundle_instagram_fxns.get_object_metadata(urn)
-            if response:
-                s.wfile.write('<TABLE BORDER="3">')
-                s.wfile.write('<CAPTION>' + "<b>Metadata Info (" + str(len(response)) + ")" + '</b></CAPTION>')
-                s.wfile.write('<TR><TH>Key</TH><TH>Decoded Value</TH><TH>URN</TH><TH>Moniker</TH></TR>')
-                for current in response:
-                    s.wfile.write("<TR><TD>" + str(current['key'])
-                                  + "</TD><TD>" + str(snapbundle_helpers.get_raw_value_decoded(current['rawValue'], current['dataType']))
-                                  + "</TD><TD>" + str(current['urn'])
-                                  + "</TD><TD>" + str(current['moniker'])
-                                  + "</TD></TR>")
-                s.wfile.write('</TABLE><BR>')
-            else:
-                s.wfile.write('<BR>No Metadata Info Found <BR>')
-
-            response = snapbundle_instagram_fxns.get_object_relationships(urn, 'FOLLOWING')
-            if response:
-                s.wfile.write('<TABLE BORDER="3">')
-                s.wfile.write('<CAPTION>' + "<b>Following Users (" + str(len(response)) + ")" + '</b></CAPTION>')
-                s.wfile.write('<TR><TH>User</TH><TH>URN</TH></TR>')
-
-                for current in sorted(response.keys()):
-                    s.wfile.write("<TR><TD>" + str(current) + "</TD><TD>" + str(response[current]) + "</TD></TR>")
-                s.wfile.write('</TABLE><BR>')
-            else:
-                s.wfile.write('<BR>No Following Users Info Found <BR>')
-
-            response = snapbundle_instagram_fxns.get_object_relationships(urn, 'FOLLOWED_BY')
-            if response:
-                s.wfile.write('<TABLE BORDER="3">')
-                s.wfile.write('<CAPTION>' + "<b>Followed By Users (" + str(len(response)) + ")" + '</b></CAPTION>')
-                s.wfile.write('<TR><TH>User</TH><TH>URN</TH></TR>')
-                for current in sorted(response.keys()):
-                    s.wfile.write("<TR><TD>" + str(current) + "</TD><TD>" + str(response[current]) + "</TD></TR>")
-                s.wfile.write('</TABLE><BR>')
-            else:
-                s.wfile.write('<BR>No Followed By Users Info Found <BR>')
+            try:
+                urn = path_list[2]
+                MyHandler.write_instagram_user_info(s, urn)
+            except IndexError:
+                response = snapbundle_helpers.count_objects()
+                if response:
+                    instagram_urn_contain = snapbundle_instagram_fxns.snapbundle_base_urn_instagram
+                    s.wfile.write('<TABLE BORDER="3">')
+                    s.wfile.write('<CAPTION>' + "<b>Object Info (" + str(len(response)) + ")" + '</b></CAPTION>')
+                    s.wfile.write('<TR><TH>objectType</TH><TH>objectUrn</TH><TH>Name</TH><TH>urn</TH></TR>')
+                    for current in response:
+                        if instagram_urn_contain in str(current['objectUrn']):
+                            s.wfile.write("<TR><TD>" + str(current['objectType'])
+                                          + '</TD><TD><a href="/instagram/' + str(current['objectUrn']) + '">' + str(current['objectUrn']) + '</a>'
+                                          + '</TD><TD>' + str(current['name'])
+                                          + "</TD><TD>" + str(current['urn'])
+                                          + "</TD></TR>")
+                    s.wfile.write('</TABLE><BR>')
+                else:
+                    s.wfile.write('<BR>No Object Info Found <BR>')
 
         s.wfile.write("</body></html>")
+
+
+
+
 
 if __name__ == '__main__':
     server_class = BaseHTTPServer.HTTPServer
