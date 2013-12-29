@@ -43,6 +43,9 @@ global_counts_dictionary['snapbundle_calls'] = 0
 global_counts_dictionary['cache_calls'] = 0
 global_counts_dictionary['snapbundle_deletes'] = 0
 
+global_following_string = 'FOLLOWING'
+global_followed_by_string = 'FOLLOWED_BY'
+
 class User(object):
     '''A class representing the Instagram User structure used by SocialStash.
 
@@ -171,13 +174,16 @@ class User(object):
         return self._instagram_user_sb_urn
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
+    def create_update_user_in_snapbundle_object_only(self):
+        self._instagram_user_sb_urn = snapbundle_instagram_fxns.add_update_new_instagram_user_object(self._username, self._instagram_user_sb_object_urn)
+        return self._instagram_user_sb_urn
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
     def check_and_update_profile_pic(self):
         return snapbundle_instagram_fxns.check_update_user_profile_pic(self._username, self._profile_picture)
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
     def update_relationship_node_list_snapbundle(self, relationship, depth=1, user=None, user_dictionary=None):
-        following_string = 'FOLLOWING'
-        followed_by_string = 'FOLLOWED_BY'
         global global_counts_dictionary
         global global_relationship_edge_list
         global global_relationship_node_list
@@ -194,11 +200,10 @@ class User(object):
         if user not in global_relationship_node_list:
             global_relationship_node_list.append(user)
 
-
         for current_name in user_dictionary.keys():
-            if relationship.upper() == followed_by_string:
+            if relationship.upper() == global_followed_by_string:
                 temp_set = (current_name, user)
-            elif relationship.upper() == following_string:
+            elif relationship.upper() == global_following_string:
                 temp_set = (user, current_name)
 
             # Add the node into the node list if it doesn't exist
@@ -228,20 +233,18 @@ class User(object):
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
     def get_follow_list_instagram(self, relationship, use_cached_users=True):
-        following_string = 'FOLLOWING'
-        followed_by_string = 'FOLLOWED_BY'
         global global_instagram_user_dictionary
         global global_count_saved_api_calls
         global global_counts_dictionary
         # We might already have this information cached in our current Python session, and if told to, let's use it
         if use_cached_users:
-            if ((relationship.upper() == followed_by_string) and
+            if ((relationship.upper() == global_followed_by_string) and
                     (global_instagram_user_dictionary[self.username].get_followedby_dict() is not None)):
                 global_count_saved_api_calls += 1
                 global_counts_dictionary['cache_calls'] += 1
                 print "Using cached copy of Followed By for " + self.username
                 return global_instagram_user_dictionary[self.username].get_followedby_dict()
-            elif ((relationship.upper() == following_string) and
+            elif ((relationship.upper() == global_following_string) and
                     (global_instagram_user_dictionary[self.username].get_following_dict() is not None)):
                 global_count_saved_api_calls += 1
                 global_counts_dictionary['cache_calls'] += 1
@@ -258,9 +261,9 @@ class User(object):
             self.authenticate()
         while keep_going:
             # Get this set of users
-            if relationship.upper() == followed_by_string:
+            if relationship.upper() == global_followed_by_string:
                 response, next_url = self.api.user_followed_by(user_id=self._id, count=instagram_record_count, cursor=next_cursor)
-            elif relationship.upper() == following_string:
+            elif relationship.upper() == global_following_string:
                 response, next_url = self.api.user_follows(user_id=self._id, count=instagram_record_count, cursor=next_cursor)
 
             # Add them to a dictionarry
@@ -276,10 +279,10 @@ class User(object):
         print relationship + " " + str(len(user_dictionary)) + " people (Instagram)"
 
         # Set or add the info to the global dictionary
-        if relationship.upper() == followed_by_string:
+        if relationship.upper() == global_followed_by_string:
             self.set_followedby_dict(user_dictionary)
             global_instagram_user_dictionary[self.username] = self
-        elif relationship.upper() == following_string:
+        elif relationship.upper() == global_following_string:
             self.set_following_dict(user_dictionary)
             global_instagram_user_dictionary[self.username] = self
 
@@ -294,8 +297,6 @@ class User(object):
                                                      go_to_max_depth=False,
                                                      use_cached_users=True):
 
-        following_string = 'FOLLOWING'
-        followed_by_string = 'FOLLOWED_BY'
         instagram_follow_user_dictionary = self.get_follow_list_instagram(relationship, use_cached_users)
         snapbundle_follow_user_dictoinary = self.get_follow_list_snapbundle(relationship)
 
@@ -305,9 +306,9 @@ class User(object):
         # We will do this recursively, using the search_follow_depth variable
         for key in instagram_follow_user_dictionary:
             current = instagram_follow_user_dictionary[key]
-            if relationship.upper() == followed_by_string:
+            if relationship.upper() == global_followed_by_string:
                 print "Followed by: " + str(current.username)
-            elif relationship.upper() == following_string:
+            elif relationship.upper() == global_following_string:
                 print "Following: " + str(current.username)
 
             # We need to keep track of any users that are in SnapBundle and not Instagram, so if we see him in
@@ -348,21 +349,7 @@ class User(object):
                     temp_social_stash_i_user.set_user_data_from_cached_or_snapbundle_data()
 
                 if new_user or update_user_following_if_found or update_user_followedby_if_found:
-                    # Time to check and add a relationships.  Remember, they actually go both ways, so either way,
-                    # we're adding/updating two relationships
-                    # A -- Follows ------> B
-                    # B -- Followed by --> A
-                    if relationship.upper() == followed_by_string:
-                        snapbundle_instagram_fxns.check_add_update_followed_by(self.get_instagrame_user_sb_object_urn(),
-                                                                               temp_social_stash_i_user.get_instagrame_user_sb_object_urn())
-                        snapbundle_instagram_fxns.check_add_update_follows(temp_social_stash_i_user.get_instagrame_user_sb_object_urn(),
-                                                                           self.get_instagrame_user_sb_object_urn())
-                    elif relationship.upper() == following_string:
-                        snapbundle_instagram_fxns.check_add_update_follows(self.get_instagrame_user_sb_object_urn(),
-                                                                           temp_social_stash_i_user.get_instagrame_user_sb_object_urn())
-                        snapbundle_instagram_fxns.check_add_update_followed_by(temp_social_stash_i_user.get_instagrame_user_sb_object_urn(),
-                                                                               self.get_instagrame_user_sb_object_urn())
-
+                    self.create_update_snapbundle_relationships(relationship, temp_social_stash_i_user)
 
                 # Check to see if we need to keep going down this follower/following thing recursively
                 if go_to_max_depth and ((self.current_search_depth - 1) > 0):
@@ -372,7 +359,7 @@ class User(object):
                     if count_to_check <= instagram_max_follow_count:
                         logging.info(current.username + "'s followed_by count: " + str(count_to_check) + "<=" + str(instagram_max_follow_count) + ", depth: " + str((self.current_search_depth-1)) + ">0")
                         logging.info("Continuing down the follow recursion")
-                        temp_social_stash_i_user.check_relationship_users_exist_in_snapbundle(followed_by_string,
+                        temp_social_stash_i_user.check_relationship_users_exist_in_snapbundle(global_followed_by_string,
                                                                                               update_user_profile_if_found,
                                                                                               update_user_following_if_found,
                                                                                               update_user_followedby_if_found,
@@ -385,7 +372,7 @@ class User(object):
                     if count_to_check <= instagram_max_follow_count:
                         logging.info(current.username + "'s follows count: " + str(count_to_check) + "<=" + str(instagram_max_follow_count) + ", depth: " + str((self.current_search_depth-1)) + ">0")
                         logging.info("Continuing down the follow recursion")
-                        temp_social_stash_i_user.check_relationship_users_exist_in_snapbundle(following_string,
+                        temp_social_stash_i_user.check_relationship_users_exist_in_snapbundle(global_following_string,
                                                                                               update_user_profile_if_found,
                                                                                               update_user_following_if_found,
                                                                                               update_user_followedby_if_found,
@@ -397,12 +384,14 @@ class User(object):
                     logging.info("Not continuing down the follow recursion...  (max_follow: " + str(instagram_max_follow_count) + "), depth: " + str((self.current_search_depth-1)))
 
                 del temp_social_stash_i_user
-            except instagram.bind.InstagramAPIError:
-                print "Unable to pull data for user " + current.username + ".  Possible permission error?"
-                logging.info("Unable to pull data for user " + current.username + ".  Possible permission error?")
-            except instagram.bind.InstagramClientError:
-                print "Unable to pull data for user " + current.username + ".  Possible permission error?"
-                logging.info("Unable to pull data for user " + current.username + ".  Possible permission error?")
+            except instagram.bind.InstagramAPIError, error:
+                print "Unable to pull data for user " + current.username + ": " + str(error) + ". Creating/Updating User with no metadata"
+                logging.info("Unable to pull data for user " + current.username + ": " + str(error) + ". Creating/Updating User with no metadata")
+                print "Added/Updated User URN: " + str(temp_social_stash_i_user.create_update_user_in_snapbundle_object_only())
+                self.create_update_snapbundle_relationships(relationship, temp_social_stash_i_user)
+            except instagram.bind.InstagramClientError, error:
+                print "Unable to pull data for user " + current.username + ": " + str(error)
+                logging.info("Unable to pull data for user " + current.username + ": " + str(error))
             except Exception, err:
                 print Exception, err
                 print traceback.format_exc()
@@ -418,6 +407,24 @@ class User(object):
                 logging.info("Deleting SnapBundle relationship: " + self.username + ' ' + relationship + ' ' + current_check_delete)
                 snapbundle_instagram_fxns.delete_relationship(snapbundle_follow_user_dictoinary[current_check_delete])
                 global_counts_dictionary['snapbundle_deletes'] += 1
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+    def create_update_snapbundle_relationships(self, relationship, temp_social_stash_i_user):
+        # Time to check and add a relationships.  Remember, they actually go both ways, so either way,
+        # we're adding/updating two relationships
+        # A -- Follows ------> B
+        # B -- Followed by --> A
+        if relationship.upper() == global_followed_by_string:
+            snapbundle_instagram_fxns.check_add_update_followed_by(self.get_instagrame_user_sb_object_urn(),
+                                                                   temp_social_stash_i_user.get_instagrame_user_sb_object_urn())
+            snapbundle_instagram_fxns.check_add_update_follows(temp_social_stash_i_user.get_instagrame_user_sb_object_urn(),
+                                                               self.get_instagrame_user_sb_object_urn())
+        elif relationship.upper() == global_following_string:
+            snapbundle_instagram_fxns.check_add_update_follows(self.get_instagrame_user_sb_object_urn(),
+                                                               temp_social_stash_i_user.get_instagrame_user_sb_object_urn())
+            snapbundle_instagram_fxns.check_add_update_followed_by(temp_social_stash_i_user.get_instagrame_user_sb_object_urn(),
+                                                                   self.get_instagrame_user_sb_object_urn())
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
     def print_relationship_node_list(self, manual_pull_from_snapbundle=False, relationship=None, depth=1):

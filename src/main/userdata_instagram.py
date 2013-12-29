@@ -66,13 +66,13 @@ else:
 
 #print "Get data stored in SnapBundle"
 #print str(instagram_user.get_user_data_in_snapbundle())
-exit()
+
 #################################################################################################################
 #instagram_user.print_relationship_node_list(manual_pull_from_snapbundle=True, relationship='FOLLOWING', depth=1)
 #instagram_user.print_relationship_node_list(manual_pull_from_snapbundle=True, relationship='FOLLOWED_BY', depth=1)
 filename = 'test.gml'
-instagram_user.output_relationship_node_gml(filename=filename, depth=2)
-instagram_user.graph_relationship_gml(filename=filename)
+#instagram_user.output_relationship_node_gml(filename=filename, depth=2)
+#instagram_user.graph_relationship_gml(filename=filename)
 
 
 #################################################################################################################
@@ -86,7 +86,7 @@ instagram_user.check_relationship_users_exist_in_snapbundle(relationship='FOLLOW
 
 print "Saved API Calls: " + str(instagram_user.get_global_count_saved_api_calls())
 print "Calls Dictionary: " + str(instagram_user.get_global_counts_dict())
-
+exit()
 
 #################################################################################################################
 # print 'checking for users following me'
