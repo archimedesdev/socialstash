@@ -100,6 +100,7 @@ def check_update_user_profile_pic(username, current_pic_url):
                 # Need to create a new File object with this picture
                 need_to_upload_url = True
 
+            need_to_upload_url = True
             if need_to_upload_url:
                 file_urn = snapbundle_helpers.add_file_from_url_jpg("Metadata", existing_stored_urn, current_pic_url)
                 if not file_urn:

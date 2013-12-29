@@ -105,7 +105,7 @@ def add_update_object(name, objectUrn, objectType):
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def get_object(urn_to_check_for):
-    url = base_url_objects + '/' + urn_to_check_for
+    url = base_url_objects + '/object/' + urn_to_check_for
     logging.info("Looking for object at URL: " + str(url))
     response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
     logging.info(str(response))
@@ -123,7 +123,7 @@ def get_object(urn_to_check_for):
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def get_object_metadata(urn_to_check_for):
-    url = base_url_metadata_objects_query + '/' + urn_to_check_for
+    url = base_url_metadata_objects_query + '/' + urn_to_check_for + "?view=Full"
     logging.info("Looking for object metadata at URL: " + str(url))
     response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
     logging.info(str(response))
