@@ -392,12 +392,12 @@ class User(object):
             except instagram.bind.InstagramClientError, error:
                 print "Unable to pull data for user " + current.username + ": " + str(error)
                 logging.info("Unable to pull data for user " + current.username + ": " + str(error))
+            except KeyError:
+                print "Unable to pull data from SnapBundle for user " + current.username + ". User probably has no metadata associated with them (permission error in Instagram)"
+                logging.info("Unable to pull data for user " + current.username + ". User probably has no metadata associated with them (permission error in Instagram)")
             except Exception, err:
                 print Exception, err
                 print traceback.format_exc()
-#            except KeyError:
-#                print "Unable to pull data for user " + current.username + ".  Weird KeyError"
-#                logging.info("Unable to pull data for user " + current.username + ".  Weird KeyError")
 
         # Time to go through our snapbundle relationships dictionary to see if there are any we need to delete
         global global_counts_dictionary
