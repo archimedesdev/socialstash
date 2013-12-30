@@ -73,7 +73,7 @@ else:
 filename = 'test.gml'
 #instagram_user.output_relationship_node_gml(filename=filename, depth=2)
 #instagram_user.graph_relationship_gml(filename=filename)
-exit()
+#exit()
 
 #################################################################################################################
 print "Saved API Calls: " + str(instagram_user.get_global_count_saved_api_calls())

@@ -5,9 +5,6 @@ import requests
 import ConfigParser
 import logging
 import ast
-import StringIO
-import gzip
-from PIL import Image
 import os
 
 # == Start the logger ==
@@ -382,32 +379,39 @@ def get_file_object(file_urn):
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def get_file_object_contents(file_urn):
+def get_file_object_contents(file_urn, check_cache=False):
     url = base_url_files + "/" + file_urn + "/contents"
     logging.info("Looking for file object at URL: " + str(url))
-    response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
+#   It's crucial that we add the "stream=True" part to the following response request.
+    response = requests.get(url, auth=(snapbundle_username, snapbundle_password), stream=True)
     logging.info(str(response))
     try:
         if response.status_code == 200:
-            print response.headers
-            if response.headers['Content-Encoding'] == 'gzip':
-                content_disposition = response.headers['content-disposition']
-                index = content_disposition.index('filename="') + 10
-                r_fileName, r_fileExtension = os.path.splitext(content_disposition[index:-1])
-                if r_fileExtension in ('.jpg', '.jpeg', '.bmp', '.tiff', '.gif', '.png', '.ppm'):
-                    i = Image.open(StringIO.StringIO(response.content))
-                    fileName_use = r_fileName.split('/')
-                    fileName_use = fileName_use[len(fileName_use)-1]
-                    print fileName_use
-                    outFilePath = cache_directory + os.sep + fileName_use + r_fileExtension
-                    i.save(outFilePath)
+            content_disposition = response.headers['content-disposition']
+            index = content_disposition.index('filename="') + 10
+            r_fileName, r_fileExtension = os.path.splitext(content_disposition[index:-1])
+            fileName_use = r_fileName.split('/')
+            fileName_use = fileName_use[len(fileName_use)-1]
+            outFilePath = cache_directory + os.sep + fileName_use + r_fileExtension
+            # If we want to use the cache, and the file already exists there, just use it
+            if check_cache:
+                logging.debug("Checked cache for file: " + outFilePath)
+                if os.path.isfile(outFilePath):
+                    logging.debug("Found file " + outFilePath + " in cache!  Not re-downloading it!")
                     return outFilePath
                 else:
-                    f = StringIO.StringIO(response.content)
-                    return f
-            return "No File"
+                    logging.debug("File " + outFilePath + " NOT found in cache!")
+
+            logging.debug("Pulling file: " + fileName_use + r_fileExtension + " from stream")
+            with open(outFilePath, 'wb') as f:
+                for chunk in response.iter_content(chunk_size=1024):
+                    if chunk: # filter out keep-alive new chunks
+                        f.write(chunk)
+                        f.flush()
+            logging.info("Successfully wrote file: " + outFilePath)
+            return outFilePath
         else:
-            return False
+            return ''
     except KeyError:
         return False
 

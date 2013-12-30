@@ -1,6 +1,7 @@
 __author__ = 'Dev'
 
 import time
+import os
 import BaseHTTPServer
 import snapbundle_instagram_fxns
 import snapbundle_helpers
@@ -12,7 +13,6 @@ PORT_NUMBER = 9000
 class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     @staticmethod
     def write_instagram_user_info(s, urn):
-        #urn = snapbundle_instagram_fxns.get_urn_from_username(username)
         s.wfile.write("<b>Object urn:</b> %s" % urn)
 
         response = snapbundle_instagram_fxns.check_for_object(urn)
@@ -49,7 +49,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 if str(current['moniker']) == 'None':
                     s.wfile.write("<TD></TD></TR>")
                 else:
-                    image_file = snapbundle_helpers.get_file_object_contents(str(current['moniker']))
+                    image_file = snapbundle_helpers.get_file_object_contents(str(current['moniker']), check_cache=True)
                     s.wfile.write("<TD>" + '<IMG SRC="' + str(image_file) + '">' + "</TD></TR>")
             s.wfile.write('</TABLE><BR>')
         else:
@@ -85,6 +85,25 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
     def do_GET(s):
         """Respond to a GET request."""
+
+        path_list = s.path
+        path_list = path_list.split('/')
+        # First we check to see if it's an image we need to serve up
+        if s.path.endswith(".jpg"):
+            path_list = path_list[2:]
+            path_to_use = ''
+            for current in path_list:
+                path_to_use += current
+                path_to_use += os.sep
+            path_to_use = path_to_use[:-1]
+            f = open(path_to_use, 'rb')
+            s.send_response(200)
+            s.send_header('Content-type',        'image/jpg')
+            s.end_headers()
+            s.wfile.write(f.read())
+            f.close()
+            return
+
         s.send_response(200)
         s.send_header("Content-type", "text/html")
         s.end_headers()
@@ -93,8 +112,6 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         # If someone went to "http://something.somewhere.net/foo/bar/",
         # then s.path equals "/foo/bar/".
 
-        path_list = s.path
-        path_list = path_list.split('/')
         application = path_list[1]
         if application == 'instagram':
             try:
