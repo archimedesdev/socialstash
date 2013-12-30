@@ -40,13 +40,17 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         if response:
             s.wfile.write('<TABLE BORDER="3">')
             s.wfile.write('<CAPTION>' + "<b>Metadata Info (" + str(len(response)) + ")" + '</b></CAPTION>')
-            s.wfile.write('<TR><TH>Key</TH><TH>Decoded Value</TH><TH>URN</TH><TH>Moniker</TH></TR>')
+            s.wfile.write('<TR><TH>Key</TH><TH>Decoded Value</TH><TH>URN</TH><TH>Moniker (file urn)</TH><TH>File</TH></TR>')
             for current in response:
                 s.wfile.write("<TR><TD>" + str(current['key'])
                               + "</TD><TD>" + str(snapbundle_helpers.get_raw_value_decoded(current['rawValue'], current['dataType']))
                               + "</TD><TD>" + str(current['urn'])
-                              + "</TD><TD>" + str(current['moniker'])
-                              + "</TD></TR>")
+                              + "</TD><TD>" + str(current['moniker']) + "</TD>")
+                if str(current['moniker']) == 'None':
+                    s.wfile.write("<TD></TD></TR>")
+                else:
+                    image_file = snapbundle_helpers.get_file_object_contents(str(current['moniker']))
+                    s.wfile.write("<TD>" + '<IMG SRC="' + str(image_file) + '">' + "</TD></TR>")
             s.wfile.write('</TABLE><BR>')
         else:
             s.wfile.write('<BR>No Metadata Info Found <BR>')

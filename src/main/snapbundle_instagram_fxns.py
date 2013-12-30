@@ -22,13 +22,14 @@ snapbundle_base_urn_instagram = "urn:instagram:"
 snapbundle_base_urn_instagram_user = snapbundle_base_urn_instagram + "users:"
 snapbundle_base_urn_instagram_post = snapbundle_base_urn_instagram + "posts:"
 snapbundle_base_instagram_filter_name = "instagram:filters:"
+snapbundle_base_instagram_device_id = "instagram:devices:Unknown"
 # == End Snapbundle Variables ==
 
 # == Start Snapbundle URLs ==
 base_url_object_interaction = snapbundle_helpers.base_url_object_interaction
 base_url_metadata_objects = snapbundle_helpers.base_url_metadata_objects
 base_url_metadata_objects_query = snapbundle_helpers.base_url_metadata_objects_query
-base_url_devicess = snapbundle_helpers.base_url_devicess
+base_url_devices = snapbundle_helpers.base_url_devices
 # == End Snapbundle URLs ==
 
 
@@ -179,6 +180,21 @@ def update_instagram_user_object(reference_urn, user, new_user):
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
+def check_add_update_followed_by(reference_urn, relatedReferenceURN):
+    return snapbundle_helpers.check_add_update_relationship('Object', reference_urn, 'FollowedBy', 'Object', relatedReferenceURN)
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def check_add_update_follows(reference_urn, relatedReferenceURN):
+    return snapbundle_helpers.check_add_update_relationship('Object', reference_urn, 'Follows', 'Object', relatedReferenceURN)
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def get_urn_from_username(username):
+    return snapbundle_base_urn_instagram_user + username
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
 def add_update_new_instagram_post_object(post):
 
     if post['location'] is None:
@@ -214,22 +230,6 @@ def add_update_new_instagram_post_object(post):
     post_urn = response.json()['message']
 
     ## -- The additional metadata portion of the tweet
-
-
-## ----------------------------------- FXN ------------------------------------------------------------------------
-def check_add_update_followed_by(reference_urn, relatedReferenceURN):
-    return snapbundle_helpers.check_add_update_relationship('Object', reference_urn, 'FollowedBy', 'Object', relatedReferenceURN)
-
-
-## ----------------------------------- FXN ------------------------------------------------------------------------
-def check_add_update_follows(reference_urn, relatedReferenceURN):
-    return snapbundle_helpers.check_add_update_relationship('Object', reference_urn, 'Follows', 'Object', relatedReferenceURN)
-
-
-## ----------------------------------- FXN ------------------------------------------------------------------------
-def get_urn_from_username(username):
-    return snapbundle_base_urn_instagram_user + username
-
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------

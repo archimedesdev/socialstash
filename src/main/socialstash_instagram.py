@@ -408,7 +408,6 @@ class User(object):
                 snapbundle_instagram_fxns.delete_relationship(snapbundle_follow_user_dictoinary[current_check_delete])
                 global_counts_dictionary['snapbundle_deletes'] += 1
 
-
 ## ----------------------------------- FXN ------------------------------------------------------------------------
     def create_update_snapbundle_relationships(self, relationship, temp_social_stash_i_user):
         # Time to check and add a relationships.  Remember, they actually go both ways, so either way,

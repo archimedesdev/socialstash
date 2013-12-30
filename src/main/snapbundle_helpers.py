@@ -5,6 +5,10 @@ import requests
 import ConfigParser
 import logging
 import ast
+import StringIO
+import gzip
+from PIL import Image
+import os
 
 # == Start the logger ==
 # == Because of this logger, this should be the first library we import ==
@@ -19,6 +23,9 @@ requests_log.setLevel(logging.WARNING)
 config_file = 'accounts.txt'
 config = ConfigParser.RawConfigParser()
 config.read(config_file)
+
+# == Local directories
+cache_directory = 'cache' + os.sep + 'instagram'
 
 # == Snapbundle Variables ==
 snapbundle_username = config.get('SnapbundleCredentials', 'snapbundle_username')
@@ -35,10 +42,10 @@ base_url_metadata_objects = url_server + '/metadata/Object'
 base_url_metadata_objects_query = url_server + '/metadata/Object'
 base_url_metadata_mapper_encode = url_server + '/metadata/mapper/encode/'
 base_url_metadata_mapper_decode = url_server + '/metadata/mapper/decode/'
-base_url_devicess = url_server + '/devices'
-base_url_files_metadata_query = url_server + '/files/query/Metadata/'
+base_url_files_metadata_query = url_server + '/files/Metadata/'
 base_url_files = url_server + '/files'
 base_url_tags = url_server + '/tags'
+base_url_devices = url_server + '/devices'
 # == End Snapbundle Variables ==
 
 metadataDataTypes = {'STRING': 'StringType',
@@ -305,6 +312,35 @@ def delete_relationship(urn_to_delete):
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
+def add_update_object_interaction(objectUrn, device_id, data, recordedTimestamp, moniker=None):
+    # Back to normal application
+    temp_meta_data = dict(
+        object=objectUrn,
+        identification=device_id,
+        data=data,
+        recordedTimestamp=recordedTimestamp
+    )
+    if moniker is not None:
+        temp_meta_data['moniker'] = moniker
+
+    url = base_url_object_interaction
+    headers = {'content-type': 'application/json'}
+    payload = json.dumps([temp_meta_data])
+    logging.debug("Sending to URL: " + str(url))
+    logging.debug("Submitting Payload: " + str(payload))
+    response = requests.put(url, data=payload, headers=headers, auth=(snapbundle_username, snapbundle_password))
+    logging.info("Response (for objectInteractionURN " + str(data) + "): " + str(response.status_code) + " <--> " + str(response.json()))
+    if response.status_code == 201:
+        # Created new user
+        logging.info("Created new object interaction")
+    elif response.status_code == 200:
+        # Updating user
+        logging.info("Object interaction existed, updated")
+    urn = response.json()['message']
+    return urn
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
 def add_file_from_url(reference_type, referenceURN, mimeType, source_url):
     temp_data = {"entityReferenceType": reference_type,
                  "referenceUrn": referenceURN,
@@ -328,6 +364,52 @@ def add_file_from_url(reference_type, referenceURN, mimeType, source_url):
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def add_file_from_url_jpg(reference_type, referenceURN, source_url):
     return add_file_from_url(reference_type, referenceURN, "image/jpeg", source_url)
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def get_file_object(file_urn):
+    url = base_url_files + "/" + file_urn
+    logging.info("Looking for file object at URL: " + str(url))
+    response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
+    logging.info(str(response))
+    try:
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return False
+    except KeyError:
+        return False
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def get_file_object_contents(file_urn):
+    url = base_url_files + "/" + file_urn + "/contents"
+    logging.info("Looking for file object at URL: " + str(url))
+    response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
+    logging.info(str(response))
+    try:
+        if response.status_code == 200:
+            print response.headers
+            if response.headers['Content-Encoding'] == 'gzip':
+                content_disposition = response.headers['content-disposition']
+                index = content_disposition.index('filename="') + 10
+                r_fileName, r_fileExtension = os.path.splitext(content_disposition[index:-1])
+                if r_fileExtension in ('.jpg', '.jpeg', '.bmp', '.tiff', '.gif', '.png', '.ppm'):
+                    i = Image.open(StringIO.StringIO(response.content))
+                    fileName_use = r_fileName.split('/')
+                    fileName_use = fileName_use[len(fileName_use)-1]
+                    print fileName_use
+                    outFilePath = cache_directory + os.sep + fileName_use + r_fileExtension
+                    i.save(outFilePath)
+                    return outFilePath
+                else:
+                    f = StringIO.StringIO(response.content)
+                    return f
+            return "No File"
+        else:
+            return False
+    except KeyError:
+        return False
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------

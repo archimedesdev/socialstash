@@ -35,3 +35,4 @@ nosetests.xml
 .project
 .pydevproject
 /src/main/accounts.txt
+cache

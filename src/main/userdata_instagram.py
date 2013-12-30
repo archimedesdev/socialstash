@@ -73,7 +73,7 @@ else:
 filename = 'test.gml'
 #instagram_user.output_relationship_node_gml(filename=filename, depth=2)
 #instagram_user.graph_relationship_gml(filename=filename)
-
+exit()
 
 #################################################################################################################
 print "Saved API Calls: " + str(instagram_user.get_global_count_saved_api_calls())
@@ -86,7 +86,6 @@ instagram_user.check_relationship_users_exist_in_snapbundle(relationship='FOLLOW
 
 print "Saved API Calls: " + str(instagram_user.get_global_count_saved_api_calls())
 print "Calls Dictionary: " + str(instagram_user.get_global_counts_dict())
-exit()
 
 #################################################################################################################
 # print 'checking for users following me'
