@@ -20,6 +20,9 @@ config_file = 'accounts.txt'
 config = ConfigParser.RawConfigParser()
 config.read(config_file)
 
+# == Instagram API URLs ==
+base_instagram_url_media = "https://api.instagram.com/v1/media/"
+
 # == Instagram Variables ==
 # number of records to get per request
 instagram_record_count = 100
@@ -519,32 +522,63 @@ class User(object):
                 # There are more we need to get, so here's the next cursor to start at
                 next_max_id = str(urlparse.parse_qs(urlparse.urlparse(next_url).query)['next_max_id'][0])
 
-        # Now start going through all the users and checking to see if they exist
-        # We will do this recursively, using the search_follow_depth variable
+        # Now let's deal with each individual post in the dictionary of posts we've gotten!!
         for key in post_dictionary:
-            current = post_dictionary[key]['data']
-            temp_post = {}
-            temp_post['parent_urn'] = self._instagram_user_sb_object_urn
-            temp_post['id'] = current['id']
-            temp_post['type'] = current['type']
-            temp_post['created_time'] = current['created_time']
-            temp_post['link'] = current['link']
-            temp_post['user'] = current['user']
-            temp_post['location'] = current['location']
-            temp_post['attribution'] = current['attribution']
+            url = base_instagram_url_media + str(key) + '?access_token=' + self.access_token
+            logging.info("Looking for file object at URL: " + str(url))
+            response = requests.get(url)
+            logging.info(str(response))
+            try:
+                if response.status_code != 200:
+                    logging.debug("Response wasn't a 200, so skipping this media")
+                    pass
+                else:
+                    current = response.json()['data']
+                    print current
+                    temp_post = {}
+                    # This is the info that goes into the object interaction
+                    temp_post['parent_urn'] = self._instagram_user_sb_object_urn
+                    temp_post['attribution'] = current['attribution']
+                    temp_post['id'] = current['id']
+                    temp_post['created_time'] = current['created_time']
+                    post_urn = snapbundle_instagram_fxns.add_new_instagram_post_object(temp_post)
+                    print "post urn: " + str(post_urn)
 
-            #FIGURE OUT THE OTHER LOCATION INFO to send before creating t
-            #FIGURE OUT THE ATTRIBUTION PART TOO
+                    # This information will become metadata
+                    temp_post['type'] = current['type']
+                    temp_post['link'] = current['link']
+                    temp_post['user'] = current['user']
+                    temp_post['user_has_liked'] = current['user_has_liked']
+                    temp_post['images'] = current['images']
 
-            #post_urn = FUNCTION CALL HERE
-            #snapbundle_instagram_fxns.set_filter_tag(post_urn, current['filter'])
+                    # This will become tags
+                    temp_post['filter'] = current['filter']
+
+                    # This will become HashTag Objects
+                    temp_post['tags'] = current['tags']
+
+                    # This will become a relationship
+                    temp_post['users_in_photo'] = current['users_in_photo']
+                    temp_post['likes'] = current['likes']
+
+                    # These will become objects associated with it
+                    temp_post['location'] = current['location']
+                    temp_post['comments'] = current['comments']
+                    temp_post['caption'] = current['caption']
+
+
+
+                    print str(temp_post)
+                    exit()
+            except KeyError:
+                pass
+            exit()
+
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
     def get_feed_from_instagram(self, count):
         recent_media, url= self.api.user_recent_media(count=count)
         print recent_media
-        response = requests.get(url)
-        print response.json()
         return
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------

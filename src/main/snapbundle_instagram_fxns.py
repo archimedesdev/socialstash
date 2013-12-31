@@ -22,7 +22,8 @@ snapbundle_base_urn_instagram = "urn:instagram:"
 snapbundle_base_urn_instagram_user = snapbundle_base_urn_instagram + "users:"
 snapbundle_base_urn_instagram_post = snapbundle_base_urn_instagram + "posts:"
 snapbundle_base_instagram_filter_name = "instagram:filters:"
-snapbundle_base_instagram_device_id = "instagram:devices:Unknown"
+snapbundle_instagram_device_id = "instagram:devices:unknown"
+snapbundle_instagram_device_urn = 'urn:uuid:a117e53e-28e3-4e95-94a1-1a1baf1b0624'
 # == End Snapbundle Variables ==
 
 # == Start Snapbundle URLs ==
@@ -195,103 +196,34 @@ def get_urn_from_username(username):
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def add_update_new_instagram_post_object(post):
-
-    if post['location'] is None:
-        hasGeo = False
+def add_new_instagram_post_object(post):
+    data_urn = snapbundle_base_urn_instagram_post + post['id']
+    if post['attribution'] is None:
+        device_id = snapbundle_instagram_device_id
     else:
-        hasGeo = True
+        device_id = ''
+        # ^^ this needs to be updated in case they ever use the attribution object
 
-    moniker = snapbundle_base_urn_instagram_post + ":" + post['id']
     object_interaction = {'objectUrn': post['parent_urn'],
-                          'moniker': moniker,
-                          'identification': moniker,
-                          'data': post['link'],
-                          'recordedTimestamp': post['created_time'],
-                          'hasGeoLocation': hasGeo,
-                          'lat': '',
-                          'lon': '',
-                          'alt': ''
+                          'identification': device_id,
+                          'data': data_urn,
+                          'recordedTimestamp': post['created_time']
                           }
 
     url = base_url_object_interaction
     headers = {'content-type': 'application/json'}
     payload = json.dumps(object_interaction)
-    print "Sending to URL: " + str(url)
-    print "Submitting Payload: " + str(payload)
+    logging.debug("Sending to URL: " + str(url))
+    logging.debug("Submitting Payload: " + str(payload))
     response = requests.put(url, data=payload, headers=headers, auth=(snapbundle_username, snapbundle_password))
-    logging.info("Response (for objectURN " + moniker + "): " + str(response.status_code) + " <--> " + str(response.json()))
-    if response.status_code == 201:
-        # Created new user
-        logging.info("Created new post")
-    elif response.status_code == 200:
-        # Updating user
-        logging.info("Post existed")
+    logging.info("Response (for object interaction " + data_urn + "): " + str(response.status_code) + " <--> " + str(response.json()))
     post_urn = response.json()['message']
-
-    ## -- The additional metadata portion of the tweet
-
-
-## ----------------------------------- FXN ------------------------------------------------------------------------
-def add_new_twitter_tweet(parent_object_urn, tweet):
-    ## -- The ObjectInteraction portion of the tweet
-    pattern = '%Y-%m-%d %H:%M:%S'
-    created_at = tweet.created_at.strftime("%Y-%m-%d %H:%M:%S")
-    created_at_epoch_utc = int(calendar.timegm(time.strptime(created_at, pattern)))
-    if tweet.geo is None:
-        hasGeoLocation = False
+    if response.status_code == 201:
+        # Created new post
+        logging.info("Created new post with urn: " + str(post_urn))
+        return post_urn
     else:
-        hasGeoLocation = True
-
-    moniker = parent_object_urn + ":tweets:" + tweet.id_str
-    object_interaction = {'objectUrn': parent_object_urn,
-                          'moniker': moniker,
-                          'identification': get_twitter_snapbundle_device_object_id(parent_object_urn, tweet.source, tweet.retweeted),
-                          'data': tweet.text,
-                          'recordedTimestamp': created_at_epoch_utc,
-                          'hasGeoLocation': hasGeoLocation,
-                          'lat': '',
-                          'lon': '',
-                          'alt': ''
-                          }
-
-    url = base_url_object_interaction
-    headers = {'content-type': 'application/json'}
-    payload = json.dumps(object_interaction)
-    print "Sending to URL: (" + str(url) + ") payload " + str(payload)
-    response = requests.put(url, data=payload, headers=headers, auth=(snapbundle_username, snapbundle_password))
-    print "Response (for moniker " + moniker + "): " + str(response.status_code) + " <--> " + str(response.json())
-    #print response
-    #print str(response.json())
-    return
-    ## -- The additional metadata portion of the tweet
-    #snapbundle_utils.add_update_metadata("Object", reference_urn, "Boolean", "contributors_enabled", user['contributors_enabled'])
-
-    print tweet.contributors
-    print tweet.truncated
-    print tweet.retweeted
-    print tweet.retweet_count
-    print tweet.coordinates
-    print tweet.id
-    print tweet.id_str
-    print tweet.in_reply_to_user_id
-    print tweet.in_reply_to_user_id_str
-    print tweet.in_reply_to_screen_name
-    print tweet.in_reply_to_status_id
-    print tweet.in_reply_to_status_id_str
-    print tweet.text
-    print tweet.source
-    print tweet.source_url
-    print tweet.favorited
-    print tweet.favorite_count
-    print tweet.place
-    print tweet.lang
-    #print tweet.possibly_sensitive
-    #'_api': <tweepy.api.API object at 0x0000000002EC78D0>,
-    #'author': <tweepy.models.User object at 0x0000000003014198>,
-    #'entities': {u'symbols': [], u'user_mentions': [], u'hashtags': [],u'urls': [{u'url': u'http://t.co/OkVHIlJPyU', u'indices': [0, 22], u'expanded_url': u'http://amzn.com/k/n79ap3z4TBmT45pOqUaFFQ', u'display_url': u'amzn.com/k/n79ap3z4TBmT\u2026'}]},
-    #'user': <tweepy.models.User object at 0x0000000003014198>,
-
+        return ''
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def get_instagram_snapbundle_device_object_id(parent_object_urn, source):
@@ -318,36 +250,3 @@ def get_instagram_snapbundle_device_object_id(parent_object_urn, source):
         print "Unknown response: " + str(response)
     #print str(response.json())
     return identification
-
-
-## ----------------------------------- FXN ------------------------------------------------------------------------
-def get_snapbundle_device_type(source):
-    source = source.upper()
-    # Start specific and get more general as we go down the line.
-    # Looking for key words in the source string
-    if "KINDLE" in source:
-        return 'Kindle'
-    elif "NOOK" in source:
-        return 'Nook'
-    elif "IPHONE" in source:
-        return 'iPhone'
-    elif "IPAD" in source:
-        return 'iPad'
-    elif "BLACKBERRY" in source:
-        return 'Blackberry'
-    elif "GOODREADS" in source:
-        return 'Specialized'
-    elif "ANDROID" in source:
-        return 'Android'
-    elif "PHONE" in source:
-        return 'Phone'
-    elif "WEB" in source:
-        return 'PC'
-    elif "MAC" in source:
-        return 'PC'
-    elif "TABLET" in source:
-        return 'Tablet'
-    elif "PHONE" in source:
-        return 'Phone'
-    else:
-        return 'Unknown'

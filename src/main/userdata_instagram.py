@@ -75,6 +75,10 @@ filename = 'test.gml'
 #instagram_user.graph_relationship_gml(filename=filename)
 #exit()
 
+instagram_user.check_recent_media_exists_in_snapbundle()
+exit()
+
+
 #################################################################################################################
 print "Saved API Calls: " + str(instagram_user.get_global_count_saved_api_calls())
 print "checking for users I'm following"

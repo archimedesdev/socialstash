@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../python-instagram/.idea/python-instagram.iml" filepath="$PROJECT_DIR$/../python-instagram/.idea/python-instagram.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/socialstash.iml" filepath="$PROJECT_DIR$/.idea/socialstash.iml" />
     </modules>
   </component>
