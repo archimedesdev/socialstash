@@ -541,8 +541,6 @@ class User(object):
                     temp_post['attribution'] = current['attribution']
                     temp_post['id'] = current['id']
                     temp_post['created_time'] = current['created_time']
-                    post_urn = snapbundle_instagram_fxns.add_new_instagram_post_object(temp_post)
-                    print "post urn: " + str(post_urn)
 
                     # This information will become metadata
                     temp_post['type'] = current['type']
@@ -550,6 +548,9 @@ class User(object):
                     temp_post['user'] = current['user']
                     temp_post['user_has_liked'] = current['user_has_liked']
                     temp_post['images'] = current['images']
+
+                    post_urn = snapbundle_instagram_fxns.add_new_instagram_post_object(temp_post)
+                    print "post urn: " + str(post_urn)
 
                     # This will become tags
                     temp_post['filter'] = current['filter']

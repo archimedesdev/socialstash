@@ -198,32 +198,40 @@ def get_urn_from_username(username):
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def add_new_instagram_post_object(post):
     data_urn = snapbundle_base_urn_instagram_post + post['id']
-    if post['attribution'] is None:
-        device_id = snapbundle_instagram_device_id
-    else:
-        device_id = ''
-        # ^^ this needs to be updated in case they ever use the attribution object
 
-    object_interaction = {'objectUrn': post['parent_urn'],
-                          'identification': device_id,
-                          'data': data_urn,
-                          'recordedTimestamp': post['created_time']
-                          }
+    # First check to see if the Object Interaction exists.  If so, get its URN
+    post_urn = snapbundle_helpers.check_object_interactions_for_urn(data_urn)
 
-    url = base_url_object_interaction
-    headers = {'content-type': 'application/json'}
-    payload = json.dumps(object_interaction)
-    logging.debug("Sending to URL: " + str(url))
-    logging.debug("Submitting Payload: " + str(payload))
-    response = requests.put(url, data=payload, headers=headers, auth=(snapbundle_username, snapbundle_password))
-    logging.info("Response (for object interaction " + data_urn + "): " + str(response.status_code) + " <--> " + str(response.json()))
-    post_urn = response.json()['message']
-    if response.status_code == 201:
-        # Created new post
-        logging.info("Created new post with urn: " + str(post_urn))
-        return post_urn
-    else:
-        return ''
+    # If we didn't get an existing OI urn back, we need to create an Object Interaction to be the base of our post
+    if not post_urn:
+        if post['attribution'] is None:
+            device_id = snapbundle_instagram_device_id
+        else:
+            # ^^ this needs to be updated in case they ever use the attribution object
+            device_id = ''
+        object_interaction = {'objectUrn': post['parent_urn'],
+                              'identification': device_id,
+                              'data': data_urn,
+                              'recordedTimestamp': post['created_time']
+                              }
+        url = base_url_object_interaction
+        headers = {'content-type': 'application/json'}
+        payload = json.dumps(object_interaction)
+        logging.debug("Sending to URL: " + str(url))
+        logging.debug("Submitting Payload: " + str(payload))
+        response = requests.put(url, data=payload, headers=headers, auth=(snapbundle_username, snapbundle_password))
+        logging.info("Response (for object interaction " + data_urn + "): " + str(response.status_code) + " <--> " + str(response.json()))
+        if response.status_code == 201:
+            post_urn = response.json()['message']
+            logging.info("Created new post with urn: " + str(post_urn))
+        else:
+            post_urn = False
+
+    # Now we need to start adding all the additional data
+    snapbundle_helpers.add_update_metadata("ObjectInteraction", post_urn, "String", "id", post['id'])
+    snapbundle_helpers.add_update_metadata("ObjectInteraction", post_urn, "String", "type", post['type'])
+
+    return post_urn
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def get_instagram_snapbundle_device_object_id(parent_object_urn, source):

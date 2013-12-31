@@ -309,7 +309,7 @@ def delete_relationship(urn_to_delete):
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def add_update_object_interaction(objectUrn, device_id, data, recordedTimestamp, moniker=None):
+def create_object_interaction(objectUrn, device_id, data, recordedTimestamp, moniker=None):
     # Back to normal application
     temp_meta_data = dict(
         object=objectUrn,
@@ -330,11 +330,40 @@ def add_update_object_interaction(objectUrn, device_id, data, recordedTimestamp,
     if response.status_code == 201:
         # Created new user
         logging.info("Created new object interaction")
-    elif response.status_code == 200:
-        # Updating user
-        logging.info("Object interaction existed, updated")
     urn = response.json()['message']
     return urn
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def check_object_interactions_for_urn(data_search):
+    url = base_url_object_interaction + "?dataLike=" + data_search + "%25"
+    logging.info("Looking for object interactions at url: " + str(url))
+    response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
+    logging.info(str(response))
+    try:
+        if response.status_code == 200:
+            return response.json()[0]['urn']
+        elif response.status_code == 204:
+            return False
+        else:
+            return False
+    except KeyError:
+        return False
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def get_object_interactions(urn_to_check_for):
+    url = base_url_object_interaction + '/' + urn_to_check_for + "?view=Full"
+    logging.info("Looking for object interactions at URL: " + str(url))
+    response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
+    logging.info(str(response))
+    try:
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return False
+    except KeyError:
+        return False
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
