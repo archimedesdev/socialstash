@@ -32,11 +32,11 @@ base_url_server = 'snapbundle'
 #base_url_server = 'stage'
 url_server = 'http://' + base_url_server + '.tagdynamics.net:8080'
 base_url_objects = url_server + '/objects'
-base_url_object_interaction = url_server + '/interactions'
+base_url_object_interactions = url_server + '/interactions'
 base_url_relationship = url_server + '/relationships'
 base_url_relationship_query_object = url_server + '/relationships/Object'
+base_url_metadata = url_server + '/metadata'
 base_url_metadata_objects = url_server + '/metadata/Object'
-base_url_metadata_objects_query = url_server + '/metadata/Object'
 base_url_metadata_mapper_encode = url_server + '/metadata/mapper/encode/'
 base_url_metadata_mapper_decode = url_server + '/metadata/mapper/decode/'
 base_url_files_metadata_query = url_server + '/files/Metadata/'
@@ -126,8 +126,8 @@ def get_object(urn_to_check_for):
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def get_object_metadata(urn_to_check_for):
-    url = base_url_metadata_objects_query + '/' + urn_to_check_for + "?view=Full"
+def get_object_metadata(urn_to_check_for, reference_type):
+    url = base_url_metadata + '/' + reference_type + '/' + urn_to_check_for + "?view=Full"
     logging.info("Looking for object metadata at URL: " + str(url))
     response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
     logging.info(str(response))
@@ -141,8 +141,8 @@ def get_object_metadata(urn_to_check_for):
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def get_object_metadata_dictionary(urn_to_check_for):
-    url = base_url_metadata_objects_query + '/' + urn_to_check_for
+def get_object_metadata_dictionary(urn_to_check_for, reference_type):
+    url = base_url_metadata + '/' + reference_type + '/' + urn_to_check_for
     logging.info("Looking for object metadata at URL: " + str(url))
     response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
     logging.info(str(response))
@@ -211,12 +211,13 @@ def add_update_metadata(reference_type, referenceURN, dataType, key, value, moni
     # Moniker check test hopefully temp
     if moniker is None:
         # First need to see if this object even has any metadata, if not, don't want to cause a 500 response
-        url = base_url_metadata_objects_query + '/' + referenceURN + '?view=Full'
+        url = base_url_metadata + '/' + reference_type + '/' + referenceURN + '?view=Full'
         response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
-        for list_item in response.json():
-            if list_item['key'] == 'moniker':
-                moniker = list_item['rawValue']
-                break
+        if response.status_code == 200:
+            for list_item in response.json():
+                if list_item['key'] == 'moniker':
+                    moniker = list_item['rawValue']
+                    break
 
     # Back to normal application
     raw_value = get_raw_value_encoded(value, dataType)
@@ -230,7 +231,7 @@ def add_update_metadata(reference_type, referenceURN, dataType, key, value, moni
     if moniker is not None:
         temp_meta_data['moniker'] = moniker
 
-    url = base_url_metadata_objects + '/' + referenceURN
+    url = base_url_metadata + '/' + reference_type + '/' + referenceURN
     headers = {'content-type': 'application/json'}
     payload = json.dumps([temp_meta_data])
     logging.debug("Sending to URL: " + str(url))
@@ -320,7 +321,7 @@ def create_object_interaction(objectUrn, device_id, data, recordedTimestamp, mon
     if moniker is not None:
         temp_meta_data['moniker'] = moniker
 
-    url = base_url_object_interaction
+    url = base_url_object_interactions
     headers = {'content-type': 'application/json'}
     payload = json.dumps([temp_meta_data])
     logging.debug("Sending to URL: " + str(url))
@@ -336,7 +337,7 @@ def create_object_interaction(objectUrn, device_id, data, recordedTimestamp, mon
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def check_object_interactions_for_urn(data_search):
-    url = base_url_object_interaction + "?dataLike=" + data_search + "%25"
+    url = base_url_object_interactions + "?dataLike=" + data_search + "%25"
     logging.info("Looking for object interactions at url: " + str(url))
     response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
     logging.info(str(response))
@@ -353,7 +354,7 @@ def check_object_interactions_for_urn(data_search):
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def get_object_interactions(urn_to_check_for):
-    url = base_url_object_interaction + '/' + urn_to_check_for + "?view=Full"
+    url = base_url_object_interactions + "?objectUrne=" + urn_to_check_for
     logging.info("Looking for object interactions at URL: " + str(url))
     response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
     logging.info(str(response))
@@ -390,6 +391,25 @@ def add_file_from_url(reference_type, referenceURN, mimeType, source_url):
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def add_file_from_url_jpg(reference_type, referenceURN, source_url):
     return add_file_from_url(reference_type, referenceURN, "image/jpeg", source_url)
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def search_for_file_object(reference_type, reference_urn):
+    # returns a dictionary of urns and timestamps
+    url = base_url_files + "/" + reference_type + "/" + reference_urn
+    logging.info("Looking for file objects at URL: " + str(url))
+    response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
+    logging.info(str(response))
+    try:
+        if (response.status_code == 200) and (response.json() != {}):
+            return_dict = {}
+            for current in response.json():
+                return_dict[current['timestamp']] = current['urn']
+            return return_dict
+        else:
+            return False
+    except KeyError:
+        return False
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------

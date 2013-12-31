@@ -534,7 +534,14 @@ class User(object):
                     pass
                 else:
                     current = response.json()['data']
-                    print current
+                    # Check to make sure everything is kosher with this post
+                    if current['user']['username'] == self.username:
+                        logging.debug("Username on post and parent object match! (" + self.username + ")")
+                    else:
+                        logging.debug("Username on post and parent object don't match! ("
+                                      + current['user']['username'] + " != " + self.username + " )")
+                        continue # Skip this post
+
                     temp_post = {}
                     # This is the info that goes into the object interaction
                     temp_post['parent_urn'] = self._instagram_user_sb_object_urn
@@ -545,12 +552,12 @@ class User(object):
                     # This information will become metadata
                     temp_post['type'] = current['type']
                     temp_post['link'] = current['link']
-                    temp_post['user'] = current['user']
                     temp_post['user_has_liked'] = current['user_has_liked']
                     temp_post['images'] = current['images']
 
                     post_urn = snapbundle_instagram_fxns.add_new_instagram_post_object(temp_post)
                     print "post urn: " + str(post_urn)
+                    exit()
 
                     # This will become tags
                     temp_post['filter'] = current['filter']
@@ -567,10 +574,7 @@ class User(object):
                     temp_post['comments'] = current['comments']
                     temp_post['caption'] = current['caption']
 
-
-
                     print str(temp_post)
-                    exit()
             except KeyError:
                 pass
             exit()

@@ -27,9 +27,8 @@ snapbundle_instagram_device_urn = 'urn:uuid:a117e53e-28e3-4e95-94a1-1a1baf1b0624
 # == End Snapbundle Variables ==
 
 # == Start Snapbundle URLs ==
-base_url_object_interaction = snapbundle_helpers.base_url_object_interaction
+base_url_object_interaction = snapbundle_helpers.base_url_object_interactions
 base_url_metadata_objects = snapbundle_helpers.base_url_metadata_objects
-base_url_metadata_objects_query = snapbundle_helpers.base_url_metadata_objects_query
 base_url_devices = snapbundle_helpers.base_url_devices
 # == End Snapbundle URLs ==
 
@@ -55,7 +54,7 @@ def get_object(urn_to_check_for):
 ## --------------------------------------------------------------------------------------------------------------
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def get_object_metadata(urn_to_check_for):
-    return_value = snapbundle_helpers.get_object_metadata(urn_to_check_for)
+    return_value = snapbundle_helpers.get_object_metadata(urn_to_check_for, 'Object')
     if not return_value:
         logging.info("Instagram user Object Metadata (" + str(urn_to_check_for) + ") does not yet exist in SnapBundle")
     return return_value
@@ -63,7 +62,7 @@ def get_object_metadata(urn_to_check_for):
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def get_object_metadata_dictionary(urn_to_check_for):
-    return_value = snapbundle_helpers.get_object_metadata_dictionary(urn_to_check_for)
+    return_value = snapbundle_helpers.get_object_metadata_dictionary(urn_to_check_for, 'Object')
     if not return_value:
         logging.info("Instagram user Object Metadata (" + str(urn_to_check_for) + ") does not yet exist in SnapBundle")
     return return_value
@@ -72,7 +71,7 @@ def get_object_metadata_dictionary(urn_to_check_for):
 ## --------------------------------------------------------------------------------------------------------------
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def check_update_user_profile_pic(username, current_pic_url):
-    url = base_url_metadata_objects_query + '/' + snapbundle_base_urn_instagram_user + username + "?key=profile_picture&view=Full"
+    url = snapbundle_helpers.base_url_metadata + '/Object/' + snapbundle_base_urn_instagram_user + username + "?key=profile_picture&view=Full"
     logging.info("Looking for object profile pic metadata at URL: " + str(url))
     response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
     logging.info(str(response.json()))
@@ -230,8 +229,10 @@ def add_new_instagram_post_object(post):
     # Now we need to start adding all the additional data
     snapbundle_helpers.add_update_metadata("ObjectInteraction", post_urn, "String", "id", post['id'])
     snapbundle_helpers.add_update_metadata("ObjectInteraction", post_urn, "String", "type", post['type'])
+    snapbundle_helpers.add_update_metadata("ObjectInteraction", post_urn, "Boolean", "user_has_liked", post['user_has_liked'])
 
     return post_urn
+
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def get_instagram_snapbundle_device_object_id(parent_object_urn, source):

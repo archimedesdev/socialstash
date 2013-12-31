@@ -5,6 +5,7 @@ import os
 import BaseHTTPServer
 import snapbundle_instagram_fxns
 import snapbundle_helpers
+import datetime
 
 HOST_NAME = 'localhost'
 PORT_NUMBER = 9000
@@ -40,17 +41,24 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         if response:
             s.wfile.write('<TABLE BORDER="3">')
             s.wfile.write('<CAPTION>' + "<b>Metadata Info (" + str(len(response)) + ")" + '</b></CAPTION>')
-            s.wfile.write('<TR><TH>Key</TH><TH>Decoded Value</TH><TH>URN</TH><TH>Moniker (file urn)</TH><TH>File</TH></TR>')
+            s.wfile.write('<TR><TH>Key</TH><TH>Decoded Value</TH><TH>URN</TH><TH>Associated Files</TH></TR>')
             for current in response:
                 s.wfile.write("<TR><TD>" + str(current['key'])
                               + "</TD><TD>" + str(snapbundle_helpers.get_raw_value_decoded(current['rawValue'], current['dataType']))
                               + "</TD><TD>" + str(current['urn'])
-                              + "</TD><TD>" + str(current['moniker']) + "</TD>")
-                if str(current['moniker']) == 'None':
-                    s.wfile.write("<TD></TD></TR>")
-                else:
-                    image_file = snapbundle_helpers.get_file_object_contents(str(current['moniker']), check_cache=True)
-                    s.wfile.write("<TD>" + '<IMG SRC="' + str(image_file) + '">' + "</TD></TR>")
+                              + "</TD><TD>")
+                file_urns = snapbundle_helpers.search_for_file_object('Metadata', current['urn'])
+                if file_urns:
+                    s.wfile.write('<TABLE BORDER="1">')
+                    s.wfile.write('<TR><TH>Urn</TH><TH>File</TH></TR>')
+                    for current_key in sorted(file_urns.keys()):
+                        time_sec = current_key / 1000
+                        time_string = datetime.datetime.fromtimestamp(time_sec).strftime('%Y-%m-%d %H:%M:%S')
+                        image_file = snapbundle_helpers.get_file_object_contents(str(file_urns[current_key]), check_cache=True)
+                        s.wfile.write("<TR><TD>" + str(file_urns[current_key]) + "<BR>@<BR>" + time_string + "</TD>")
+                        s.wfile.write("<TD>" + '<IMG SRC="' + str(image_file) + '">' + "</TD></TR>")
+                    s.wfile.write("</TABLE>")
+                s.wfile.write("</TD></TR>")
             s.wfile.write('</TABLE><BR>')
         else:
             s.wfile.write('<BR>No Metadata Info Found <BR>')
