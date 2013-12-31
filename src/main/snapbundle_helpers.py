@@ -354,7 +354,7 @@ def check_object_interactions_for_urn(data_search):
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def get_object_interactions(urn_to_check_for):
-    url = base_url_object_interactions + "?objectUrne=" + urn_to_check_for
+    url = base_url_object_interactions + "?objectUrn=" + urn_to_check_for
     logging.info("Looking for object interactions at URL: " + str(url))
     response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
     logging.info(str(response))

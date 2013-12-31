@@ -86,6 +86,35 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         else:
             s.wfile.write('<BR>No Followed By Users Info Found <BR>')
 
+        response = snapbundle_helpers.get_object_interactions(urn)
+        if response:
+            s.wfile.write('<TABLE BORDER="3">')
+            s.wfile.write('<CAPTION>' + "<b>Object Interactions Info (" + str(len(response)) + ")" + '</b></CAPTION>')
+            s.wfile.write('<TR><TH>data</TH><TH>URN</TH><TH>Recorded Timestamp</TH><TH>Associated Metadata</TH></TR>')
+            for current in response:
+                time_sec = current['recordedTimestamp']
+                time_string = datetime.datetime.fromtimestamp(time_sec).strftime('%Y-%m-%d %H:%M:%S')
+                s.wfile.write("<TR><TD>" + str(current['data'])
+                              + "</TD><TD>" + str(current['urn'])
+                              + "</TD><TD>" + str(time_string)
+                              + "</TD><TD>")
+                metadata_urns = snapbundle_instagram_fxns.get_object_metadata(current['urn'], reference_type='ObjectInteraction')
+                if metadata_urns:
+                    s.wfile.write('<TABLE BORDER="1">')
+                    s.wfile.write('<TR><TH>Key</TH><TH>Decoded Value</TH><TH>URN</TH></TR>')
+                    for current in metadata_urns:
+                        s.wfile.write("<TR><TD>" + str(current['key']) + "</TD>"
+                                      + "<TD>" + str(snapbundle_helpers.get_raw_value_decoded(current['rawValue'], current['dataType'])) + "</TD>"
+                                      + "<TD>" + str(current['urn']) + "</TD>"
+                                      + "</TR>")
+                    s.wfile.write("</TABLE>")
+                else:
+                    s.wfile.write("</TD></TR>")
+            s.wfile.write('</TABLE><BR>')
+        else:
+            s.wfile.write('<BR>No Object Interactions Info Found <BR>')
+
+
     def do_HEAD(s):
         s.send_response(200)
         s.send_header("Content-type", "text/html")

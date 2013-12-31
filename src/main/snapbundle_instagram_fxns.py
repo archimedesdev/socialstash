@@ -53,8 +53,8 @@ def get_object(urn_to_check_for):
 
 ## --------------------------------------------------------------------------------------------------------------
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def get_object_metadata(urn_to_check_for):
-    return_value = snapbundle_helpers.get_object_metadata(urn_to_check_for, 'Object')
+def get_object_metadata(urn_to_check_for, reference_type='Object'):
+    return_value = snapbundle_helpers.get_object_metadata(urn_to_check_for, reference_type)
     if not return_value:
         logging.info("Instagram user Object Metadata (" + str(urn_to_check_for) + ") does not yet exist in SnapBundle")
     return return_value
@@ -88,16 +88,12 @@ def check_update_user_profile_pic(username, current_pic_url):
             if existing_stored_url == current_pic_url:
                 logging.info("Existing stored profile pic URL matches current URL for user " + username + ".  Checking to see if file exists in SnapBundle")
                 # Check to see if a file exists in SB for this
-                try:
-                    existing_stored_file_urn = str(response.json()['moniker'])
-                    if existing_stored_file_urn in ("None", ''):
-                        logging.info("Moniker key not set in metadata: No file urn found, need to upload the file")
-                        need_to_upload_url = True
-                    else:
-                        logging.info("Moniker found.  Existing profile pic urn: " + str(existing_stored_file_urn))
-                except KeyError:
+                file_urns = snapbundle_helpers.search_for_file_object('Metadata', existing_stored_urn)
+                if not file_urns:
                     logging.info("Moniker key not set in metadata: No file urn found, need to upload the file")
                     need_to_upload_url = True
+                else:
+                    logging.info(str(len(file_urns)) + " Associated files found.")
             else:
                 # Need to create a new File object with this picture
                 need_to_upload_url = True
