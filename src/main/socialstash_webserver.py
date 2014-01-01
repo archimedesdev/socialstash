@@ -14,12 +14,20 @@ PORT_NUMBER = 9000
 class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     @staticmethod
     def write_instagram_user_info(s, urn):
-        s.wfile.write("<b>Object urn:</b> %s" % urn)
+        s.wfile.write('<TABLE BORDER="3" BORDERCOLOR="00FF00">')
+        s.wfile.write('<CAPTION>' + "<b>User Object Info</b></CAPTION>")
+        s.wfile.write('<TR><TD>')
+        MyHandler.write_instagram_object_info(s, urn)
+        s.wfile.write('</TD><TD>')
+        MyHandler.write_instagram_metadata_info(s, urn)
+        s.wfile.write('</TD></TR></TABLE>')
 
+    @staticmethod
+    def write_instagram_object_info(s, urn):
         response = snapbundle_instagram_fxns.check_for_object(urn)
         if response:
-            s.wfile.write('<table border="3">')
-            s.wfile.write('<CAPTION>' + "<b>User Object Info (" + str(len(response)) + ")" + '</b></CAPTION>')
+            s.wfile.write('<table border="1">')
+            s.wfile.write('<CAPTION>' + "<b>Object Info (" + str(len(response)) + ")" + '</b></CAPTION>')
             s.wfile.write('<TR><TH>Key</TH><TH>Value</TH></TR>')
             for current in sorted(response.keys()):
                 s.wfile.write("<TR><TD>" + str(current) + "</TD><TD>" + str(response[current]) + "</TD></TR>")
@@ -27,19 +35,12 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         else:
             s.wfile.write('<BR>No Object Info Found <BR>')
 
-#            response = snapbundle_instagram_fxns.get_object_metadata_dictionary(urn)
-#            if response:
-#                s.wfile.write('<TABLE BORDER="3">')
-#                s.wfile.write('<CAPTION>' + "<b>Metadata Info (" + str(len(response)) + ")" + '</b></CAPTION>')
-#                for current in sorted(response.keys()):
-#                    s.wfile.write("<TR><TD>" + str(current) + "</TD><TD>" + str(response[current]) + "</TD></TR>")
-#                s.wfile.write('</TABLE><BR>')
-#            else:
-#                s.wfile.write('<BR>No Metadata Info Found <BR>')
-
+    ################## FXN ######################################################################################################
+    @staticmethod
+    def write_instagram_metadata_info(s, urn):
         response = snapbundle_instagram_fxns.get_object_metadata(urn)
         if response:
-            s.wfile.write('<TABLE BORDER="3">')
+            s.wfile.write('<TABLE BORDER="1">')
             s.wfile.write('<CAPTION>' + "<b>Metadata Info (" + str(len(response)) + ")" + '</b></CAPTION>')
             s.wfile.write('<TR><TH>Key</TH><TH>Decoded Value</TH><TH>URN</TH><TH>Associated Files</TH></TR>')
             for current in response:
@@ -63,6 +64,9 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         else:
             s.wfile.write('<BR>No Metadata Info Found <BR>')
 
+    ################## FXN ######################################################################################################
+    @staticmethod
+    def write_instagram_user_relationships_following(s, urn):
         response = snapbundle_instagram_fxns.get_object_relationships(urn, 'FOLLOWING')
         if response:
             s.wfile.write('<TABLE BORDER="3">')
@@ -75,6 +79,9 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         else:
             s.wfile.write('<BR>No Following Users Info Found <BR>')
 
+    ################## FXN ######################################################################################################
+    @staticmethod
+    def write_instagram_user_relationships_followedby(s, urn):
         response = snapbundle_instagram_fxns.get_object_relationships(urn, 'FOLLOWED_BY')
         if response:
             s.wfile.write('<TABLE BORDER="3">')
@@ -86,33 +93,32 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         else:
             s.wfile.write('<BR>No Followed By Users Info Found <BR>')
 
-#        response = snapbundle_helpers.get_object_interactions(urn)
-#        if response:
-#            s.wfile.write('<TABLE BORDER="3">')
-#            s.wfile.write('<CAPTION>' + "<b>Object Interactions Info (" + str(len(response)) + ")" + '</b></CAPTION>')
-#            s.wfile.write('<TR><TH>data</TH><TH>URN</TH><TH>Recorded Timestamp</TH><TH>Associated Metadata</TH></TR>')
-#            for current in response:
-#                time_sec = current['recordedTimestamp']
-#                time_string = datetime.datetime.fromtimestamp(time_sec).strftime('%Y-%m-%d %H:%M:%S')
-#                s.wfile.write("<TR><TD>" + str(current['data'])
-#                              + "</TD><TD>" + str(current['urn'])
-#                              + "</TD><TD>" + str(time_string)
-#                              + "</TD><TD>")
-#                metadata_urns = snapbundle_instagram_fxns.get_object_metadata(current['urn'], reference_type='ObjectInteraction')
-#                if metadata_urns:
-#                    s.wfile.write('<TABLE BORDER="1">')
-#                    s.wfile.write('<TR><TH>Key</TH><TH>Decoded Value</TH><TH>URN</TH></TR>')
-#                    for current in metadata_urns:
-#                        s.wfile.write("<TR><TD>" + str(current['key']) + "</TD>"
-#                                      + "<TD>" + str(snapbundle_helpers.get_raw_value_decoded(current['rawValue'], current['dataType'])) + "</TD>"
-#                                      + "<TD>" + str(current['urn']) + "</TD>"
-#                                      + "</TR>")
-#                    s.wfile.write("</TABLE>")
-#                else:
-#                    s.wfile.write("</TD></TR>")
-#            s.wfile.write('</TABLE><BR>')
-#        else:
-#            s.wfile.write('<BR>No Object Interactions Info Found <BR>')
+    ################## FXN ######################################################################################################
+    @staticmethod
+    def write_instagram_user_object_interactions(s, urn):
+        response = snapbundle_helpers.get_object_interactions(urn)
+        if response:
+            s.wfile.write('<TABLE BORDER="3" BORDERCOLOR="FF0000">')
+            s.wfile.write('<CAPTION>' + "<b>Object Interactions Info (" + str(len(response)) + ")" + '</b></CAPTION>')
+            s.wfile.write('<TR><TH>ReferenceURN</TH><TH>URN</TH><TH>Recorded Timestamp</TH><TH>Associated Object</TH><TH>Object Metadata</TH></TR>')
+            for current in response:
+                time_sec = current['recordedTimestamp']
+                time_string = datetime.datetime.fromtimestamp(time_sec).strftime('%Y-%m-%d %H:%M:%S')
+                s.wfile.write("<TR><TD>" + str(current['referenceURN'])
+                              + "</TD><TD>" + str(current['urn'])
+                              + "</TD><TD>" + str(time_string)
+                              + "</TD><TD>")
+
+                MyHandler.write_instagram_object_info(s, current['referenceURN'])
+                s.wfile.write("</TD>")
+                s.wfile.write("<TD>")
+                MyHandler.write_instagram_metadata_info(s, current['referenceURN'])
+                s.wfile.write("</TD>")
+                s.wfile.write("</TR>")
+
+            s.wfile.write('</TABLE><BR>')
+        else:
+            s.wfile.write('<BR>No Object Interactions Info Found <BR>')
 
 
     def do_HEAD(s):
@@ -153,7 +159,11 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         if application == 'instagram':
             try:
                 urn = path_list[2]
+                s.wfile.write("<b><CENTER>Object urn: %s</CENTER></b><br>" % urn)
                 MyHandler.write_instagram_user_info(s, urn)
+                MyHandler.write_instagram_user_relationships_following(s, urn)
+                MyHandler.write_instagram_user_relationships_followedby(s, urn)
+                MyHandler.write_instagram_user_object_interactions(s, urn)
             except IndexError:
                 response = snapbundle_helpers.count_objects()
                 if response:

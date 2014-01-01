@@ -240,9 +240,14 @@ def add_update_metadata(reference_type, referenceURN, dataType, key, value, moni
     response = requests.put(url, data=payload, headers=headers, auth=(snapbundle_username, snapbundle_password))
     try:
         logging.info("Response (for key/value " + str(key) + "/" + str(value) + "): " + str(response.status_code) + " <--> " + str(response.json()))
+        urn = response.json()[0]['message']
+        if response.status_code in (200, 201):
+            return urn
+        else:
+            return False
     except UnicodeEncodeError:
         logging.info("Response (for key/value " + str(key) + "/" + "UnicodeEncodeError Value Here" + "): " + str(response.status_code) + " <--> " + str(response.json()))
-
+        return False
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def check_add_update_relationship(entityReferenceType, referenceURN, relationshipType, relatedEntityReferenceType, relatedReferenceURN):

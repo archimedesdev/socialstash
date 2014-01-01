@@ -553,7 +553,10 @@ class User(object):
                     temp_post['type'] = current['type']
                     temp_post['link'] = current['link']
                     temp_post['user_has_liked'] = current['user_has_liked']
-#                    temp_post['images'] = current['images']
+                    if temp_post['type'] == 'image':
+                        temp_post['images'] = current['images']
+                    elif temp_post['type'] == 'video':
+                        temp_post['videos'] = current['videos']
 
                     # This will become tags
                     temp_post['filter'] = current['filter']
@@ -561,7 +564,7 @@ class User(object):
 
                     # This will become a relationship
 #                    temp_post['users_in_photo'] = current['users_in_photo']
-#                    temp_post['likes'] = current['likes']
+                    temp_post['likes'] = current['likes']
 
                     # These will become objects associated with it
 #                    temp_post['location'] = current['location']

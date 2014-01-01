@@ -187,6 +187,22 @@ def get_urn_from_username(username):
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
+def check_for_file_upload_url(referenceType, urn, url):
+    file_urns = snapbundle_helpers.search_for_file_object(referenceType, urn)
+    if not file_urns:
+        logging.info("No associated file urns found for " + urn + ", need to upload the file")
+        file_urn = snapbundle_helpers.add_file_from_url_jpg(referenceType, urn, url)
+        if not file_urn:
+            logging.info("File could not be uploaded for some reason.")
+            return 'n/a'
+        else:
+            logging.info("File uploaded, urn: " + file_urn)
+            return file_urn
+    else:
+        logging.info(str(len(file_urns)) + " Associated files found.")
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
 def add_new_instagram_post_object(post):
     data_urn = snapbundle_base_urn_instagram_post + post['id']
 
@@ -200,11 +216,36 @@ def add_new_instagram_post_object(post):
     snapbundle_helpers.add_update_metadata("Object", post_urn, "String", "type", post['type'])
     snapbundle_helpers.add_update_metadata("Object", post_urn, "Boolean", "user_has_liked", post['user_has_liked'])
 
+    # Take care of the pictures and videos
+    if post['type'] == 'image':
+        pic_url = post['images']['low_resolution']['url']
+        metadata_urn = snapbundle_helpers.add_update_metadata("Object", post_urn, "String", "image:low_resolution", pic_url)
+        file_urn = check_for_file_upload_url('Metadata', metadata_urn, pic_url)
+
+        pic_url = post['images']['thumbnail']['url']
+        metadata_urn = snapbundle_helpers.add_update_metadata("Object", post_urn, "String", "image:thumbnail", pic_url)
+        file_urn = check_for_file_upload_url('Metadata', metadata_urn, pic_url)
+
+        pic_url = post['images']['standard_resolution']['url']
+        metadata_urn = snapbundle_helpers.add_update_metadata("Object", post_urn, "String", "image:standard_resolution", pic_url)
+        file_urn = check_for_file_upload_url('Metadata', metadata_urn, pic_url)
+    elif post['type'] == 'video':
+        pic_url = post['videos']['low_resolution']['url']
+        metadata_urn = snapbundle_helpers.add_update_metadata("Object", post_urn, "String", "video:low_resolution", pic_url)
+        file_urn = check_for_file_upload_url('Metadata', metadata_urn, pic_url)
+
+        pic_url = post['videos']['standard_resolution']['url']
+        metadata_urn = snapbundle_helpers.add_update_metadata("Object", post_urn, "String", "video:standard_resolution", pic_url)
+        file_urn = check_for_file_upload_url('Metadata', metadata_urn, pic_url)
+
     # Now add the tags, including the filters:
 #    filter_tag = snapbundle_base_instagram_filter_name + post['filter']
 #    snapbundle_helpers.create_tag_association('Object', post_urn, filter_tag)
 #    for tag in post['tags']:
 #        snapbundle_helpers.create_tag_association('Object', post_urn, tag)
+
+    # Now let's add the Like relationships
+    snapbundle_helpers.add_update_metadata("Object", post_urn, "Integer", "likes_count", post['likes']['count'])
 
     # Now we need to see if the Interaction already exists:
     interaction_urn = snapbundle_helpers.check_object_interactions_for_urn(post_urn)
