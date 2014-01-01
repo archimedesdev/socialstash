@@ -73,7 +73,6 @@ else:
 filename = 'test.gml'
 #instagram_user.output_relationship_node_gml(filename=filename, depth=2)
 #instagram_user.graph_relationship_gml(filename=filename)
-#exit()
 
 instagram_user.check_recent_media_exists_in_snapbundle()
 exit()

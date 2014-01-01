@@ -85,11 +85,12 @@ def check_for_object(urn_to_check_for):
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def add_update_object(name, objectUrn, objectType):
+def add_update_object(name, objectUrn, objectType, description=None):
     json_info = {"name": name,
                  "active": "true",
                  "objectUrn": objectUrn,
-                 "objectType": objectType
+                 "objectType": objectType,
+                 "description": description
                  }
     url = base_url_objects
     headers = {'content-type': 'application/json'}
@@ -97,13 +98,13 @@ def add_update_object(name, objectUrn, objectType):
     logging.info("Submitting Payload: " + str(payload))
     response = requests.put(url, data=payload, headers=headers, auth=(snapbundle_username, snapbundle_password))
     logging.info("Response (for objectURN " + objectUrn + "): " + str(response.status_code) + " <--> " + str(response.json()))
+    urn = response.json()['message']
     if response.status_code == 201:
         # Created new user
-        logging.info("Created new object")
+        logging.info("Created new object, urn=" + str(urn))
     elif response.status_code == 200:
         # Updating user
-        logging.info("Object existed, updated")
-    urn = response.json()['message']
+        logging.info("Object existed, updated, urn=" + str(urn))
     return urn
 
 
@@ -310,16 +311,15 @@ def delete_relationship(urn_to_delete):
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def create_object_interaction(objectUrn, device_id, data, recordedTimestamp, moniker=None):
+def create_object_interaction(entityReferenceType, entityUrn, recordedTimestamp, interactedUrn):
     # Back to normal application
     temp_meta_data = dict(
-        object=objectUrn,
-        identification=device_id,
-        data=data,
-        recordedTimestamp=recordedTimestamp
+        entityReferenceType=entityReferenceType,
+        objectUrn=entityUrn,
+        recordedTimestamp=recordedTimestamp,
+        referenceUrn=interactedUrn,
+        data=interactedUrn
     )
-    if moniker is not None:
-        temp_meta_data['moniker'] = moniker
 
     url = base_url_object_interactions
     headers = {'content-type': 'application/json'}
@@ -327,11 +327,11 @@ def create_object_interaction(objectUrn, device_id, data, recordedTimestamp, mon
     logging.debug("Sending to URL: " + str(url))
     logging.debug("Submitting Payload: " + str(payload))
     response = requests.put(url, data=payload, headers=headers, auth=(snapbundle_username, snapbundle_password))
-    logging.info("Response (for objectInteractionURN " + str(data) + "): " + str(response.status_code) + " <--> " + str(response.json()))
+    logging.info("Response (for objectInteractionURN " + str(interactedUrn) + "): " + str(response.status_code) + " <--> " + str(response.json()))
+    urn = response.json()['message']
     if response.status_code == 201:
         # Created new user
-        logging.info("Created new object interaction")
-    urn = response.json()['message']
+        logging.info("Created new interaction, urn=" + str(urn))
     return urn
 
 
@@ -474,7 +474,7 @@ def create_tag_association(entity_reference_type, reference_urn, name):
     logging.debug("Sending to URL: " + str(url))
     logging.debug("Submitting Payload: " + str(payload))
     response = requests.put(url, data=payload, headers=headers, auth=(snapbundle_username, snapbundle_password))
-    logging.info("Response for url (" + str(url) + "): " + str(response.status_code) + " <--> " + str(response.json()))
+    logging.info("Response for tag association of (" + entity_reference_type + '/' + reference_urn + "): " + str(response.status_code) + " <--> " + str(response.json()))
     if response.status_code in (200, 201):
         return True
     else:
@@ -484,12 +484,10 @@ def create_tag_association(entity_reference_type, reference_urn, name):
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def count_objects():
     url = base_url_objects
-    print "Looking at URL: " + str(url)
     count = 0
     response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
     for record in response.json():
         count += 1
-    print "Count: " + str(count)
     return response.json()
 
 ## ----------------------------------- END ------------------------------------------------------------------------

@@ -22,8 +22,6 @@ snapbundle_base_urn_instagram = "urn:instagram:"
 snapbundle_base_urn_instagram_user = snapbundle_base_urn_instagram + "users:"
 snapbundle_base_urn_instagram_post = snapbundle_base_urn_instagram + "posts:"
 snapbundle_base_instagram_filter_name = "instagram:filters:"
-snapbundle_instagram_device_id = "instagram:devices:unknown"
-snapbundle_instagram_device_urn = 'urn:uuid:a117e53e-28e3-4e95-94a1-1a1baf1b0624'
 # == End Snapbundle Variables ==
 
 # == Start Snapbundle URLs ==
@@ -90,7 +88,7 @@ def check_update_user_profile_pic(username, current_pic_url):
                 # Check to see if a file exists in SB for this
                 file_urns = snapbundle_helpers.search_for_file_object('Metadata', existing_stored_urn)
                 if not file_urns:
-                    logging.info("Moniker key not set in metadata: No file urn found, need to upload the file")
+                    logging.info("No associated file urns found, need to upload the file")
                     need_to_upload_url = True
                 else:
                     logging.info(str(len(file_urns)) + " Associated files found.")
@@ -106,9 +104,6 @@ def check_update_user_profile_pic(username, current_pic_url):
                     return 'n/a'
                 else:
                     logging.info("File uploaded, urn: " + file_urn)
-                    reference_urn = snapbundle_base_urn_instagram_user + username
-                    logging.info("Updating profile pic metadata to include latest file urn")
-                    snapbundle_helpers.add_update_metadata("Object", reference_urn, "String", "profile_picture", current_pic_url, file_urn)
                     return file_urn
         else:
             return False
@@ -159,7 +154,8 @@ def set_filter_tag(referenceURN, filter_name):
 ## --------------------------------------------------------------------------------------------------------------
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def add_update_new_instagram_user_object(instagram_handle, instagram_user_sb_object_urn):
-    return snapbundle_helpers.add_update_object(instagram_handle, instagram_user_sb_object_urn, "Person")
+    return snapbundle_helpers.add_update_object(instagram_handle, instagram_user_sb_object_urn, "Person",
+                                                description='Instagram User')
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
@@ -194,38 +190,34 @@ def get_urn_from_username(username):
 def add_new_instagram_post_object(post):
     data_urn = snapbundle_base_urn_instagram_post + post['id']
 
-    # First check to see if the Object Interaction exists.  If so, get its URN
-    post_urn = snapbundle_helpers.check_object_interactions_for_urn(data_urn)
-
-    # If we didn't get an existing OI urn back, we need to create an Object Interaction to be the base of our post
-    if not post_urn:
-        if post['attribution'] is None:
-            device_id = snapbundle_instagram_device_id
-        else:
-            # ^^ this needs to be updated in case they ever use the attribution object
-            device_id = ''
-        object_interaction = {'objectUrn': post['parent_urn'],
-                              'identification': device_id,
-                              'data': data_urn,
-                              'recordedTimestamp': post['created_time']
-                              }
-        url = base_url_object_interaction
-        headers = {'content-type': 'application/json'}
-        payload = json.dumps(object_interaction)
-        logging.debug("Sending to URL: " + str(url))
-        logging.debug("Submitting Payload: " + str(payload))
-        response = requests.put(url, data=payload, headers=headers, auth=(snapbundle_username, snapbundle_password))
-        logging.info("Response (for object interaction " + data_urn + "): " + str(response.status_code) + " <--> " + str(response.json()))
-        if response.status_code == 201:
-            post_urn = response.json()['message']
-            logging.info("Created new post with urn: " + str(post_urn))
-        else:
-            post_urn = False
-
+    # First check to see if the Post Object Interaction exists.  If so, get its URN
+    post_object_urn = snapbundle_base_urn_instagram_post + post['id']
+    post_urn = snapbundle_helpers.add_update_object(name=post['id'], objectUrn=post_object_urn, objectType='Post',
+                                                    description='Instagram Post')
     # Now we need to start adding all the additional data
-    snapbundle_helpers.add_update_metadata("ObjectInteraction", post_urn, "String", "id", post['id'])
-    snapbundle_helpers.add_update_metadata("ObjectInteraction", post_urn, "String", "type", post['type'])
-    snapbundle_helpers.add_update_metadata("ObjectInteraction", post_urn, "Boolean", "user_has_liked", post['user_has_liked'])
+    snapbundle_helpers.add_update_metadata("Object", post_urn, "String", "id", post['id'])
+    snapbundle_helpers.add_update_metadata("Object", post_urn, "String", "created_time", post['created_time'])
+    snapbundle_helpers.add_update_metadata("Object", post_urn, "String", "type", post['type'])
+    snapbundle_helpers.add_update_metadata("Object", post_urn, "Boolean", "user_has_liked", post['user_has_liked'])
+
+    # Now add the tags, including the filters:
+#    filter_tag = snapbundle_base_instagram_filter_name + post['filter']
+#    snapbundle_helpers.create_tag_association('Object', post_urn, filter_tag)
+#    for tag in post['tags']:
+#        snapbundle_helpers.create_tag_association('Object', post_urn, tag)
+
+    # Now we need to see if the Interaction already exists:
+    interaction_urn = snapbundle_helpers.check_object_interactions_for_urn(post_urn)
+
+    if not interaction_urn:
+        # Now we need to create an Interaction between the parent object and this post object
+        interaction_urn = snapbundle_helpers.create_object_interaction('Object', post['parent_urn'],
+                                                                       post['created_time'], post_urn)
+
+    print "posturn: " + str(post_urn)
+    print "inerurn: " + str(interaction_urn)
+    return post_urn
+
 
     return post_urn
 

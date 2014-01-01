@@ -553,26 +553,25 @@ class User(object):
                     temp_post['type'] = current['type']
                     temp_post['link'] = current['link']
                     temp_post['user_has_liked'] = current['user_has_liked']
-                    temp_post['images'] = current['images']
+#                    temp_post['images'] = current['images']
+
+                    # This will become tags
+                    temp_post['filter'] = current['filter']
+                    temp_post['tags'] = current['tags']
+
+                    # This will become a relationship
+#                    temp_post['users_in_photo'] = current['users_in_photo']
+#                    temp_post['likes'] = current['likes']
+
+                    # These will become objects associated with it
+#                    temp_post['location'] = current['location']
+#                    temp_post['comments'] = current['comments']
+#                    temp_post['caption'] = current['caption']
 
                     post_urn = snapbundle_instagram_fxns.add_new_instagram_post_object(temp_post)
                     print "post urn: " + str(post_urn)
                     exit()
 
-                    # This will become tags
-                    temp_post['filter'] = current['filter']
-
-                    # This will become HashTag Objects
-                    temp_post['tags'] = current['tags']
-
-                    # This will become a relationship
-                    temp_post['users_in_photo'] = current['users_in_photo']
-                    temp_post['likes'] = current['likes']
-
-                    # These will become objects associated with it
-                    temp_post['location'] = current['location']
-                    temp_post['comments'] = current['comments']
-                    temp_post['caption'] = current['caption']
 
                     print str(temp_post)
             except KeyError:
