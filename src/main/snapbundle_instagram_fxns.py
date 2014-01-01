@@ -260,9 +260,6 @@ def add_new_instagram_post_object(post):
     return post_urn
 
 
-    return post_urn
-
-
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def get_instagram_snapbundle_device_object_id(parent_object_urn, source):
     identification = parent_object_urn + ":" + deviceType + ":" + source

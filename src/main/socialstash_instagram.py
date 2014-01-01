@@ -319,38 +319,8 @@ class User(object):
             if current.username in snapbundle_follow_user_dictoinary.keys():
                 snapbundle_follow_user_dictoinary[current.username] = 'VALID'
 
-            try:
-                temp_social_stash_i_user = User(access_token=self.access_token,
-                                                snapbundle_user_object=self._snapbundle_user_object,
-                                                snapbundle_username=self._snapbundle_username,
-                                                snapbundle_password=self._snapbundle_password,
-                                                username=current.username,
-                                                current_search_depth=(self.current_search_depth - 1))
-                print "Checking for SocialStash Instagram User " + current.username + " in SnapBundle"
-                do_profile_update = False
-                new_user = False
-                user_data_response = temp_social_stash_i_user.check_for_user_in_snapbundle()
-                if not user_data_response:
-                    print "User not found!  Creating New User"
-                    new_user = True
-                    do_profile_update = True
-                else:
-                    print "User exists!"
-                    if update_user_profile_if_found:
-                        print "Updating User " + current.username + " anyway"
-                        do_profile_update = True
-
-                if do_profile_update:
-                    temp_social_stash_i_user.authenticate()
-                    temp_social_stash_i_user.set_user_data_from_instagram(current.id)
-                    print "Added/Updated User URN: " + \
-                          str(temp_social_stash_i_user.create_update_user_in_snapbundle(new_user=new_user))
-                    # Time to check the profile pic
-                    temp_social_stash_i_user.check_and_update_profile_pic()
-                else:
-                    # We need to pull the data from SnapBundle instead of the Instagram API
-                    temp_social_stash_i_user.set_user_data_from_cached_or_snapbundle_data()
-
+            temp_social_stash_i_user, new_user = self.check_users_exist_in_snapbundle(current.username, current.id, update_user_profile_if_found, self.current_search_depth, relationship)
+            if temp_social_stash_i_user != False:
                 if new_user or update_user_following_if_found or update_user_followedby_if_found:
                     self.create_update_snapbundle_relationships(relationship, temp_social_stash_i_user)
 
@@ -387,20 +357,6 @@ class User(object):
                     logging.info("Not continuing down the follow recursion...  (max_follow: " + str(instagram_max_follow_count) + "), depth: " + str((self.current_search_depth-1)))
 
                 del temp_social_stash_i_user
-            except instagram.bind.InstagramAPIError, error:
-                print "Unable to pull data for user " + current.username + ": " + str(error) + ". Creating/Updating User with no metadata"
-                logging.info("Unable to pull data for user " + current.username + ": " + str(error) + ". Creating/Updating User with no metadata")
-                print "Added/Updated User URN: " + str(temp_social_stash_i_user.create_update_user_in_snapbundle_object_only())
-                self.create_update_snapbundle_relationships(relationship, temp_social_stash_i_user)
-            except instagram.bind.InstagramClientError, error:
-                print "Unable to pull data for user " + current.username + ": " + str(error)
-                logging.info("Unable to pull data for user " + current.username + ": " + str(error))
-            except KeyError:
-                print "Unable to pull data from SnapBundle for user " + current.username + ". User probably has no metadata associated with them (permission error in Instagram)"
-                logging.info("Unable to pull data for user " + current.username + ". User probably has no metadata associated with them (permission error in Instagram)")
-            except Exception, err:
-                print Exception, err
-                print traceback.format_exc()
 
         # Time to go through our snapbundle relationships dictionary to see if there are any we need to delete
         global global_counts_dictionary
@@ -427,6 +383,61 @@ class User(object):
                                                                temp_social_stash_i_user.get_instagrame_user_sb_object_urn())
             snapbundle_instagram_fxns.check_add_update_followed_by(temp_social_stash_i_user.get_instagrame_user_sb_object_urn(),
                                                                    self.get_instagrame_user_sb_object_urn())
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+    def check_users_exist_in_snapbundle(self, username, id, update_user_profile_if_found, search_depth, relationship=None):
+        try:
+            temp_social_stash_i_user = User(access_token=self.access_token,
+                                            snapbundle_user_object=self._snapbundle_user_object,
+                                            snapbundle_username=self._snapbundle_username,
+                                            snapbundle_password=self._snapbundle_password,
+                                            username=username,
+                                            current_search_depth=(search_depth - 1))
+            print "Checking for SocialStash Instagram User " + username + " in SnapBundle"
+            do_profile_update = False
+            new_user = False
+            user_data_response = temp_social_stash_i_user.check_for_user_in_snapbundle()
+            if not user_data_response:
+                print "User not found!  Creating New User"
+                new_user = True
+                do_profile_update = True
+            else:
+                print "User exists!"
+                if update_user_profile_if_found:
+                    print "Updating User " + username + " anyway"
+                    do_profile_update = True
+
+            if do_profile_update:
+                temp_social_stash_i_user.authenticate()
+                temp_social_stash_i_user.set_user_data_from_instagram(id)
+                print "Added/Updated User URN: " + \
+                      str(temp_social_stash_i_user.create_update_user_in_snapbundle(new_user=new_user))
+                # Time to check the profile pic
+                temp_social_stash_i_user.check_and_update_profile_pic()
+            else:
+                # We need to pull the data from SnapBundle instead of the Instagram API
+                temp_social_stash_i_user.set_user_data_from_cached_or_snapbundle_data()
+
+            return temp_social_stash_i_user, new_user
+        except instagram.bind.InstagramAPIError, error:
+            print "Unable to pull data for user " + username + ": " + str(error) + ". Creating/Updating User with no metadata"
+            logging.info("Unable to pull data for user " + username + ": " + str(error) + ". Creating/Updating User with no metadata")
+            print "Added/Updated User URN: " + str(temp_social_stash_i_user.create_update_user_in_snapbundle_object_only())
+            if relationship is not None:
+                self.create_update_snapbundle_relationships(relationship, temp_social_stash_i_user)
+            return temp_social_stash_i_user, new_user
+        except instagram.bind.InstagramClientError, error:
+            print "Unable to pull data for user " + username + ": " + str(error)
+            logging.info("Unable to pull data for user " + username + ": " + str(error))
+            return False, False
+        except KeyError:
+            print "Unable to pull data from SnapBundle for user " + username + ". User probably has no metadata associated with them (permission error in Instagram)"
+            logging.info("Unable to pull data for user " + username + ". User probably has no metadata associated with them (permission error in Instagram)")
+            return False, False
+        except Exception, err:
+            print Exception, err
+            print traceback.format_exc()
+            return False, False
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
     def print_relationship_node_list(self, manual_pull_from_snapbundle=False, relationship=None, depth=1):
@@ -565,6 +576,15 @@ class User(object):
                     # This will become a relationship
 #                    temp_post['users_in_photo'] = current['users_in_photo']
                     temp_post['likes'] = current['likes']
+                    likes_users = temp_post['likes']['data']
+                    print str(likes_users)
+                    for current_user in likes_users:
+                        logging.debug("Checking into existance of user who liked post: " + str(current_user['username']))
+                        temp_social_stash_i_user, new_user = self.check_users_exist_in_snapbundle(str(current_user['username']),
+                                                                                                  str(current_user['id']),
+                                                                                                  True,
+                                                                                                  1)
+
 
                     # These will become objects associated with it
 #                    temp_post['location'] = current['location']
