@@ -2,8 +2,6 @@ __author__ = 'prad'
 
 import json
 import requests
-import calendar
-import time
 import ConfigParser
 import snapbundle_helpers
 import logging
@@ -19,8 +17,8 @@ config.read(config_file)
 snapbundle_username = config.get('SnapbundleCredentials', 'snapbundle_username')
 snapbundle_password = config.get('SnapbundleCredentials', 'snapbundle_password')
 snapbundle_base_urn_instagram = "urn:instagram:"
-snapbundle_base_urn_instagram_user = snapbundle_base_urn_instagram + "users:"
-snapbundle_base_urn_instagram_post = snapbundle_base_urn_instagram + "posts:"
+snapbundle_base_urn_instagram_user = snapbundle_base_urn_instagram + "user:"
+snapbundle_base_urn_instagram_post = snapbundle_base_urn_instagram + "post:"
 snapbundle_base_urn_instagram_comment = snapbundle_base_urn_instagram + "comment:"
 snapbundle_base_instagram_filter_name = "instagram:filter:"
 # == End Snapbundle Variables ==

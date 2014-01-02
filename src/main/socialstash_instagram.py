@@ -5,7 +5,7 @@ import instagram
 import logging
 import ConfigParser
 import requests
-import simplejson
+import json
 import urlparse
 import snapbundle_instagram_fxns
 import traceback
@@ -784,7 +784,7 @@ class User(object):
         Returns:
           A JSON string representation of this twitter.User instance
         '''
-        return simplejson.dumps(self.AsDict(), sort_keys=True)
+        return json.dumps(self.AsDict(), sort_keys=True)
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
     def AsDict(self):
