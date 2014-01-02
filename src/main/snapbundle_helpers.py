@@ -203,7 +203,10 @@ def get_object_metadata_dictionary(urn_to_check_for, reference_type):
 def get_raw_value_encoded(var_passed_in, var_type):
     url = base_url_metadata_mapper_encode + metadataDataTypes[var_type.upper()]
     try:
-        payload = str(var_passed_in)
+        if isinstance(var_passed_in, basestring):
+            payload = var_passed_in.encode('utf-8')
+        else:
+            payload = str(var_passed_in)
     except UnicodeEncodeError:
         logging.critical("GAH, UnicodeEncodeError, don't know what to do!")
         payload = ''

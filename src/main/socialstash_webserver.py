@@ -44,8 +44,13 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             s.wfile.write('<CAPTION>' + "<b>Metadata Info (" + str(len(response)) + ")" + '</b></CAPTION>')
             s.wfile.write('<TR><TH>Key</TH><TH>Decoded Value</TH><TH>URN</TH><TH>Associated Files</TH></TR>')
             for current in response:
+                decoded_value = snapbundle_helpers.get_raw_value_decoded(current['rawValue'], current['dataType'])
+                if current['dataType'] == 'StringType':
+                    decoded_value = decoded_value.encode("utf-8")
+                else:
+                    decoded_value = str(decoded_value)
                 s.wfile.write("<TR><TD>" + str(current['key'])
-                              + "</TD><TD>" + str(snapbundle_helpers.get_raw_value_decoded(current['rawValue'], current['dataType']))
+                              + "</TD><TD>" + decoded_value
                               + "</TD><TD>" + str(current['urn'])
                               + "</TD><TD>")
                 file_urns = snapbundle_helpers.search_for_file_object('Metadata', current['urn'])
@@ -166,9 +171,11 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         else:
             s.wfile.write('<BR>No Object Interactions Info Found <BR>')
 
-    ################## FXN ######################################################################################################
+    ########################################################################################################################
+    ########################################################################################################################
+    ############# FXN ######################################################################################################
     @staticmethod
-    def write_all_users(s):
+    def index_write_all_users(s):
         response = snapbundle_helpers.check_for_objects_options(snapbundle_instagram_fxns.snapbundle_base_urn_instagram_user,objectUrnLike=True)
         if response:
             s.wfile.write('<TABLE BORDER="3">')
@@ -186,11 +193,29 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
     ################## FXN ######################################################################################################
     @staticmethod
-    def write_all_posts(s):
+    def index_write_all_posts(s):
         response = snapbundle_helpers.check_for_objects_options(snapbundle_instagram_fxns.snapbundle_base_urn_instagram_post, objectUrnLike=True)
         if response:
             s.wfile.write('<TABLE BORDER="3">')
             s.wfile.write('<CAPTION>' + "<b>Instagram Post Object Info (" + str(len(response)) + ")" + '</b></CAPTION>')
+            s.wfile.write('<TR><TH>objectType</TH><TH>objectUrn</TH><TH>Name</TH><TH>urn</TH></TR>')
+            for current in response:
+                s.wfile.write("<TR><TD>" + str(current['objectType'])
+                              + '</TD><TD><a href="/instagram/' + str(current['objectUrn']) + '">' + str(current['objectUrn']) + '</a>'
+                              + '</TD><TD>' + str(current['name'])
+                              + "</TD><TD>" + str(current['urn'])
+                              + "</TD></TR>")
+            s.wfile.write('</TABLE><BR>')
+        else:
+            s.wfile.write('<BR>No Object Info Found <BR>')
+
+    ################## FXN ######################################################################################################
+    @staticmethod
+    def index_write_all_comments(s):
+        response = snapbundle_helpers.check_for_objects_options(snapbundle_instagram_fxns.snapbundle_base_urn_instagram_comment, objectUrnLike=True)
+        if response:
+            s.wfile.write('<TABLE BORDER="3">')
+            s.wfile.write('<CAPTION>' + "<b>Instagram Comment Object Info (" + str(len(response)) + ")" + '</b></CAPTION>')
             s.wfile.write('<TR><TH>objectType</TH><TH>objectUrn</TH><TH>Name</TH><TH>urn</TH></TR>')
             for current in response:
                 s.wfile.write("<TR><TD>" + str(current['objectType'])
@@ -249,8 +274,9 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 MyHandler.write_instagram_user_relationships(s, urn)
                 MyHandler.write_instagram_user_object_interactions(s, urn)
             except IndexError:
-                MyHandler.write_all_users(s)
-                MyHandler.write_all_posts(s)
+                MyHandler.index_write_all_users(s)
+                MyHandler.index_write_all_posts(s)
+                MyHandler.index_write_all_comments(s)
 
         s.wfile.write("</body></html>")
 
