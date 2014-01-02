@@ -547,8 +547,8 @@ class User(object):
                     current = response.json()['data']
 
                     # TEMP
-                    #just_use = '560867689500569094_513507874' #Dolly sods with a comment
-                    just_use = '620310392478690795_513507874' #flashback friday shit eating grin
+                    just_use = '560867689500569094_513507874' #Dolly sods with a comment
+                    #just_use = '620310392478690795_513507874' #flashback friday shit eating grin
                     if current['id'] != just_use:
                         continue
 
@@ -578,6 +578,8 @@ class User(object):
                         temp_post['images'] = current['images']
                     elif temp_post['type'] == 'video':
                         temp_post['videos'] = current['videos']
+                    temp_post['likes'] = current['likes']
+                    temp_post['comments'] = current['comments']
 
                     # This will become tags
                     temp_post['filter'] = current['filter']
@@ -585,14 +587,39 @@ class User(object):
 
                     # This will become a relationship
 #                    temp_post['users_in_photo'] = current['users_in_photo']
-                    temp_post['likes'] = current['likes']
 
                     # These will become objects associated with it
 #                    temp_post['location'] = current['location']
-                    temp_post['comments'] = current['comments']
 
                     # Need to create the post and get its URN back before we can do any additional relationships
                     post_urn = snapbundle_instagram_fxns.add_new_instagram_post_object(temp_post)
+
+                    # Time to go get our comments
+                    if temp_post['comments']['count'] > 0:
+                        url3 = base_instagram_url_media + str(key) + '/comments?access_token=' + self.access_token
+                        logging.info("Looking for Instagram Post Comments at URL: " + str(url3))
+                        response3 = requests.get(url3)
+                        logging.info(str(response3))
+                        if response3.status_code != 200:
+                            logging.debug("Response wasn't a 200!!! WTF, so skipping this media likes")
+                        else:
+                            comments_data = response3.json()['data']
+                            print comments_data
+                            for current_comment in comments_data:
+                                print current_comment
+                                # First we'll check that the creator of the comment exists in SB
+                                logging.debug("Checking into existance of user who commented on post: " + str(current_comment['from']['username']))
+                                temp_social_stash_i_user, new_user = self.check_users_exist_in_snapbundle(str(current_comment['from']['username']),
+                                                                                                          str(current_comment['from']['id']),
+                                                                                                          update_user_profile_if_found=False,
+                                                                                                          search_depth=1)
+                                #if temp_social_stash_i_user:
+                                    # The user either exists or was created
+
+                                    #like_user_urn = temp_social_stash_i_user.get_instagrame_user_sb_object_urn()
+                                    #snapbundle_instagram_fxns.add_user_likes_post(like_user_urn, post_urn)
+                    exit()
+
                     likes_users = temp_post['likes']['data']
                     # Need to see if the number of likes in our data list is equal to the number stated.  Instagram will
                     # Only include a couple if there are many likes
@@ -602,7 +629,7 @@ class User(object):
                         logging.info("Numbers didn't match! Looking for Instagram Post Likes at URL: " + str(url2))
                         response2 = requests.get(url2)
                         logging.info(str(response2))
-                        if response.status_code != 200:
+                        if response2.status_code != 200:
                             logging.debug("Response wasn't a 200!!! WTF, so skipping this media likes")
                         else:
                             likes_users = response2.json()['data']
