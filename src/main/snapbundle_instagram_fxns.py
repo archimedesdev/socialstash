@@ -30,6 +30,9 @@ base_url_metadata_objects = snapbundle_helpers.base_url_metadata_objects
 base_url_devices = snapbundle_helpers.base_url_devices
 # == End Snapbundle URLs ==
 
+global_following_string = 'FOLLOWING'
+global_followed_by_string = 'FOLLOWED_BY'
+global_likes_string = 'LIKES'
 
 ## --------------------------------------------------------------------------------------------------------------
 ## ----------------------------------- FXN ------------------------------------------------------------------------
@@ -114,15 +117,19 @@ def check_update_user_profile_pic(username, current_pic_url):
 
 ## --------------------------------------------------------------------------------------------------------------
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def get_object_relationships(urn_to_check_for, relationship):
-    following_string = 'FOLLOWING'
-    followed_by_string = 'FOLLOWED_BY'
-    if relationship.upper() == followed_by_string:
+def get_object_relationships(urn_to_check_for, relationship, reverse=False):
+    if relationship.upper() == global_followed_by_string:
         relationship = 'FollowedBy'
-    elif relationship.upper() == following_string:
+    elif relationship.upper() == global_following_string:
         relationship = 'Follows'
+    elif relationship.upper() == global_likes_string:
+        relationship = 'Likes'
 
-    temp_dict = snapbundle_helpers.get_object_relationship_urn_list(urn_to_check_for, relationship)
+    if reverse:
+        temp_dict = snapbundle_helpers.get_object_relationship_urn_list(urn_to_check_for, relationship, reverse=True)
+    else:
+        temp_dict = snapbundle_helpers.get_object_relationship_urn_list(urn_to_check_for, relationship)
+
     # we're going to remove the prefix to the instagram user names here
     return_dict = {}
     for current in temp_dict.keys():
@@ -141,14 +148,25 @@ def delete_relationship(urn_to_delete):
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def set_instagram_tags(referenceURN, tag_list):
     for tag in tag_list:
-        snapbundle_helpers.create_tag_association("ObjectAssociation", referenceURN, tag)
+        snapbundle_helpers.create_tag_association("Object", referenceURN, tag)
 
 
 ## --------------------------------------------------------------------------------------------------------------
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def set_filter_tag(referenceURN, filter_name):
     tag_name = snapbundle_base_instagram_filter_name + filter_name.upper()
-    return snapbundle_helpers.create_tag_association("ObjectAssociation", referenceURN, tag_name)
+    return snapbundle_helpers.create_tag_association("Object", referenceURN, tag_name)
+
+
+## --------------------------------------------------------------------------------------------------------------
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def get_tag_list_by_post(post_urn):
+    response = snapbundle_helpers.get_all_tags_linked_to_object('Object', post_urn)
+    tag_list = {}
+    if response:
+        for current in response:
+            tag_list[current['tag']['name']] = current['tag']['urn']
+    return tag_list
 
 
 ## --------------------------------------------------------------------------------------------------------------
@@ -179,6 +197,11 @@ def check_add_update_followed_by(reference_urn, relatedReferenceURN):
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def check_add_update_follows(reference_urn, relatedReferenceURN):
     return snapbundle_helpers.check_add_update_relationship('Object', reference_urn, 'Follows', 'Object', relatedReferenceURN)
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def add_user_likes_post(user_urn, post_urn):
+    return snapbundle_helpers.check_add_update_relationship('Object', user_urn, 'Likes', 'Object', post_urn)
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
@@ -239,10 +262,10 @@ def add_new_instagram_post_object(post):
         file_urn = check_for_file_upload_url('Metadata', metadata_urn, pic_url)
 
     # Now add the tags, including the filters:
-#    filter_tag = snapbundle_base_instagram_filter_name + post['filter']
-#    snapbundle_helpers.create_tag_association('Object', post_urn, filter_tag)
-#    for tag in post['tags']:
-#        snapbundle_helpers.create_tag_association('Object', post_urn, tag)
+    filter_tag = snapbundle_base_instagram_filter_name + post['filter']
+    snapbundle_helpers.create_tag_association('Object', post_urn, filter_tag)
+    for tag in post['tags']:
+        snapbundle_helpers.create_tag_association('Object', post_urn, tag)
 
     # Now let's add the Like relationships
     snapbundle_helpers.add_update_metadata("Object", post_urn, "Integer", "likes_count", post['likes']['count'])

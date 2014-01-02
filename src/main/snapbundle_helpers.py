@@ -285,8 +285,13 @@ def check_add_update_relationship(entityReferenceType, referenceURN, relationshi
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def get_object_relationship_urn_list(urn_to_check_for, relationship):
+def get_object_relationship_urn_list(urn_to_check_for, relationship, reverse=False):
     url = base_url_relationship_query_object + '/' + urn_to_check_for + '/' + relationship
+    # Reverse happens when we want to see who have that relationship with US, not who we have the relationship with
+    # For example: We send in the URN of a post, and want to see who Likes the Post Object, not who the Post Likes
+    if reverse:
+        url += '?reverse=true'
+
     logging.info("Looking for object relationships at URL: " + str(url))
     response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
     logging.info(str(response))
@@ -294,7 +299,10 @@ def get_object_relationship_urn_list(urn_to_check_for, relationship):
         if response.status_code == 200:
             temp_dict = {}
             for current in response.json():
-                value = str(current['relatedReferenceURN'])
+                if reverse:
+                    value = str(current['referenceURN'])
+                else:
+                    value = str(current['relatedReferenceURN'])
                 temp_dict[str(value)] = str(current['urn'])
             return temp_dict
         else:
@@ -483,6 +491,36 @@ def create_tag_association(entity_reference_type, reference_urn, name):
     if response.status_code in (200, 201):
         return True
     else:
+        return False
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def get_all_tags_linked_to_object(entity_reference_type, reference_urn):
+    url = base_url_tags + "?entityReferenceType=" + entity_reference_type + "&referenceUrn=" + reference_urn
+    logging.debug("Sending to URL: " + str(url))
+    response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
+    logging.info(str(response))
+    try:
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return False
+    except KeyError:
+        return False
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def get_all_objects_linked_to_tag(entity_reference_type, tag_name):
+    url = base_url_tags + "?entityReferenceType=" + entity_reference_type + "&tagName=" + tag_name
+    logging.debug("Sending to URL: " + str(url))
+    response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
+    logging.info(str(response))
+    try:
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return False
+    except KeyError:
         return False
 
 

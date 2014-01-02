@@ -327,32 +327,32 @@ class User(object):
                 # Check to see if we need to keep going down this follower/following thing recursively
                 if go_to_max_depth and ((self.current_search_depth - 1) > 0):
                     temp_counts = temp_social_stash_i_user.get_counts()
-                    count_to_check = int(temp_counts['followed_by'])
-                    logging.info(current.username + "'s followed_by count: " + str(count_to_check) + " (max_follow: " + str(instagram_max_follow_count) + "), depth: " + str((self.current_search_depth-1)))
-                    if count_to_check <= instagram_max_follow_count:
-                        logging.info(current.username + "'s followed_by count: " + str(count_to_check) + "<=" + str(instagram_max_follow_count) + ", depth: " + str((self.current_search_depth-1)) + ">0")
-                        logging.info("Continuing down the follow recursion")
-                        temp_social_stash_i_user.check_relationship_users_exist_in_snapbundle(global_followed_by_string,
-                                                                                              update_user_profile_if_found,
-                                                                                              update_user_following_if_found,
-                                                                                              update_user_followedby_if_found,
-                                                                                              go_to_max_depth)
-                    else:
-                        logging.info(current.username + "'s followed_by count: " + str(count_to_check) + ">" + str(instagram_max_follow_count) + ", depth: " + str((self.current_search_depth-1)) + ">0")
+                    if temp_counts is not None:
+                        count_to_check = int(temp_counts['followed_by'])
+                        logging.info(current.username + "'s followed_by count: " + str(count_to_check) + " (max_follow: " + str(instagram_max_follow_count) + "), depth: " + str((self.current_search_depth-1)))
+                        if count_to_check <= instagram_max_follow_count:
+                            logging.info(current.username + "'s followed_by count: " + str(count_to_check) + "<=" + str(instagram_max_follow_count) + ", depth: " + str((self.current_search_depth-1)) + ">0")
+                            logging.info("Continuing down the follow recursion")
+                            temp_social_stash_i_user.check_relationship_users_exist_in_snapbundle(global_followed_by_string,
+                                                                                                  update_user_profile_if_found,
+                                                                                                  update_user_following_if_found,
+                                                                                                  update_user_followedby_if_found,
+                                                                                                  go_to_max_depth)
+                        else:
+                            logging.info(current.username + "'s followed_by count: " + str(count_to_check) + ">" + str(instagram_max_follow_count) + ", depth: " + str((self.current_search_depth-1)) + ">0")
 
-                    count_to_check = int(temp_counts['follows'])
-                    logging.info(current.username + "'s follows count: " + str(count_to_check) + " (max_follow: " + str(instagram_max_follow_count) + "), depth: " + str((self.current_search_depth-1)))
-                    if count_to_check <= instagram_max_follow_count:
-                        logging.info(current.username + "'s follows count: " + str(count_to_check) + "<=" + str(instagram_max_follow_count) + ", depth: " + str((self.current_search_depth-1)) + ">0")
-                        logging.info("Continuing down the follow recursion")
-                        temp_social_stash_i_user.check_relationship_users_exist_in_snapbundle(global_following_string,
-                                                                                              update_user_profile_if_found,
-                                                                                              update_user_following_if_found,
-                                                                                              update_user_followedby_if_found,
-                                                                                              go_to_max_depth)
-                    else:
-                        logging.info(current.username + "'s follows count: " + str(count_to_check) + ">" + str(instagram_max_follow_count) + ", depth: " + str((self.current_search_depth-1)) + ">0")
-
+                        count_to_check = int(temp_counts['follows'])
+                        logging.info(current.username + "'s follows count: " + str(count_to_check) + " (max_follow: " + str(instagram_max_follow_count) + "), depth: " + str((self.current_search_depth-1)))
+                        if count_to_check <= instagram_max_follow_count:
+                            logging.info(current.username + "'s follows count: " + str(count_to_check) + "<=" + str(instagram_max_follow_count) + ", depth: " + str((self.current_search_depth-1)) + ">0")
+                            logging.info("Continuing down the follow recursion")
+                            temp_social_stash_i_user.check_relationship_users_exist_in_snapbundle(global_following_string,
+                                                                                                  update_user_profile_if_found,
+                                                                                                  update_user_following_if_found,
+                                                                                                  update_user_followedby_if_found,
+                                                                                                  go_to_max_depth)
+                        else:
+                            logging.info(current.username + "'s follows count: " + str(count_to_check) + ">" + str(instagram_max_follow_count) + ", depth: " + str((self.current_search_depth-1)) + ">0")
                 else:
                     logging.info("Not continuing down the follow recursion...  (max_follow: " + str(instagram_max_follow_count) + "), depth: " + str((self.current_search_depth-1)))
 
@@ -576,22 +576,25 @@ class User(object):
                     # This will become a relationship
 #                    temp_post['users_in_photo'] = current['users_in_photo']
                     temp_post['likes'] = current['likes']
-                    likes_users = temp_post['likes']['data']
-                    print str(likes_users)
-                    for current_user in likes_users:
-                        logging.debug("Checking into existance of user who liked post: " + str(current_user['username']))
-                        temp_social_stash_i_user, new_user = self.check_users_exist_in_snapbundle(str(current_user['username']),
-                                                                                                  str(current_user['id']),
-                                                                                                  True,
-                                                                                                  1)
-
 
                     # These will become objects associated with it
 #                    temp_post['location'] = current['location']
 #                    temp_post['comments'] = current['comments']
 #                    temp_post['caption'] = current['caption']
 
+                    # Need to create the post and get its URN back before we can do any additional relationships
                     post_urn = snapbundle_instagram_fxns.add_new_instagram_post_object(temp_post)
+                    likes_users = temp_post['likes']['data']
+                    for current_user in likes_users:
+                        logging.debug("Checking into existance of user who liked post: " + str(current_user['username']))
+                        temp_social_stash_i_user, new_user = self.check_users_exist_in_snapbundle(str(current_user['username']),
+                                                                                                  str(current_user['id']),
+                                                                                                  update_user_profile_if_found=False,
+                                                                                                  search_depth=1)
+                        if temp_social_stash_i_user:
+                            like_user_urn = temp_social_stash_i_user.get_instagrame_user_sb_object_urn()
+                            snapbundle_instagram_fxns.add_user_likes_post(like_user_urn, post_urn)
+
                     print "post urn: " + str(post_urn)
                     exit()
 

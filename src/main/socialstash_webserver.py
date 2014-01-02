@@ -16,7 +16,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def write_instagram_user_info(s, urn):
         s.wfile.write('<TABLE BORDER="3" BORDERCOLOR="00FF00">')
         s.wfile.write('<CAPTION>' + "<b>User Object Info</b></CAPTION>")
-        s.wfile.write('<TR><TD>')
+        s.wfile.write('<TR VALIGN=TOP><TD>')
         MyHandler.write_instagram_object_info(s, urn)
         s.wfile.write('</TD><TD>')
         MyHandler.write_instagram_metadata_info(s, urn)
@@ -66,10 +66,21 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
     ################## FXN ######################################################################################################
     @staticmethod
+    def write_instagram_user_relationships(s, urn):
+        s.wfile.write('<TABLE BORDER="3" BORDERCOLOR="0000FF">')
+        s.wfile.write('<CAPTION>' + "<b>User Relationship Info</b></CAPTION>")
+        s.wfile.write('<TR VALIGN=TOP><TD>')
+        MyHandler.write_instagram_user_relationships_following(s, urn)
+        s.wfile.write('</TD><TD>')
+        MyHandler.write_instagram_user_relationships_followedby(s, urn)
+        s.wfile.write('</TD></TR></TABLE>')
+
+    ################## FXN ######################################################################################################
+    @staticmethod
     def write_instagram_user_relationships_following(s, urn):
         response = snapbundle_instagram_fxns.get_object_relationships(urn, 'FOLLOWING')
         if response:
-            s.wfile.write('<TABLE BORDER="3">')
+            s.wfile.write('<TABLE BORDER="1">')
             s.wfile.write('<CAPTION>' + "<b>Following Users (" + str(len(response)) + ")" + '</b></CAPTION>')
             s.wfile.write('<TR><TH>User</TH><TH>URN</TH></TR>')
 
@@ -84,7 +95,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def write_instagram_user_relationships_followedby(s, urn):
         response = snapbundle_instagram_fxns.get_object_relationships(urn, 'FOLLOWED_BY')
         if response:
-            s.wfile.write('<TABLE BORDER="3">')
+            s.wfile.write('<TABLE BORDER="1">')
             s.wfile.write('<CAPTION>' + "<b>Followed By Users (" + str(len(response)) + ")" + '</b></CAPTION>')
             s.wfile.write('<TR><TH>User</TH><TH>URN</TH></TR>')
             for current in sorted(response.keys()):
@@ -92,6 +103,36 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             s.wfile.write('</TABLE><BR>')
         else:
             s.wfile.write('<BR>No Followed By Users Info Found <BR>')
+
+    ################## FXN ###############################################################################es#######################
+    @staticmethod
+    def write_instagram_object_relationships_likes(s, urn):
+        response = snapbundle_instagram_fxns.get_object_relationships(urn, 'Likes', reverse=True)
+        if response:
+            s.wfile.write('<TABLE BORDER="1">')
+            s.wfile.write('<CAPTION>' + "<b>Object Like (" + str(len(response)) + ")" + '</b></CAPTION>')
+            s.wfile.write('<TR><TH>User</TH><TH>URN</TH></TR>')
+
+            for current in sorted(response.keys()):
+                s.wfile.write("<TR><TD>" + str(current) + "</TD><TD>" + str(response[current]) + "</TD></TR>")
+            s.wfile.write('</TABLE><BR>')
+        else:
+            s.wfile.write('<BR>No Object Likes Found <BR>')
+
+    ################## FXN ###############################################################################es#######################
+    @staticmethod
+    def write_instagram_object_tags(s, urn):
+        response = snapbundle_instagram_fxns.get_tag_list_by_post(urn)
+        if response:
+            s.wfile.write('<TABLE BORDER="1">')
+            s.wfile.write('<CAPTION>' + "<b>Object Tags (" + str(len(response)) + ")" + '</b></CAPTION>')
+            s.wfile.write('<TR><TH>Tag</TH><TH>URN</TH></TR>')
+
+            for current in sorted(response.keys()):
+                s.wfile.write("<TR><TD>" + str(current) + "</TD><TD>" + str(response[current]) + "</TD></TR>")
+            s.wfile.write('</TABLE><BR>')
+        else:
+            s.wfile.write('<BR>No Object Tags Found <BR>')
 
     ################## FXN ######################################################################################################
     @staticmethod
@@ -104,12 +145,17 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             for current in response:
                 time_sec = current['recordedTimestamp']
                 time_string = datetime.datetime.fromtimestamp(time_sec).strftime('%Y-%m-%d %H:%M:%S')
-                s.wfile.write("<TR><TD>" + str(current['referenceURN'])
+                s.wfile.write("<TR VALIGN=TOP><TD>" + str(current['referenceURN'])
                               + "</TD><TD>" + str(current['urn'])
                               + "</TD><TD>" + str(time_string)
                               + "</TD><TD>")
 
                 MyHandler.write_instagram_object_info(s, current['referenceURN'])
+                s.wfile.write("<BR>")
+                MyHandler.write_instagram_object_relationships_likes(s, current['referenceURN'])
+                s.wfile.write("<BR>")
+                MyHandler.write_instagram_object_tags(s, current['referenceURN'])
+
                 s.wfile.write("</TD>")
                 s.wfile.write("<TD>")
                 MyHandler.write_instagram_metadata_info(s, current['referenceURN'])
@@ -161,8 +207,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 urn = path_list[2]
                 s.wfile.write("<b><CENTER>Object urn: %s</CENTER></b><br>" % urn)
                 MyHandler.write_instagram_user_info(s, urn)
-                MyHandler.write_instagram_user_relationships_following(s, urn)
-                MyHandler.write_instagram_user_relationships_followedby(s, urn)
+                MyHandler.write_instagram_user_relationships(s, urn)
                 MyHandler.write_instagram_user_object_interactions(s, urn)
             except IndexError:
                 response = snapbundle_helpers.count_objects()
