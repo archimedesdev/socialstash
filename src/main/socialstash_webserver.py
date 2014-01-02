@@ -126,6 +126,21 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
     ################## FXN ###############################################################################es#######################
     @staticmethod
+    def write_instagram_object_relationships_references(s, urn, reverse=False):
+        response = snapbundle_instagram_fxns.get_object_relationships(urn, 'References', reverse=reverse)
+        if response:
+            s.wfile.write('<TABLE BORDER="1">')
+            s.wfile.write('<CAPTION>' + "<b>Object References (" + str(len(response)) + ")" + '</b></CAPTION>')
+            s.wfile.write('<TR><TH>Object</TH><TH>URN</TH></TR>')
+
+            for current in sorted(response.keys()):
+                s.wfile.write("<TR><TD>" + str(current) + "</TD><TD>" + str(response[current]) + "</TD></TR>")
+            s.wfile.write('</TABLE><BR>')
+        else:
+            s.wfile.write('<BR>No Object References Found <BR>')
+
+    ################## FXN ###############################################################################es#######################
+    @staticmethod
     def write_instagram_object_tags(s, urn):
         response = snapbundle_instagram_fxns.get_tag_list_by_post(urn)
         if response:
@@ -158,6 +173,8 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 MyHandler.write_instagram_object_info(s, current['referenceURN'])
                 s.wfile.write("<BR>")
                 MyHandler.write_instagram_object_relationships_likes(s, current['referenceURN'])
+                s.wfile.write("<BR>")
+                MyHandler.write_instagram_object_relationships_references(s, current['referenceURN'], reverse=True)
                 s.wfile.write("<BR>")
                 MyHandler.write_instagram_object_tags(s, current['referenceURN'])
 
@@ -273,6 +290,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 MyHandler.write_instagram_user_info(s, urn)
                 MyHandler.write_instagram_user_relationships(s, urn)
                 MyHandler.write_instagram_user_object_interactions(s, urn)
+                MyHandler.write_instagram_object_relationships_references(s, urn, reverse=False)
             except IndexError:
                 MyHandler.index_write_all_users(s)
                 MyHandler.index_write_all_posts(s)

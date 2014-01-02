@@ -547,6 +547,7 @@ class User(object):
                     current = response.json()['data']
 
                     # TEMP
+                    #just_use = '560874534243987153_513507874' #Post with no caption
                     just_use = '560867689500569094_513507874' #Dolly sods with a comment
                     #just_use = '620310392478690795_513507874' #flashback friday shit eating grin
                     if current['id'] != just_use:
@@ -594,6 +595,19 @@ class User(object):
                     # Need to create the post and get its URN back before we can do any additional relationships
                     post_urn = snapbundle_instagram_fxns.add_new_instagram_post_object(temp_post)
 
+                    # Time to take care of our caption
+                    if temp_post['caption'] is not None:
+                        caption_urn = snapbundle_instagram_fxns.add_new_instagram_comment(temp_post['caption']['id'],
+                                                                                          temp_post['caption']['created_time'],
+                                                                                          temp_post['caption']['text'],
+                                                                                          temp_post['caption']['from']['username'],
+                                                                                          post_urn,
+                                                                                          is_caption=True)
+                        if caption_urn:
+                            logging.debug("Succesfully created post caption with urn: " + str(caption_urn))
+                        else:
+                            logging.debug("Failed to successfully create the post caption")
+
                     # Time to go get our comments
                     if temp_post['comments']['count'] > 0:
                         url3 = base_instagram_url_media + str(key) + '/comments?access_token=' + self.access_token
@@ -617,7 +631,8 @@ class User(object):
                                                                                                       current_comment['created_time'],
                                                                                                       current_comment['text'],
                                                                                                       current_comment['from']['username'],
-                                                                                                      post_urn)
+                                                                                                      post_urn,
+                                                                                                      is_caption=False)
 
                     likes_users = temp_post['likes']['data']
                     # Need to see if the number of likes in our data list is equal to the number stated.  Instagram will

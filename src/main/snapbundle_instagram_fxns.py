@@ -216,7 +216,7 @@ def check_for_file_upload_url(referenceType, urn, url):
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def add_new_instagram_comment(comment_id, created_time, text, author_username, post_urn):
+def add_new_instagram_comment(comment_id, created_time, text, author_username, post_urn, is_caption):
     # This function assumes that the author object EXISTS in SnapBundle already!
     # But hey, we'll check first before we do it anyway
     author_urn = get_urn_from_username(author_username)
@@ -234,9 +234,12 @@ def add_new_instagram_comment(comment_id, created_time, text, author_username, p
         snapbundle_helpers.add_update_metadata("Object", comment_urn, "String", "id", comment_id)
         snapbundle_helpers.add_update_metadata("Object", comment_urn, "String", "created_time", created_time)
         snapbundle_helpers.add_update_metadata("Object", comment_urn, "String", "text", text)
+        snapbundle_helpers.add_update_metadata("Object", comment_urn, "Boolean", "is_caption", is_caption)
+
 
         # Now create the relationship between the user and the author object
         ownership_urn = snapbundle_helpers.check_add_update_relationship('Object', author_urn, 'Owner', 'Object', comment_urn)
+        references_urn = snapbundle_helpers.check_add_update_relationship('Object', comment_urn, 'References', 'Object', post_urn)
 
         return comment_urn
 
