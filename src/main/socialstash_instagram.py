@@ -544,12 +544,15 @@ class User(object):
                     logging.debug("Response wasn't a 200, so skipping this media")
                     continue
                 else:
-                    print "Here" + str(response.json()['data'])
                     current = response.json()['data']
 
                     # TEMP
-                    if current['id'] != '560867689500569094_513507874':
+                    #just_use = '560867689500569094_513507874' #Dolly sods with a comment
+                    just_use = '620310392478690795_513507874' #flashback friday shit eating grin
+                    if current['id'] != just_use:
                         continue
+
+                    print "Here" + str(response.json()['data'])
 
                     # Check to make sure everything is kosher with this post
                     if current['user']['username'] == self.username:
@@ -586,7 +589,7 @@ class User(object):
 
                     # These will become objects associated with it
 #                    temp_post['location'] = current['location']
-#                    temp_post['comments'] = current['comments']
+                    temp_post['comments'] = current['comments']
 
                     # Need to create the post and get its URN back before we can do any additional relationships
                     post_urn = snapbundle_instagram_fxns.add_new_instagram_post_object(temp_post)
@@ -600,7 +603,7 @@ class User(object):
                         response2 = requests.get(url2)
                         logging.info(str(response2))
                         if response.status_code != 200:
-                            logging.debug("Response wasn't a 200, so skipping this media likes")
+                            logging.debug("Response wasn't a 200!!! WTF, so skipping this media likes")
                         else:
                             likes_users = response2.json()['data']
                     for current_user in likes_users:
@@ -617,8 +620,6 @@ class User(object):
                     print "post urn: " + str(post_urn)
                     exit()
 
-
-                    print str(temp_post)
             except KeyError:
                 pass
             exit()

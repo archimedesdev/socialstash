@@ -21,7 +21,8 @@ snapbundle_password = config.get('SnapbundleCredentials', 'snapbundle_password')
 snapbundle_base_urn_instagram = "urn:instagram:"
 snapbundle_base_urn_instagram_user = snapbundle_base_urn_instagram + "users:"
 snapbundle_base_urn_instagram_post = snapbundle_base_urn_instagram + "posts:"
-snapbundle_base_instagram_filter_name = "instagram:filters:"
+snapbundle_base_urn_instagram_comment = snapbundle_base_urn_instagram + "comment:"
+snapbundle_base_instagram_filter_name = "instagram:filter:"
 # == End Snapbundle Variables ==
 
 # == Start Snapbundle URLs ==
@@ -270,8 +271,9 @@ def add_new_instagram_post_object(post):
     for tag in post['tags']:
         snapbundle_helpers.create_tag_association('Object', post_urn, tag)
 
-    # Now let's add the Like relationships
+    # Now let's add some counts
     snapbundle_helpers.add_update_metadata("Object", post_urn, "Integer", "likes_count", post['likes']['count'])
+    snapbundle_helpers.add_update_metadata("Object", post_urn, "Integer", "comments_count", post['comments']['count'])
 
     # Now we need to see if the Interaction already exists:
     interaction_urn = snapbundle_helpers.check_object_interactions_for_urn(post_urn)

@@ -280,6 +280,7 @@ def add_update_metadata(reference_type, referenceURN, dataType, key, value, moni
         logging.info("Response (for key/value " + str(key) + "/" + "UnicodeEncodeError Value Here" + "): " + str(response.status_code) + " <--> " + str(response.json()))
         return False
 
+
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def check_add_update_relationship(entityReferenceType, referenceURN, relationshipType, relatedEntityReferenceType, relatedReferenceURN):
     # First check to see if it exists before add/update
@@ -357,17 +358,16 @@ def delete_relationship(urn_to_delete):
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def create_object_interaction(entityReferenceType, entityUrn, recordedTimestamp, interactedUrn):
     # Back to normal application
-    temp_meta_data = dict(
-        entityReferenceType=entityReferenceType,
-        objectUrn=entityUrn,
-        recordedTimestamp=recordedTimestamp,
-        referenceUrn=interactedUrn,
-        data=interactedUrn
-    )
-
+    temp_meta_data = {"entityReferenceType": entityReferenceType,
+                      "objectUrn": entityUrn,
+                      "recordedTimestamp": recordedTimestamp,
+                      "referenceUrn": interactedUrn,
+                      "data": interactedUrn
+                     }
     url = base_url_object_interactions
     headers = {'content-type': 'application/json'}
-    payload = json.dumps([temp_meta_data])
+    #payload = temp_meta_data
+    payload = json.dumps(temp_meta_data)
     logging.debug("Sending to URL: " + str(url))
     logging.debug("Submitting Payload: " + str(payload))
     response = requests.put(url, data=payload, headers=headers, auth=(snapbundle_username, snapbundle_password))
