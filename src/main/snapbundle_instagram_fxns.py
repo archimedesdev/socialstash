@@ -33,7 +33,7 @@ global_following_string = 'FOLLOWING'
 global_followed_by_string = 'FOLLOWED_BY'
 global_likes_string = 'LIKES'
 
-## --------------------------------------------------------------------------------------------------------------
+
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def check_for_object(urn_to_check_for):
     return_value = snapbundle_helpers.check_for_object(urn_to_check_for)
@@ -42,7 +42,6 @@ def check_for_object(urn_to_check_for):
     return return_value
 
 
-## --------------------------------------------------------------------------------------------------------------
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def get_object(urn_to_check_for):
     return_value = snapbundle_helpers.get_object(urn_to_check_for)
@@ -51,7 +50,6 @@ def get_object(urn_to_check_for):
     return return_value
 
 
-## --------------------------------------------------------------------------------------------------------------
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def get_object_metadata(urn_to_check_for, reference_type='Object'):
     return_value = snapbundle_helpers.get_object_metadata(urn_to_check_for, reference_type)
@@ -68,7 +66,6 @@ def get_object_metadata_dictionary(urn_to_check_for):
     return return_value
 
 
-## --------------------------------------------------------------------------------------------------------------
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def check_update_user_profile_pic(username, current_pic_url):
     url = snapbundle_helpers.base_url_metadata + '/Object/' + snapbundle_base_urn_instagram_user + username + "?key=profile_picture&view=Full"
@@ -114,7 +111,6 @@ def check_update_user_profile_pic(username, current_pic_url):
         return False
 
 
-## --------------------------------------------------------------------------------------------------------------
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def get_object_relationships(urn_to_check_for, relationship, reverse=False):
     if relationship.upper() == global_followed_by_string:
@@ -137,27 +133,23 @@ def get_object_relationships(urn_to_check_for, relationship, reverse=False):
     return return_dict
 
 
-## --------------------------------------------------------------------------------------------------------------
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def delete_relationship(urn_to_delete):
     return snapbundle_helpers.delete_relationship(urn_to_delete)
 
 
-## --------------------------------------------------------------------------------------------------------------
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def set_instagram_tags(referenceURN, tag_list):
     for tag in tag_list:
         snapbundle_helpers.create_tag_association("Object", referenceURN, tag)
 
 
-## --------------------------------------------------------------------------------------------------------------
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def set_filter_tag(referenceURN, filter_name):
     tag_name = snapbundle_base_instagram_filter_name + filter_name.upper()
     return snapbundle_helpers.create_tag_association("Object", referenceURN, tag_name)
 
 
-## --------------------------------------------------------------------------------------------------------------
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def get_tag_list_by_post(post_urn):
     response = snapbundle_helpers.get_all_tags_linked_to_object('Object', post_urn)
@@ -168,7 +160,6 @@ def get_tag_list_by_post(post_urn):
     return tag_list
 
 
-## --------------------------------------------------------------------------------------------------------------
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def add_update_new_instagram_user_object(instagram_handle, instagram_user_sb_object_urn):
     return snapbundle_helpers.add_update_object(instagram_handle, instagram_user_sb_object_urn, "Person",
@@ -223,6 +214,31 @@ def check_for_file_upload_url(referenceType, urn, url):
     else:
         logging.info(str(len(file_urns)) + " Associated files found.")
 
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def add_new_instagram_comment(comment_id, created_time, text, author_username, post_urn):
+    # This function assumes that the author object EXISTS in SnapBundle already!
+    # But hey, we'll check first before we do it anyway
+    author_urn = get_urn_from_username(author_username)
+    response = snapbundle_helpers.check_for_object(author_urn)
+    if not response:
+        logging.info("Could not create comment with ID " + str(comment_id) + " as the author's user (" +
+                     str(author_username) + " doesn't exist in SnapBundle yet!")
+        return False
+    else:
+        # First create/update the Comment Object
+        comment_object_urn = snapbundle_base_urn_instagram_comment + str(comment_id)
+        comment_urn = snapbundle_helpers.add_update_object(name=str(comment_id), objectUrn=comment_object_urn,
+                                                           objectType='Comment', description='Instagram Comment')
+        # Now we need to start adding all the additional data
+        snapbundle_helpers.add_update_metadata("Object", comment_urn, "String", "id", comment_id)
+        snapbundle_helpers.add_update_metadata("Object", comment_urn, "String", "created_time", created_time)
+        snapbundle_helpers.add_update_metadata("Object", comment_urn, "String", "text", text)
+
+        # Now create the relationship between the user and the author object
+        ownership_urn = snapbundle_helpers.check_add_update_relationship('Object', author_urn, 'Owner', 'Object', comment_urn)
+
+        return comment_urn
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def add_new_instagram_post_object(post):

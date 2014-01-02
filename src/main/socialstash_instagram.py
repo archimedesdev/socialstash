@@ -604,26 +604,28 @@ class User(object):
                             logging.debug("Response wasn't a 200!!! WTF, so skipping this media likes")
                         else:
                             comments_data = response3.json()['data']
-                            print comments_data
                             for current_comment in comments_data:
-                                print current_comment
                                 # First we'll check that the creator of the comment exists in SB
                                 logging.debug("Checking into existance of user who commented on post: " + str(current_comment['from']['username']))
                                 temp_social_stash_i_user, new_user = self.check_users_exist_in_snapbundle(str(current_comment['from']['username']),
                                                                                                           str(current_comment['from']['id']),
                                                                                                           update_user_profile_if_found=False,
                                                                                                           search_depth=1)
-                                #if temp_social_stash_i_user:
-                                    # The user either exists or was created
-
-                                    #like_user_urn = temp_social_stash_i_user.get_instagrame_user_sb_object_urn()
-                                    #snapbundle_instagram_fxns.add_user_likes_post(like_user_urn, post_urn)
-                    exit()
+                                if temp_social_stash_i_user:
+                                    # The user either exists or was created, so let's create this comment
+                                    comment_urn = snapbundle_instagram_fxns.add_new_instagram_comment(current_comment['id'],
+                                                                                                      current_comment['created_time'],
+                                                                                                      current_comment['text'],
+                                                                                                      current_comment['from']['username'],
+                                                                                                      post_urn)
 
                     likes_users = temp_post['likes']['data']
                     # Need to see if the number of likes in our data list is equal to the number stated.  Instagram will
                     # Only include a couple if there are many likes
-                    if temp_post['likes']['count'] != len(likes_users):
+
+                    #TEMP WORK AROUND UNTIL INSTAGRAM FIXES THE API
+                    if False:
+                    #if temp_post['likes']['count'] != len(likes_users):
                         # If the number of user likes in the post don't match the total, need to go get them!
                         url2 = base_instagram_url_media + str(key) + '/likes?access_token=' + self.access_token
                         logging.info("Numbers didn't match! Looking for Instagram Post Likes at URL: " + str(url2))
