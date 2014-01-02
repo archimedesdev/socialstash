@@ -166,6 +166,45 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         else:
             s.wfile.write('<BR>No Object Interactions Info Found <BR>')
 
+    ################## FXN ######################################################################################################
+    @staticmethod
+    def write_all_users(s):
+        response = snapbundle_helpers.check_for_objects_options(snapbundle_instagram_fxns.snapbundle_base_urn_instagram_user,objectUrnLike=True)
+        if response:
+            s.wfile.write('<TABLE BORDER="3">')
+            s.wfile.write('<CAPTION>' + "<b>Instagram User Object Info (" + str(len(response)) + ")" + '</b></CAPTION>')
+            s.wfile.write('<TR><TH>objectType</TH><TH>objectUrn</TH><TH>Name</TH><TH>urn</TH></TR>')
+            for current in response:
+                s.wfile.write("<TR><TD>" + str(current['objectType'])
+                              + '</TD><TD><a href="/instagram/' + str(current['objectUrn']) + '">' + str(current['objectUrn']) + '</a>'
+                              + '</TD><TD>' + str(current['name'])
+                              + "</TD><TD>" + str(current['urn'])
+                              + "</TD></TR>")
+            s.wfile.write('</TABLE><BR>')
+        else:
+            s.wfile.write('<BR>No Object Info Found <BR>')
+
+    ################## FXN ######################################################################################################
+    @staticmethod
+    def write_all_posts(s):
+        response = snapbundle_helpers.check_for_objects_options(snapbundle_instagram_fxns.snapbundle_base_urn_instagram_post, objectUrnLike=True)
+        if response:
+            s.wfile.write('<TABLE BORDER="3">')
+            s.wfile.write('<CAPTION>' + "<b>Instagram Post Object Info (" + str(len(response)) + ")" + '</b></CAPTION>')
+            s.wfile.write('<TR><TH>objectType</TH><TH>objectUrn</TH><TH>Name</TH><TH>urn</TH></TR>')
+            for current in response:
+                s.wfile.write("<TR><TD>" + str(current['objectType'])
+                              + '</TD><TD><a href="/instagram/' + str(current['objectUrn']) + '">' + str(current['objectUrn']) + '</a>'
+                              + '</TD><TD>' + str(current['name'])
+                              + "</TD><TD>" + str(current['urn'])
+                              + "</TD></TR>")
+            s.wfile.write('</TABLE><BR>')
+        else:
+            s.wfile.write('<BR>No Object Info Found <BR>')
+
+    ###################################################################################################################
+    ###################################################################################################################
+
 
     def do_HEAD(s):
         s.send_response(200)
@@ -210,28 +249,13 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 MyHandler.write_instagram_user_relationships(s, urn)
                 MyHandler.write_instagram_user_object_interactions(s, urn)
             except IndexError:
-                response = snapbundle_helpers.count_objects()
-                if response:
-                    instagram_urn_contain = snapbundle_instagram_fxns.snapbundle_base_urn_instagram
-                    s.wfile.write('<TABLE BORDER="3">')
-                    s.wfile.write('<CAPTION>' + "<b>Object Info (" + str(len(response)) + ")" + '</b></CAPTION>')
-                    s.wfile.write('<TR><TH>objectType</TH><TH>objectUrn</TH><TH>Name</TH><TH>urn</TH></TR>')
-                    for current in response:
-                        if instagram_urn_contain in str(current['objectUrn']):
-                            s.wfile.write("<TR><TD>" + str(current['objectType'])
-                                          + '</TD><TD><a href="/instagram/' + str(current['objectUrn']) + '">' + str(current['objectUrn']) + '</a>'
-                                          + '</TD><TD>' + str(current['name'])
-                                          + "</TD><TD>" + str(current['urn'])
-                                          + "</TD></TR>")
-                    s.wfile.write('</TABLE><BR>')
-                else:
-                    s.wfile.write('<BR>No Object Info Found <BR>')
+                MyHandler.write_all_users(s)
+                MyHandler.write_all_posts(s)
 
         s.wfile.write("</body></html>")
 
-
-
-
+    ###################################################################################################################
+    ###################################################################################################################
 
 if __name__ == '__main__':
     server_class = BaseHTTPServer.HTTPServer

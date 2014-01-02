@@ -262,7 +262,10 @@ def add_new_instagram_post_object(post):
         file_urn = check_for_file_upload_url('Metadata', metadata_urn, pic_url)
 
     # Now add the tags, including the filters:
-    filter_tag = snapbundle_base_instagram_filter_name + post['filter']
+    if post['filter'] is None:
+        filter_tag = snapbundle_base_instagram_filter_name + 'None'
+    else:
+        filter_tag = snapbundle_base_instagram_filter_name + post['filter']
     snapbundle_helpers.create_tag_association('Object', post_urn, filter_tag)
     for tag in post['tags']:
         snapbundle_helpers.create_tag_association('Object', post_urn, tag)

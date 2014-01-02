@@ -67,6 +67,37 @@ metadataDataTypes = {'STRING': 'StringType',
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
+def check_for_objects_options(text, objectUrnLike=False, nameLike=False, monikerLike=False, modifiedAfter=False):
+    #/objects?objectUrnLike=foo
+    #/objects?nameLike=foo
+    #/objects?monikerLike=foo&view=Full
+    #/objects?modifiedAfter=1388629875
+    if objectUrnLike:
+        url = base_url_objects + '?objectUrnLike=' + text
+    elif nameLike:
+        url = base_url_objects + '?nameLike=' + text
+    elif monikerLike:
+        url = base_url_objects + '?monikerLike=' + text + "&view=Full"
+    elif modifiedAfter:
+        url = base_url_objects + '?modifiedAfter=' + text
+    else:
+        return False
+    logging.info("Looking for object at URL: " + str(url))
+    response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
+    logging.info(str(response))
+    try:
+        if (response.status_code == 404) or (response.status_code == 204):
+            logging.info("No records found not found!")
+            return False
+        else:
+            size = len(response.json())
+            logging.info(str(size) + " Matching Objects Exist!!")
+            return response.json()
+    except KeyError:
+        return False
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
 def check_for_object(urn_to_check_for):
     url = base_url_objects + '/object/' + urn_to_check_for
     logging.info("Looking for object at URL: " + str(url))

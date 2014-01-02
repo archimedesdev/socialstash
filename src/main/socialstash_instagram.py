@@ -536,15 +536,21 @@ class User(object):
         # Now let's deal with each individual post in the dictionary of posts we've gotten!!
         for key in post_dictionary:
             url = base_instagram_url_media + str(key) + '?access_token=' + self.access_token
-            logging.info("Looking for file object at URL: " + str(url))
+            logging.info("Looking for Instagram Post at URL: " + str(url))
             response = requests.get(url)
             logging.info(str(response))
             try:
                 if response.status_code != 200:
                     logging.debug("Response wasn't a 200, so skipping this media")
-                    pass
+                    continue
                 else:
+                    print "Here" + str(response.json()['data'])
                     current = response.json()['data']
+
+                    # TEMP
+                    if current['id'] != '560867689500569094_513507874':
+                        continue
+
                     # Check to make sure everything is kosher with this post
                     if current['user']['username'] == self.username:
                         logging.debug("Username on post and parent object match! (" + self.username + ")")
@@ -563,6 +569,7 @@ class User(object):
                     # This information will become metadata
                     temp_post['type'] = current['type']
                     temp_post['link'] = current['link']
+                    temp_post['caption'] = current['caption']
                     temp_post['user_has_liked'] = current['user_has_liked']
                     if temp_post['type'] == 'image':
                         temp_post['images'] = current['images']
@@ -580,11 +587,22 @@ class User(object):
                     # These will become objects associated with it
 #                    temp_post['location'] = current['location']
 #                    temp_post['comments'] = current['comments']
-#                    temp_post['caption'] = current['caption']
 
                     # Need to create the post and get its URN back before we can do any additional relationships
                     post_urn = snapbundle_instagram_fxns.add_new_instagram_post_object(temp_post)
                     likes_users = temp_post['likes']['data']
+                    # Need to see if the number of likes in our data list is equal to the number stated.  Instagram will
+                    # Only include a couple if there are many likes
+                    if temp_post['likes']['count'] != len(likes_users):
+                        # If the number of user likes in the post don't match the total, need to go get them!
+                        url2 = base_instagram_url_media + str(key) + '/likes?access_token=' + self.access_token
+                        logging.info("Numbers didn't match! Looking for Instagram Post Likes at URL: " + str(url2))
+                        response2 = requests.get(url2)
+                        logging.info(str(response2))
+                        if response.status_code != 200:
+                            logging.debug("Response wasn't a 200, so skipping this media likes")
+                        else:
+                            likes_users = response2.json()['data']
                     for current_user in likes_users:
                         logging.debug("Checking into existance of user who liked post: " + str(current_user['username']))
                         temp_social_stash_i_user, new_user = self.check_users_exist_in_snapbundle(str(current_user['username']),
@@ -594,6 +612,7 @@ class User(object):
                         if temp_social_stash_i_user:
                             like_user_urn = temp_social_stash_i_user.get_instagrame_user_sb_object_urn()
                             snapbundle_instagram_fxns.add_user_likes_post(like_user_urn, post_urn)
+                    ####### End User Likes
 
                     print "post urn: " + str(post_urn)
                     exit()
