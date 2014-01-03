@@ -289,10 +289,10 @@ def add_update_metadata(reference_type, referenceURN, dataType, key, value, moni
 def check_add_update_relationship(entityReferenceType, referenceURN, relationshipType, relatedEntityReferenceType, relatedReferenceURN):
     # First check to see if it exists before add/update
     url = base_url_relationship + '/' + entityReferenceType + '/' + referenceURN + '/' + relatedEntityReferenceType + '/' + relatedReferenceURN + '/' + relationshipType
-    logging.debug("Sending to URL: " + str(url))
+    logging.debug("Checking for URL: " + str(url))
     response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
     logging.info("Response: " + str(response.status_code))
-    if response.status_code == 204:
+    if response.status_code in (204, 404):
         # Relationship doesn't exist, do it
         temp_meta_data = dict(
             entityReferenceType=entityReferenceType,

@@ -209,7 +209,7 @@ def add_new_instagram_location(location_id, name, lat, lon):
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def add_new_instagram_post_location(post_urn, location_id, name, lat, lon):
     location_urn = add_new_instagram_location(location_id, name, lat, lon)
-    references_urn = snapbundle_helpers.check_add_update_relationship('Object', post_urn, 'References', 'Geospatial', location_urn)
+    references_urn = snapbundle_helpers.check_add_update_relationship('Object', post_urn, 'References', 'Georectification', location_urn)
     return location_urn
 
 

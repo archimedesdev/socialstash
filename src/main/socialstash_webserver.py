@@ -131,7 +131,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         if response:
             s.wfile.write('<TABLE BORDER="1">')
             s.wfile.write('<CAPTION>' + "<b>Object References (" + str(len(response)) + ")" + '</b></CAPTION>')
-            s.wfile.write('<TR><TH>Object</TH><TH>URN</TH></TR>')
+            s.wfile.write('<TR><TH>Object</TH><TH>URN</TH><TH>URN</TH></TR>')
 
             for current in sorted(response.keys()):
                 s.wfile.write("<TR><TD>" + str(current) + "</TD><TD>" + str(response[current]) + "</TD></TR>")
@@ -175,6 +175,8 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 MyHandler.write_instagram_object_relationships_likes(s, current['referenceURN'])
                 s.wfile.write("<BR>")
                 MyHandler.write_instagram_object_relationships_references(s, current['referenceURN'], reverse=True)
+                s.wfile.write("<BR>")
+                MyHandler.write_instagram_object_relationships_references(s, current['referenceURN'], reverse=False)
                 s.wfile.write("<BR>")
                 MyHandler.write_instagram_object_tags(s, current['referenceURN'])
 
