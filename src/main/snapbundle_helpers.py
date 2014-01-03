@@ -42,6 +42,7 @@ base_url_metadata_mapper_decode = url_server + '/metadata/mapper/decode/'
 base_url_files_metadata_query = url_server + '/files/Metadata/'
 base_url_files = url_server + '/files'
 base_url_tags = url_server + '/tags'
+base_url_geospatial = url_server + '/geospatial'
 base_url_devices = url_server + '/devices'
 # == End Snapbundle Variables ==
 
@@ -547,6 +548,86 @@ def get_all_tags_linked_to_object(entity_reference_type, reference_urn):
 def get_all_objects_linked_to_tag(entity_reference_type, tag_name):
     url = base_url_tags + "?entityReferenceType=" + entity_reference_type + "&tagName=" + tag_name
     logging.debug("Sending to URL: " + str(url))
+    response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
+    logging.info(str(response))
+    try:
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return False
+    except KeyError:
+        return False
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def create_geospacial(name, description, georectificationType, geometricShape):
+    temp_meta_data = {"name": name,
+                      "description": description,
+                      "georectificationType": georectificationType,
+                      "geometricShape": geometricShape
+                      }
+    url = base_url_geospatial
+    headers = {'content-type': 'application/json'}
+    payload = json.dumps(temp_meta_data)
+    logging.debug("Sending to URL: " + str(url))
+    logging.debug("Submitting Payload: " + str(payload))
+    response = requests.put(url, data=payload, headers=headers, auth=(snapbundle_username, snapbundle_password))
+    logging.info("Response (for geospacial name " + str(name) + "): " + str(response.status_code) + " <--> " + str(response.json()))
+    urn = response.json()['message']
+    if response.status_code == 201:
+        # Created new place
+        logging.info("Created new place, urn=" + str(urn))
+    return urn
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def create_geospacial_place(name, description, geometricShape):
+    return create_geospacial(name=name, description=description,
+                             georectificationType='Place', geometricShape=geometricShape)
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def create_geospacial_place_point(name, description, x, y):
+    temp_geo_json = {"type": 'Point',
+                     "coordinates": [float(x), float(y)]
+                     }
+    return create_geospacial_place(name=name, description=description, geometricShape=temp_geo_json)
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def check_or_create_geospacial_place_point(name, description, x, y):
+    url = base_url_geospatial + "?nameLike=" + name
+    logging.info("Looking for file geospacial object at URL: " + str(url))
+    response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
+    logging.info(str(response))
+    try:
+        if response.status_code == 200:
+            return response.json()[0]['urn']
+        else:
+            return create_geospacial_place_point(name, description, x, y)
+    except KeyError:
+        return False
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def check_geospacial_by_name(search_name):
+    url = base_url_geospatial + "?nameLike=" + search_name
+    logging.info("Looking for file geospacial object at URL: " + str(url))
+    response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
+    logging.info(str(response))
+    try:
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return False
+    except KeyError:
+        return False
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def check_geospacial_by_urn(search_urn):
+    url = base_url_geospatial + "/" + search_urn
+    logging.info("Looking for file geospacial object at URL: " + str(url))
     response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
     logging.info(str(response))
     try:

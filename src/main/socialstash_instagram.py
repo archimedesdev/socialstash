@@ -547,8 +547,9 @@ class User(object):
                     current = response.json()['data']
 
                     # TEMP
+                    just_use = '605971004470914431_513507874' #Winerly location
                     #just_use = '560874534243987153_513507874' #Post with no caption
-                    just_use = '560867689500569094_513507874' #Dolly sods with a comment
+                    #just_use = '560867689500569094_513507874' #Dolly sods with a comment
                     #just_use = '620310392478690795_513507874' #flashback friday shit eating grin
                     if current['id'] != just_use:
                         continue
@@ -588,9 +589,6 @@ class User(object):
 
                     # This will become a relationship
 #                    temp_post['users_in_photo'] = current['users_in_photo']
-
-                    # These will become objects associated with it
-#                    temp_post['location'] = current['location']
 
                     # Need to create the post and get its URN back before we can do any additional relationships
                     post_urn = snapbundle_instagram_fxns.add_new_instagram_post_object(temp_post)
@@ -661,11 +659,21 @@ class User(object):
                             snapbundle_instagram_fxns.add_user_likes_post(like_user_urn, post_urn)
                     ####### End User Likes
 
+                    # These will become objects associated with it
+                    temp_post['location'] = current['location']
+                    if temp_post['location'] is not None:
+                        loc_urn = snapbundle_instagram_fxns.add_new_instagram_post_location(post_urn,
+                                                                                            temp_post['location']['id'],
+                                                                                            temp_post['location']['name'],
+                                                                                            temp_post['location']['latitude'],
+                                                                                            temp_post['location']['longitude'])
+                        print "Loc Urn: " + str(loc_urn)
+
                     print "post urn: " + str(post_urn)
                     exit()
 
             except KeyError:
-                pass
+                logging.info("Key Error encountered")
             exit()
 
 

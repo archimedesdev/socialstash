@@ -244,10 +244,26 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         else:
             s.wfile.write('<BR>No Object Info Found <BR>')
 
+    ################## FXN ######################################################################################################
+    @staticmethod
+    def index_write_all_locations(s):
+        response = snapbundle_helpers.check_geospacial_by_name(snapbundle_instagram_fxns.snapbundle_base_instagram_location_name)
+        if response:
+            s.wfile.write('<TABLE BORDER="3">')
+            s.wfile.write('<CAPTION>' + "<b>Instagram Geospatial Info (" + str(len(response)) + ")" + '</b></CAPTION>')
+            s.wfile.write('<TR><TH>georectificationType</TH><TH>name</TH><TH>description</TH><TH>urn</TH></TR>')
+            for current in response:
+                s.wfile.write("<TR><TD>" + str(current['georectificationType'])
+                              + '</TD><TD>' + str(current['name'])
+                              + '</TD><TD>' + str(current['description'])
+                              + "</TD><TD>" + str(current['urn'])
+                              + "</TD></TR>")
+            s.wfile.write('</TABLE><BR>')
+        else:
+            s.wfile.write('<BR>No Object Info Found <BR>')
+
     ###################################################################################################################
     ###################################################################################################################
-
-
     def do_HEAD(s):
         s.send_response(200)
         s.send_header("Content-type", "text/html")
@@ -295,7 +311,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 MyHandler.index_write_all_users(s)
                 MyHandler.index_write_all_posts(s)
                 MyHandler.index_write_all_comments(s)
-
+                MyHandler.index_write_all_locations(s)
         s.wfile.write("</body></html>")
 
     ###################################################################################################################

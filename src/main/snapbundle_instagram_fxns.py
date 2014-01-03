@@ -21,6 +21,7 @@ snapbundle_base_urn_instagram_user = snapbundle_base_urn_instagram + "user:"
 snapbundle_base_urn_instagram_post = snapbundle_base_urn_instagram + "post:"
 snapbundle_base_urn_instagram_comment = snapbundle_base_urn_instagram + "comment:"
 snapbundle_base_instagram_filter_name = "instagram:filter:"
+snapbundle_base_instagram_location_name = "location:instagram:"
 # == End Snapbundle Variables ==
 
 # == Start Snapbundle URLs ==
@@ -200,6 +201,19 @@ def get_urn_from_username(username):
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
+def add_new_instagram_location(location_id, name, lat, lon):
+    sb_name = snapbundle_base_instagram_location_name + str(location_id)
+    return snapbundle_helpers.check_or_create_geospacial_place_point(sb_name, name, x=lon, y=lat)
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def add_new_instagram_post_location(post_urn, location_id, name, lat, lon):
+    location_urn = add_new_instagram_location(location_id, name, lat, lon)
+    references_urn = snapbundle_helpers.check_add_update_relationship('Object', post_urn, 'References', 'Geospatial', location_urn)
+    return location_urn
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
 def check_for_file_upload_url(referenceType, urn, url):
     file_urns = snapbundle_helpers.search_for_file_object(referenceType, urn)
     if not file_urns:
@@ -242,6 +256,7 @@ def add_new_instagram_comment(comment_id, created_time, text, author_username, p
         references_urn = snapbundle_helpers.check_add_update_relationship('Object', comment_urn, 'References', 'Object', post_urn)
 
         return comment_urn
+
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def add_new_instagram_post_object(post):
