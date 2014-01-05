@@ -36,6 +36,22 @@ global_likes_string = 'LIKES'
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
+def get_urn_from_username(username):
+    return snapbundle_base_urn_instagram_user + username
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def get_id_from_username(username):
+    urn = get_urn_from_username(username)
+    if check_for_object(urn):
+        metadata = get_object_metadata_dictionary(urn)
+        if 'id' in metadata:
+            return metadata['id']
+        else:
+            return False
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
 def check_for_object(urn_to_check_for):
     return_value = snapbundle_helpers.check_for_object(urn_to_check_for)
     if not return_value:
@@ -193,11 +209,6 @@ def check_add_update_follows(reference_urn, relatedReferenceURN):
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def add_user_likes_post(user_urn, post_urn):
     return snapbundle_helpers.check_add_update_relationship('Object', user_urn, 'Likes', 'Object', post_urn)
-
-
-## ----------------------------------- FXN ------------------------------------------------------------------------
-def get_urn_from_username(username):
-    return snapbundle_base_urn_instagram_user + username
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
