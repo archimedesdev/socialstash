@@ -78,6 +78,7 @@ filename = 'test.gml'
 update_user = 'alexpt48'
 updates = instagram_user.update_user_feed_in_snapbundle(update_user, update_if_found=True)
 print "Made " + str(updates) + " post updates for user " + str(update_user)
+#instagram_user.update_cached_users_media_feed(max_media=60, update_if_found=False)
 exit()
 
 

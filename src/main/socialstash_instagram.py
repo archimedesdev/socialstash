@@ -555,13 +555,13 @@ class User(object):
 
                     # TEMP
                     #just_use = '620621129814330121_225958025' #alexpt48 picture
-                    just_use = '518265249027017009_225958025' #alexpt48 video
+                    #just_use = '518265249027017009_225958025' #alexpt48 video
                     #just_use = '605971004470914431_513507874' #Winerly location
                     #just_use = '560874534243987153_513507874' #Post with no caption
                     #just_use = '560867689500569094_513507874' #Dolly sods with a comment
                     #just_use = '620310392478690795_513507874' #flashback friday shit eating grin
-                    if current['id'] != just_use:
-                        continue
+                    #if current['id'] != just_use:
+                    #    continue
 
                     # First check to see if this post already exists, unless we're just going to update it anyway
                     if not update_if_found:
@@ -889,6 +889,29 @@ class User(object):
     def get_global_relationship_node_list():
         global global_relationship_edge_list
         return global_relationship_edge_list
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+    @staticmethod
+    def update_cached_users_media_feed(max_media=50, update_if_found=False):
+        total_num_updates = 0
+        logging.info("Looking to update media posts of all users found in local cache into SnapBundle")
+        for username in global_instagram_user_dictionary.keys():
+            logging.info("Looking to update user " + str(username) + "'s media feed in SnapBundle")
+            user = global_instagram_user_dictionary[username]
+            if user.api is None:
+                user.authenticate()
+
+            if user.counts['media'] <= max_media:
+                #logging.info("Using API from user X to update posts from user Y (" + str(user.username) + ":" + str(username) + ")")
+                #num_updates = user.check_recent_media_exists_in_snapbundle(update_if_found=update_if_found)
+                #logging.info("Updated " + str(num_updates) + "posts for user " + str(user.username))
+                total_num_updates += 0 #num_updates
+            else:
+                logging.info("Not using API from user X to update posts from user Y (" + str(user.username) + ":" +
+                             str(username) + ").  Media count was too high (" + str(user.counts['media']) + ">" +
+                             str(max_media) + ")")
+
+        return total_num_updates
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
     def test_one_thing(self):
