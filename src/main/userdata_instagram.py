@@ -75,7 +75,7 @@ filename = 'test.gml'
 #instagram_user.graph_relationship_gml(filename=filename)
 
 #instagram_user.check_recent_media_exists_in_snapbundle(update_if_found=False)
-update_user = 'alexpt48'
+update_user = 'stephiekrom'
 updates = instagram_user.update_user_feed_in_snapbundle(update_user, update_if_found=True)
 print "Made " + str(updates) + " post updates for user " + str(update_user)
 #instagram_user.update_cached_users_media_feed(max_media=60, update_if_found=False)

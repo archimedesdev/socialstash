@@ -678,6 +678,14 @@ class User(object):
                     # These will become objects associated with it
                     temp_post['location'] = current['location']
                     if temp_post['location'] is not None:
+                        # As it turns out, some locations are just Lat Lon and don't have a location stored in Instagram
+                        if 'id' not in temp_post['location']:
+                            temp_post['location']['id'] = 'post_' + str(temp_post['id'])
+                        if 'name' not in temp_post['location']:
+                            temp_post['location']['name'] = current['user']['username'] + "'s position for post " + str(temp_post['id'])
+                            print "LOCATION:" + str(temp_post['location'])
+                            exit()
+
                         loc_urn = snapbundle_instagram_fxns.add_new_instagram_post_location(post_urn,
                                                                                             temp_post['location']['id'],
                                                                                             temp_post['location']['name'],
