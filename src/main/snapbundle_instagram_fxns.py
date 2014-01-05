@@ -225,11 +225,14 @@ def add_new_instagram_post_location(post_urn, location_id, name, lat, lon):
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def check_for_file_upload_url(referenceType, urn, url):
+def check_for_file_upload_url(referenceType, urn, url, mediaType):
     file_urns = snapbundle_helpers.search_for_file_object(referenceType, urn)
     if not file_urns:
         logging.info("No associated file urns found for " + urn + ", need to upload the file")
-        file_urn = snapbundle_helpers.add_file_from_url_jpg(referenceType, urn, url)
+        if mediaType == 'jpg':
+            file_urn = snapbundle_helpers.add_file_from_url_jpg(referenceType, urn, url)
+        elif mediaType == 'mp4':
+            file_urn = snapbundle_helpers.add_file_from_url_mp4(referenceType, urn, url)
         if not file_urn:
             logging.info("File could not be uploaded for some reason.")
             return 'n/a'
@@ -296,23 +299,23 @@ def add_new_instagram_post_object(post):
     if post['type'] == 'image':
         pic_url = post['images']['low_resolution']['url']
         metadata_urn = snapbundle_helpers.add_update_metadata("Object", post_urn, "String", "image:low_resolution", pic_url)
-        file_urn = check_for_file_upload_url('Metadata', metadata_urn, pic_url)
+        file_urn = check_for_file_upload_url('Metadata', metadata_urn, pic_url, 'jpg')
 
         pic_url = post['images']['thumbnail']['url']
         metadata_urn = snapbundle_helpers.add_update_metadata("Object", post_urn, "String", "image:thumbnail", pic_url)
-        file_urn = check_for_file_upload_url('Metadata', metadata_urn, pic_url)
+        file_urn = check_for_file_upload_url('Metadata', metadata_urn, pic_url, 'jpg')
 
         pic_url = post['images']['standard_resolution']['url']
         metadata_urn = snapbundle_helpers.add_update_metadata("Object", post_urn, "String", "image:standard_resolution", pic_url)
-        file_urn = check_for_file_upload_url('Metadata', metadata_urn, pic_url)
+        file_urn = check_for_file_upload_url('Metadata', metadata_urn, pic_url, 'jpg')
     elif post['type'] == 'video':
         pic_url = post['videos']['low_resolution']['url']
         metadata_urn = snapbundle_helpers.add_update_metadata("Object", post_urn, "String", "video:low_resolution", pic_url)
-        file_urn = check_for_file_upload_url('Metadata', metadata_urn, pic_url)
+        file_urn = check_for_file_upload_url('Metadata', metadata_urn, pic_url, 'mp4')
 
         pic_url = post['videos']['standard_resolution']['url']
         metadata_urn = snapbundle_helpers.add_update_metadata("Object", post_urn, "String", "video:standard_resolution", pic_url)
-        file_urn = check_for_file_upload_url('Metadata', metadata_urn, pic_url)
+        file_urn = check_for_file_upload_url('Metadata', metadata_urn, pic_url, 'mp4')
 
     # Now add the tags, including the filters:
     if post['filter'] is None:

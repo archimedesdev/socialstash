@@ -442,6 +442,11 @@ def add_file_from_url_jpg(reference_type, referenceURN, source_url):
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
+def add_file_from_url_mp4(reference_type, referenceURN, source_url):
+    return add_file_from_url(reference_type, referenceURN, "video/mp4", source_url)
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
 def search_for_file_object(reference_type, reference_urn):
     # returns a dictionary of urns and timestamps
     url = base_url_files + "/" + reference_type + "/" + reference_urn

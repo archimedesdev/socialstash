@@ -75,6 +75,10 @@ filename = 'test.gml'
 #instagram_user.graph_relationship_gml(filename=filename)
 
 #instagram_user.check_recent_media_exists_in_snapbundle(update_if_found=False)
+update_user = 'alexpt48'
+updates = instagram_user.update_user_feed_in_snapbundle(update_user, update_if_found=True)
+print "Made " + str(updates) + " post updates for user " + str(update_user)
+exit()
 
 
 #################################################################################################################
@@ -85,10 +89,6 @@ instagram_user.check_relationship_users_exist_in_snapbundle(relationship='FOLLOW
                                                             update_user_following_if_found=False,
                                                             update_user_followedby_if_found=False,
                                                             go_to_max_depth=False)
-
-instagram_user.update_user_feed_in_snapbundle('vraduphoto')
-exit()
-
 
 print "Saved API Calls: " + str(instagram_user.get_global_count_saved_api_calls())
 print "Calls Dictionary: " + str(instagram_user.get_global_counts_dict())
