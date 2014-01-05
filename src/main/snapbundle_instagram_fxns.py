@@ -259,6 +259,15 @@ def add_new_instagram_comment(comment_id, created_time, text, author_username, p
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
+def check_for_post(post_id):
+    urn_to_check_for =  snapbundle_base_urn_instagram_post + post_id
+    return_value = snapbundle_helpers.check_for_object(urn_to_check_for)
+    if not return_value:
+        logging.info("Instagram Post Object (" + str(urn_to_check_for) + ") does not yet exist in SnapBundle")
+    return return_value
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
 def add_new_instagram_post_object(post):
     data_urn = snapbundle_base_urn_instagram_post + post['id']
 
@@ -315,8 +324,6 @@ def add_new_instagram_post_object(post):
         interaction_urn = snapbundle_helpers.create_object_interaction('Object', post['parent_urn'],
                                                                        post['created_time'], post_urn)
 
-    print "posturn: " + str(post_urn)
-    print "inerurn: " + str(interaction_urn)
     return post_urn
 
 

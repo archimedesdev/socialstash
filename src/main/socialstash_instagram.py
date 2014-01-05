@@ -513,15 +513,19 @@ class User(object):
         pylab.show()
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-    def check_recent_media_exists_in_snapbundle(self, update_if_found=False):
+    def check_recent_media_exists_in_snapbundle(self, user_id=None, update_if_found=False):
+        posts_udated = 0
         post_dictionary = {}
         keep_going = True
+        # If no Instagram user id was passed in, we assume it's for us
+        if not user_id:
+            user_id = self.id
 
         ## Need to find a way to set the next_max_id to be the latest post we already have in Snapbundle
         next_max_id = None
         while keep_going:
             # Get this set of posts
-            response, next_url = self.api.user_recent_media(count=instagram_feed_record_count, max_id=next_max_id)
+            response, next_url = self.api.user_recent_media(user_id=user_id, count=instagram_feed_record_count, max_id=next_max_id)
 
             # Add them to a dictionary
             for current in response:
@@ -547,14 +551,20 @@ class User(object):
                     current = response.json()['data']
 
                     # TEMP
-                    just_use = '605971004470914431_513507874' #Winerly location
+                    #just_use = '605971004470914431_513507874' #Winerly location
                     #just_use = '560874534243987153_513507874' #Post with no caption
                     #just_use = '560867689500569094_513507874' #Dolly sods with a comment
                     #just_use = '620310392478690795_513507874' #flashback friday shit eating grin
-                    if current['id'] != just_use:
-                        continue
+                    #if current['id'] != just_use:
+                    #    continue
 
-                    print "Here" + str(response.json()['data'])
+                    # First check to see if this post already exists, unless we're just going to update it anyway
+                    if not update_if_found:
+                        post_exists = snapbundle_instagram_fxns.check_for_post(current['id'])
+                        if post_exists:
+                            print "Skipping Post " + str(current['id'])
+                            logging.info("Told not to update existing posts.  Post " + str(current['id']) + " found.  Skipping")
+                            continue
 
                     # Check to make sure everything is kosher with this post
                     if current['user']['username'] == self.username:
@@ -564,6 +574,7 @@ class User(object):
                                       + current['user']['username'] + " != " + self.username + " )")
                         continue # Skip this post
 
+                    print "Working with Post: " + str(current['id'])
                     temp_post = {}
                     # This is the info that goes into the object interaction
                     temp_post['parent_urn'] = self._instagram_user_sb_object_urn
@@ -667,15 +678,15 @@ class User(object):
                                                                                             temp_post['location']['name'],
                                                                                             temp_post['location']['latitude'],
                                                                                             temp_post['location']['longitude'])
-                        print "Loc Urn: " + str(loc_urn)
+                    print "Finished with Post, URN: " + str(post_urn)
+                    posts_udated += 1
 
-                    print "post urn: " + str(post_urn)
-                    exit()
-
-            except KeyError:
+            except KeyError, err:
+                print KeyError, err
+                print traceback.format_exc()
                 logging.info("Key Error encountered")
-            exit()
 
+        return posts_udated
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
     def get_feed_from_instagram(self, count):
@@ -834,6 +845,22 @@ class User(object):
           data['counts'] = self.counts
 
         return data
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+    @staticmethod
+    def update_user_feed_in_snapbundle(username, update_if_found=False):
+        logging.info("Looking to update user " + str(username) + "'s media feed in SnapBundle")
+        if username in global_instagram_user_dictionary:
+            user = global_instagram_user_dictionary[username]
+            if user.api is None:
+                print "Setting up API First"
+                user.authenticate()
+
+            num_updates = user.check_recent_media_exists_in_snapbundle(update_if_found=update_if_found)
+            return num_updates
+        else:
+            logging.info("User not found in cached user dictionary, seeing if we can pull their user id out of snapbundle")
+            return 0
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
     @staticmethod

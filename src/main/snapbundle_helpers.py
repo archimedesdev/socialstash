@@ -183,10 +183,10 @@ def get_object_metadata_dictionary(urn_to_check_for, reference_type):
         if response.status_code == 200:
             temp_dict = {}
             for current in response.json():
-                value = str(get_raw_value_decoded(current['rawValue'], str(current['dataType'])))
+                value = get_raw_value_decoded(current['rawValue'], str(current['dataType']))
                 # Check to see if it's really a dictionary stored as a string
                 # If so, clear off all the unicode u'' crap from the beginning
-                if (value[0] == '{') and (value[-1] == '}'):
+                if isinstance(value, basestring) and (value[0] == '{') and (value[-1] == '}'):
                     value = ast.literal_eval(value)
                     non_unicode_value = {}
                     for key in value.keys():
