@@ -463,8 +463,8 @@ def add_file_from_text(reference_type, referenceURN, text_filename, text):
         file_urn = response.json()['message']
         # Now we need to upload the actual file
         url = base_url_files + '/' + str(file_urn)
-        headers = {'content-type': mimeType}
-        files = {'file': (text_filename, text)}
+        headers = {'content-type': 'multipart/form-data', 'Accept': 'application/json'}
+        files = {'file': ('test.txt', open('test.txt'), 'text/plain', {})}
         print str(file_urn)
         print str(url)
         print str(headers)
@@ -472,12 +472,14 @@ def add_file_from_text(reference_type, referenceURN, text_filename, text):
         response = requests.post(url, headers=headers, files=files, auth=(snapbundle_username, snapbundle_password))
         if response.status_code in (200, 201):
             logging.info("Response uploading file, for url (" + str(url) + "): " + str(response.status_code) + " <--> " + str(response.json()))
-            return file_urn
-        else:
             print response.status_code
             print response.text
+            return file_urn
+        else:
+            print response.headers
+            print response.text
             exit()
-            False
+            return False
     else:
         return False
 
