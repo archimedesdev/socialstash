@@ -554,14 +554,15 @@ class User(object):
                     current = response.json()['data']
 
                     # TEMP
+                    just_use = '603233164163236582_9103023' #krom's long  comment text
                     #just_use = '620621129814330121_225958025' #alexpt48 picture
                     #just_use = '518265249027017009_225958025' #alexpt48 video
                     #just_use = '605971004470914431_513507874' #Winerly location
                     #just_use = '560874534243987153_513507874' #Post with no caption
                     #just_use = '560867689500569094_513507874' #Dolly sods with a comment
                     #just_use = '620310392478690795_513507874' #flashback friday shit eating grin
-                    #if current['id'] != just_use:
-                    #    continue
+                    if current['id'] != just_use:
+                        continue
 
                     # First check to see if this post already exists, unless we're just going to update it anyway
                     if not update_if_found:
@@ -682,9 +683,7 @@ class User(object):
                         if 'id' not in temp_post['location']:
                             temp_post['location']['id'] = 'post_' + str(temp_post['id'])
                         if 'name' not in temp_post['location']:
-                            temp_post['location']['name'] = current['user']['username'] + "'s position for post " + str(temp_post['id'])
-                            print "LOCATION:" + str(temp_post['location'])
-                            exit()
+                            temp_post['location']['name'] = "Location for " + current['user']['username'] + "'s post " + str(temp_post['id'])
 
                         loc_urn = snapbundle_instagram_fxns.add_new_instagram_post_location(post_urn,
                                                                                             temp_post['location']['id'],

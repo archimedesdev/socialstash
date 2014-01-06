@@ -2,6 +2,7 @@ __author__ = 'prad'
 
 import json
 import requests
+import urllib
 import ConfigParser
 import logging
 import ast
@@ -256,7 +257,21 @@ def add_update_metadata(reference_type, referenceURN, dataType, key, value, moni
                     break
 
     # Back to normal application
-    raw_value = get_raw_value_encoded(value, dataType)
+
+    # We need to check to make sure if it's a string type, that it's not too long.
+    # If so, we need to store it as a text file
+    # 1) Create the metadata with some placeholder value in the value, get the urn
+    # 2) Create the file, referencing the urn of the metadata we made, get the urn for the file
+    # 3) Update the metadata to have the urn of the file name in it
+    contents_in_file = False
+    if (metadataDataTypes[dataType.upper()] == 'StringType') and (len(value) > 150):
+        new_value = '<contents_in_file_pending>'
+        raw_value = get_raw_value_encoded(new_value, dataType)
+        contents_in_file = True
+        print "Text: " + str(value)
+    else:
+        raw_value = get_raw_value_encoded(value, dataType)
+
     temp_meta_data = dict(
         entityReferenceType=reference_type,
         referenceURN=referenceURN,
@@ -264,6 +279,7 @@ def add_update_metadata(reference_type, referenceURN, dataType, key, value, moni
         key=key,
         rawValue=str(raw_value)
     )
+
     if moniker is not None:
         temp_meta_data['moniker'] = moniker
 
@@ -274,10 +290,25 @@ def add_update_metadata(reference_type, referenceURN, dataType, key, value, moni
     logging.debug("Submitting Payload: " + str(payload))
     response = requests.put(url, data=payload, headers=headers, auth=(snapbundle_username, snapbundle_password))
     try:
-        logging.info("Response (for key/value " + str(key) + "/" + str(value) + "): " + str(response.status_code) + " <--> " + str(response.json()))
-        urn = response.json()[0]['message']
         if response.status_code in (200, 201):
-            return urn
+            logging.info("Response (for key/value " + str(key) + "/" + str(value) + "): " + str(response.status_code) + " <--> " + str(response.json()))
+            metadata_urn = response.json()[0]['message']
+            if contents_in_file:
+                print "Metadata URN pre contents file doing: " + str(metadata_urn)
+                text_filename = 'text_for_metadata_urn_' + str(metadata_urn) + '.txt'
+                file_urn = add_file_from_text('Metadata', metadata_urn, text_filename, value)
+                print "File_urn: " + str(file_urn)
+                if file_urn:
+                    new_value = '<contents_in_file_urn_' + str(file_urn) + '>'
+                    newly_updated_metadata_urn = add_update_metadata(reference_type, referenceURN, dataType, key, new_value, moniker)
+                    print "Metadata URN of post contents file doing: " + str(newly_updated_metadata_urn)
+                    exit()
+                    return newly_updated_metadata_urn
+                else:
+                    logging.info("Uh oh, something bad happened trying to add the file!")
+                    return metadata_urn
+            else:
+                return metadata_urn
         else:
             return False
     except UnicodeEncodeError:
@@ -412,6 +443,42 @@ def get_object_interactions(urn_to_check_for):
         else:
             return False
     except KeyError:
+        return False
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def add_file_from_text(reference_type, referenceURN, text_filename, text):
+    mimeType = 'text/plain'
+    temp_data = {"entityReferenceType": reference_type,
+                 "referenceUrn": referenceURN,
+                 "mimeType": mimeType}
+    url = base_url_files
+    headers = {'content-type': 'application/json'}
+    payload = json.dumps(temp_data)
+    logging.debug("Sending to URL: " + str(url))
+    logging.debug("Submitting Payload: " + str(payload))
+    response = requests.put(url, data=payload, headers=headers, auth=(snapbundle_username, snapbundle_password))
+    logging.info("Response for url, before uploading content (" + str(url) + "): " + str(response.status_code) + " <--> " + str(response.json()))
+    if response.status_code in (200, 201):
+        file_urn = response.json()['message']
+        # Now we need to upload the actual file
+        url = base_url_files + '/' + str(file_urn)
+        headers = {'content-type': mimeType}
+        files = {'file': (text_filename, text)}
+        print str(file_urn)
+        print str(url)
+        print str(headers)
+        print str(files)
+        response = requests.post(url, headers=headers, files=files, auth=(snapbundle_username, snapbundle_password))
+        if response.status_code in (200, 201):
+            logging.info("Response uploading file, for url (" + str(url) + "): " + str(response.status_code) + " <--> " + str(response.json()))
+            return file_urn
+        else:
+            print response.status_code
+            print response.text
+            exit()
+            False
+    else:
         return False
 
 
