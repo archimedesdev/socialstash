@@ -57,12 +57,12 @@ response = instagram_user.check_for_user_in_snapbundle()
 
 if not response:
     print "User not found!  Creating New User"
-#    print "User URN: " + str(instagram_user.create_update_user_in_snapbundle(new_user=True))
+    print "User URN: " + str(instagram_user.create_update_user_in_snapbundle(new_user=True))
 else:
     print "User exists!"
     print "SnapBundle Data: " + str(response)
-#    print "Updating anyway"
-#    print "Updated URN: " + str(instagram_user.create_update_user_in_snapbundle())
+    #print "Updating anyway"
+    #print "Updated URN: " + str(instagram_user.create_update_user_in_snapbundle())
 
 #print "Get data stored in SnapBundle"
 #print str(instagram_user.get_user_data_in_snapbundle())
@@ -74,7 +74,7 @@ filename = 'test.gml'
 #instagram_user.output_relationship_node_gml(filename=filename, depth=2)
 #instagram_user.graph_relationship_gml(filename=filename)
 
-#instagram_user.check_recent_media_exists_in_snapbundle(update_if_found=False)
+#instagram_user.check_recent_media_exists_in_snapbundle(update_if_found=True)
 update_user = 'stephiekrom'
 updates = instagram_user.update_user_feed_in_snapbundle(update_user, update_if_found=True)
 print "Made " + str(updates) + " post updates for user " + str(update_user)
@@ -85,22 +85,25 @@ exit()
 #################################################################################################################
 print "Saved API Calls: " + str(instagram_user.get_global_count_saved_api_calls())
 print "checking for users I'm following"
-instagram_user.check_relationship_users_exist_in_snapbundle(relationship='FOLLOWING',
-                                                            update_user_profile_if_found=False,
-                                                            update_user_following_if_found=False,
-                                                            update_user_followedby_if_found=False,
-                                                            go_to_max_depth=False)
+#instagram_user.check_relationship_users_exist_in_snapbundle(relationship='FOLLOWING',
+#                                                            update_user_profile_if_found=True,
+#                                                            update_user_following_if_found=True,
+#                                                            update_user_followedby_if_found=True,
+#                                                            go_to_max_depth=False)
 
 print "Saved API Calls: " + str(instagram_user.get_global_count_saved_api_calls())
 print "Calls Dictionary: " + str(instagram_user.get_global_counts_dict())
 
+#exit()
+
+
 #################################################################################################################
 # print 'checking for users following me'
 instagram_user.check_relationship_users_exist_in_snapbundle(relationship='FOLLOWED_BY',
-                                                            update_user_profile_if_found=False,
+                                                            update_user_profile_if_found=True,
                                                             update_user_following_if_found=True,
                                                             update_user_followedby_if_found=True,
-                                                            go_to_max_depth=True)
+                                                            go_to_max_depth=False)
 
 print "Saved API Calls: " + str(instagram_user.get_global_count_saved_api_calls())
 

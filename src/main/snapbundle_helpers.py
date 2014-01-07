@@ -2,11 +2,13 @@ __author__ = 'prad'
 
 import json
 import requests
-import urllib
 import ConfigParser
 import logging
 import ast
 import os
+import urllib2
+import poster.encode
+import poster.streaminghttp
 
 # == Start the logger ==
 # == Because of this logger, this should be the first library we import ==
@@ -42,6 +44,8 @@ base_url_metadata_mapper_encode = url_server + '/metadata/mapper/encode/'
 base_url_metadata_mapper_decode = url_server + '/metadata/mapper/decode/'
 base_url_files_metadata_query = url_server + '/files/Metadata/'
 base_url_files = url_server + '/files'
+# The application/octet-stream endpoint is located at a POST at /files/{urn}/octet
+# If you want to continue to try and figure out the multi-part, the endpoint is at /files/{urn}/multipart
 base_url_tags = url_server + '/tags'
 base_url_geospatial = url_server + '/geospatial'
 base_url_devices = url_server + '/devices'
@@ -264,7 +268,10 @@ def add_update_metadata(reference_type, referenceURN, dataType, key, value, moni
     # 2) Create the file, referencing the urn of the metadata we made, get the urn for the file
     # 3) Update the metadata to have the urn of the file name in it
     contents_in_file = False
-    if (metadataDataTypes[dataType.upper()] == 'StringType') and (len(value) > 150):
+    if (metadataDataTypes[dataType.upper()] == 'StringType') and (len(value) > 512):
+        logging.info("Found some metadata that was too long, ignoring for now!! --> ")
+        print "Found some metadata that was too long, ignoring for now!! --> "
+        return False
         new_value = '<contents_in_file_pending>'
         raw_value = get_raw_value_encoded(new_value, dataType)
         contents_in_file = True
@@ -464,7 +471,7 @@ def add_file_from_text(reference_type, referenceURN, text_filename, text):
         # Now we need to upload the actual file
         url = base_url_files + '/' + str(file_urn)
         headers = {'content-type': 'multipart/form-data', 'Accept': 'application/json'}
-        files = {'file': ('test.txt', open('test.txt'), 'text/plain', {})}
+        files = {'file': ('no_name.txt', open('test.txt'), 'text/plain', {})}
         print str(file_urn)
         print str(url)
         print str(headers)
@@ -484,6 +491,66 @@ def add_file_from_text(reference_type, referenceURN, text_filename, text):
         return False
 
 
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def add_file_from_file(reference_type, referenceURN, mimeType, filename):
+    temp_data = {"entityReferenceType": reference_type,
+                 "referenceUrn": referenceURN,
+                 "mimeType": mimeType}
+    url = base_url_files
+    headers = {'content-type': 'application/json'}
+    payload = json.dumps(temp_data)
+    logging.debug("Sending to URL: " + str(url))
+    logging.debug("Submitting Payload: " + str(payload))
+    response = requests.put(url, data=payload, headers=headers, auth=(snapbundle_username, snapbundle_password))
+    logging.info("Response for url, before uploading content (" + str(url) + "): " + str(response.status_code) + " <--> " + str(response.json()))
+    if response.status_code in (200, 201):
+        file_urn = response.json()['message']
+        # Now we need to upload the actual file
+        url = base_url_files + '/' + str(file_urn)
+
+#        import base64
+#        base64string = base64.encodestring('%s:%s' % (snapbundle_username, snapbundle_password))[:-1]
+#        opener = poster.streaminghttp.register_openers()
+#        params = {'filename': open(filename,'rb')}
+#        datagen, headers = poster.encode.multipart_encode(params)
+#        request = urllib2.Request(url, datagen, headers)
+#        request.add_header("Authorization", "Basic %s" % base64string)
+#        request.add_header('Transfer-Encoding', 'chunked')
+#        response = opener.open(request)
+#        print response.read()
+#        exit()
+
+
+#data = open('./x.png', 'rb').read()
+#res = requests.post(url='http://httpbin.org/post',
+#                    data=data,
+#                    headers={'Content-Type': 'application/octet-stream'})
+
+        #headers = {'content-type': 'multipart/form-data', 'Accept': 'application/json', }
+        headers = {'Accept': 'application/json'}
+        files = {'file': ('', open(filename), mimeType, {})}
+        print "File URN: " + str(file_urn)
+        print "URL: " + str(url)
+        print "Headers: " + str(headers)
+        print "Filename: " + str(filename)
+        print "Files: " + str(files)
+        response = requests.post(url, headers=headers, files=files, auth=(snapbundle_username, snapbundle_password))
+        #response = requests.post(url, files=files, auth=(snapbundle_username, snapbundle_password))
+        if response.status_code in (200, 201):
+            logging.info("Response uploading file, for url (" + str(url) + "): " + str(response.status_code) + " <--> " + str(response.json()))
+            print response.status_code
+            print response.text
+            return file_urn
+        else:
+            print "Return: " + str(response.headers)
+            print "Return: " + str(response.text)
+            exit()
+            return False
+    else:
+        return False
+
+
+## ----------------------------------- FXN ------------------------------------------------------------------------
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def add_file_from_url(reference_type, referenceURN, mimeType, source_url):
     temp_data = {"entityReferenceType": reference_type,
@@ -724,6 +791,8 @@ def count_objects():
 
 ## ----------------------------------- END ------------------------------------------------------------------------
 ## ----------------------------------- END ------------------------------------------------------------------------
+
+#urn = add_file_from_file('Object', 'urn:instagram:user:praddc', 'image/jpeg', 'test.jpg')
 
 #count_objects()
 

@@ -22,6 +22,7 @@ config.read(config_file)
 
 # == Instagram API URLs ==
 base_instagram_url_media = "https://api.instagram.com/v1/media/"
+base_instagram_url_locations = "https://api.instagram.com/v1/locations/"
 
 # == Instagram Variables ==
 # number of records to get per request
@@ -554,7 +555,8 @@ class User(object):
                     current = response.json()['data']
 
                     # TEMP
-                    just_use = '603233164163236582_9103023' #krom's long  comment text
+                    just_use = '260216321725120589_9103023'
+                    #just_use = '603233164163236582_9103023' #krom's long  comment text
                     #just_use = '620621129814330121_225958025' #alexpt48 picture
                     #just_use = '518265249027017009_225958025' #alexpt48 video
                     #just_use = '605971004470914431_513507874' #Winerly location
@@ -680,10 +682,38 @@ class User(object):
                     temp_post['location'] = current['location']
                     if temp_post['location'] is not None:
                         # As it turns out, some locations are just Lat Lon and don't have a location stored in Instagram
+                        if 'name' not in temp_post['location']:
+                            use_default_location_name = False
+                            if 'id' in temp_post['location']:
+                                # Check instagram for a name if there is one
+                                url4 = base_instagram_url_locations + '/' + str(temp_post['location']['id']) + '?access_token=' + self.access_token
+                                logging.info("Looking for Instagram at URL: " + str(url4))
+                                response4 = requests.get(url4)
+                                logging.info(str(response4))
+                                if response4.status_code != 200:
+                                    logging.debug("Response wasn't a 200!!! WTF, so skipping this media likes")
+                                    use_default_location_name = True
+                                else:
+                                    location_info = response4.json()['data']
+                                    if 'name' not in location_info:
+                                        use_default_location_name = True
+                                    else:
+                                        temp_post['location']['name'] = location_info['name']
+                                        temp_post['location']['latitude'] = location_info['latitude']
+                                        temp_post['location']['longitude'] = location_info['longitude']
+                            else:
+                                use_default_location_name = True
+                            if use_default_location_name:
+                                temp_post['location']['name'] = "Location for post " + str(temp_post['id'] + " by user " + current['user']['username'])
+
                         if 'id' not in temp_post['location']:
                             temp_post['location']['id'] = 'post_' + str(temp_post['id'])
-                        if 'name' not in temp_post['location']:
-                            temp_post['location']['name'] = "Location for " + current['user']['username'] + "'s post " + str(temp_post['id'])
+
+                        if ('latitude' not in temp_post['location']) or (temp_post['location']['latitude'] is None):
+                            temp_post['location']['latitude'] = "0.0"
+
+                        if ('longitude' not in temp_post['location']) or (temp_post['location']['longitude'] is None):
+                            temp_post['location']['longitude'] = "0.0"
 
                         loc_urn = snapbundle_instagram_fxns.add_new_instagram_post_location(post_urn,
                                                                                             temp_post['location']['id'],
