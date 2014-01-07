@@ -6,6 +6,7 @@ import BaseHTTPServer
 import snapbundle_instagram_fxns
 import snapbundle_helpers
 import datetime
+import urlparse
 from operator import itemgetter
 
 HOST_NAME = 'localhost'
@@ -262,9 +263,20 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 lat = current['geometricShape']['coordinates'][1]
                 lat_lon = str(lat) + ',' + str(lon)
                 geo_link = "<a href='http://maps.google.com/maps?q=" + lat_lon + "+(My+Point)&z=14&ll=" + lat_lon + "'>" + str(current['geometricShape']['coordinates']) + '</a>'
+                print "URN: " + str(current['urn'])
+
+                try:
+                    name = current['name'].encode("utf-8")
+                except UnicodeEncodeError:
+                    name = "<Undisplay-able>"
+                try:
+                    desc = current['description'].encode("utf-8")
+                except UnicodeEncodeError:
+                    desc = "<Undisplay-able>"
+
                 s.wfile.write("<TR><TD>" + str(current['georectificationType'])
-                              + '</TD><TD>' + str(current['name'])
-                              + '</TD><TD>' + str(current['description'])
+                              + '</TD><TD>' + name
+                              + '</TD><TD>' + desc
                               + "</TD><TD>" + str(current['urn'])
                               + "</TD><TD>" + geo_link
                               + "</TD></TR>")
@@ -308,8 +320,10 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         # If someone went to "http://something.somewhere.net/foo/bar/",
         # then s.path equals "/foo/bar/".
 
+        my_vars = urlparse.parse_qs(urlparse.urlparse(s.path).query)
+        print "Vars: " + str(my_vars)
         application = path_list[1]
-        if application == 'instagram':
+        if application[0:9] == 'instagram':
             try:
                 urn = path_list[2]
                 s.wfile.write("<b><CENTER>Object urn: %s</CENTER></b><br>" % urn)
@@ -318,10 +332,15 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 MyHandler.write_instagram_user_object_interactions(s, urn)
                 MyHandler.write_instagram_object_relationships_references(s, urn, reverse=False)
             except IndexError:
-                MyHandler.index_write_all_users(s)
-                MyHandler.index_write_all_posts(s)
-                MyHandler.index_write_all_comments(s)
-                MyHandler.index_write_all_locations(s)
+#                print "vars view: " + my_vars['view']
+                if ('view' not in my_vars) or my_vars['view'] == ['users']:
+                    MyHandler.index_write_all_users(s)
+                if ('view' not in my_vars) or my_vars['view'] == ['posts']:
+                    MyHandler.index_write_all_posts(s)
+                if ('view' not in my_vars) or my_vars['view'] == ['comments']:
+                    MyHandler.index_write_all_comments(s)
+                if ('view' not in my_vars) or my_vars['view'] == ['locations']:
+                    MyHandler.index_write_all_locations(s)
         s.wfile.write("</body></html>")
 
     ###################################################################################################################
