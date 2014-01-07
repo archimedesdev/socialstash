@@ -738,6 +738,7 @@ class User(object):
                                                                                             temp_post['location']['longitude'])
                     print "Finished with Post, URN: " + str(post_urn)
                     posts_udated += 1
+                    print "Updated #" + str(posts_udated)
                     #return posts_udated
 
             except KeyError, err:

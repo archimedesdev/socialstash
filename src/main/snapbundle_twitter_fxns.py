@@ -18,7 +18,10 @@ config.read(config_file)
 # == Start Snapbundle Variables ==
 snapbundle_username = config.get('SnapbundleCredentials', 'snapbundle_username')
 snapbundle_password = config.get('SnapbundleCredentials', 'snapbundle_password')
+snapbundle_base_urn_twitter = "urn:twitter:"
+snapbundle_base_urn_twitter_user = snapbundle_base_urn_twitter + "user:"
 # == End Snapbundle Variables ==
+
 
 # == Start Snapbundle URLs ==
 base_url_objects = 'https://snapbundle.tagdynamics.net/v1/app/objects'
@@ -32,25 +35,10 @@ base_url_devicess = 'https://snapbundle.tagdynamics.net/v1/admin/devices'
 
 ## --------------------------------------------------------------------------------------------------------------
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def add_new_twitter_user_object(twitter_handle, sb_username, description):
-    object_urn = sb_username + ":twitter:" + twitter_handle
-    json_info = {"moniker": twitter_handle,
-                 "name": sb_username,
-                 "description": description,
-                 "active": "true",
-                 "hasGeoLocation": "false",
-                 "objectUrn": object_urn,
-                 "objectType": "Person"
-                 }
-    url = base_url_objects
-    headers = {'content-type': 'application/json'}
-    payload = json.dumps(json_info)
-    print "Sending to URL: " + str(url)
-    print "Submitting Payload: " + str(payload)
-    response = requests.put(url, data=payload, headers=headers, auth=(snapbundle_username, snapbundle_password))
-    print "Response: " + str(response.status_code) + " <--> "
-    print response
-    print str(response.json())
+## ----------------------------------- FXN ------------------------------------------------------------------------
+def add_update_new_twitter_user_object(handle, user_sb_object_urn):
+    return snapbundle_helpers.add_update_object(handle, user_sb_object_urn, "Person",
+                                                description='Twitter User')
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
