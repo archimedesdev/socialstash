@@ -563,8 +563,8 @@ class User(object):
                     #just_use = '560874534243987153_513507874' #Post with no caption
                     #just_use = '560867689500569094_513507874' #Dolly sods with a comment
                     #just_use = '620310392478690795_513507874' #flashback friday shit eating grin
-                    if current['id'] != just_use:
-                        continue
+                    #if current['id'] != just_use:
+                    #    continue
 
                     # First check to see if this post already exists, unless we're just going to update it anyway
                     if not update_if_found:

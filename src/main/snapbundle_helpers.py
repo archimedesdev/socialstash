@@ -506,36 +506,17 @@ def add_file_from_file(reference_type, referenceURN, mimeType, filename):
     if response.status_code in (200, 201):
         file_urn = response.json()['message']
         # Now we need to upload the actual file
-        url = base_url_files + '/' + str(file_urn)
-
-#        import base64
-#        base64string = base64.encodestring('%s:%s' % (snapbundle_username, snapbundle_password))[:-1]
-#        opener = poster.streaminghttp.register_openers()
-#        params = {'filename': open(filename,'rb')}
-#        datagen, headers = poster.encode.multipart_encode(params)
-#        request = urllib2.Request(url, datagen, headers)
-#        request.add_header("Authorization", "Basic %s" % base64string)
-#        request.add_header('Transfer-Encoding', 'chunked')
-#        response = opener.open(request)
-#        print response.read()
-#        exit()
-
-
-#data = open('./x.png', 'rb').read()
-#res = requests.post(url='http://httpbin.org/post',
-#                    data=data,
-#                    headers={'Content-Type': 'application/octet-stream'})
-
-        #headers = {'content-type': 'multipart/form-data', 'Accept': 'application/json', }
-        headers = {'Accept': 'application/json'}
-        files = {'file': ('', open(filename), mimeType, {})}
-        print "File URN: " + str(file_urn)
-        print "URL: " + str(url)
-        print "Headers: " + str(headers)
-        print "Filename: " + str(filename)
-        print "Files: " + str(files)
-        response = requests.post(url, headers=headers, files=files, auth=(snapbundle_username, snapbundle_password))
-        #response = requests.post(url, files=files, auth=(snapbundle_username, snapbundle_password))
+        url = base_url_files + '/' + str(file_urn) + '/octet'
+        data = open(filename, 'rb').read()
+        headers = {'Content-Type': 'application/octet-stream'}
+#        headers = {'Accept': 'application/json'}
+#        files = {'file': ('', open(filename), mimeType, {})}
+#        print "File URN: " + str(file_urn)
+#        print "URL: " + str(url)
+#        print "Headers: " + str(headers)
+#        print "Filename: " + str(filename)
+        #response = requests.post(url, headers=headers, files=files, auth=(snapbundle_username, snapbundle_password))
+        response = requests.post(url=url, data=data, headers=headers, auth=(snapbundle_username, snapbundle_password))
         if response.status_code in (200, 201):
             logging.info("Response uploading file, for url (" + str(url) + "): " + str(response.status_code) + " <--> " + str(response.json()))
             print response.status_code
@@ -792,7 +773,7 @@ def count_objects():
 ## ----------------------------------- END ------------------------------------------------------------------------
 ## ----------------------------------- END ------------------------------------------------------------------------
 
-#urn = add_file_from_file('Object', 'urn:instagram:user:praddc', 'image/jpeg', 'test.jpg')
+urn = add_file_from_file('Object', 'urn:instagram:user:praddc', 'image/jpeg', 'test.jpg')
 
 #count_objects()
 
