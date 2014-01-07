@@ -38,6 +38,7 @@ instagram_max_search_depth = 2
 # == Global Variables ==
 # Need this one to save us calls to the instagram API (limited to 5000 per hour)
 global_instagram_user_dictionary = {}
+global_snapbundle_user_dictionary = {}
 global_count_saved_api_calls = 0
 global_relationship_edge_list = []
 global_relationship_node_list = []
@@ -156,9 +157,20 @@ class User(object):
 ## ----------------------------------- FXN ------------------------------------------------------------------------
     def check_for_user_in_snapbundle(self):
         global global_counts_dictionary
+        global global_snapbundle_user_dictionary
         global_counts_dictionary['snapbundle_calls'] += 1
-        logging.info("Checking SnapBundle for URN: " + self._instagram_user_sb_object_urn)
-        return snapbundle_instagram_fxns.check_for_object(self._instagram_user_sb_object_urn)
+        logging.info("Checking SnapBundle (cache, then database) for URN: " + self._instagram_user_sb_object_urn)
+        # No need to check SB every time with an HTTP request, so let's check our cache first
+        if self._instagram_user_sb_object_urn in global_snapbundle_user_dictionary:
+            return True
+        else:
+            # Not in cache, so let's get the value
+            return_value = snapbundle_instagram_fxns.check_for_object(self._instagram_user_sb_object_urn)
+
+        # For the next time we get asked, put it in the cache
+        if return_value:
+            global_snapbundle_user_dictionary[self._instagram_user_sb_object_urn] = True
+        return return_value
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
     def get_user_data_in_snapbundle(self):

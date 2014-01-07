@@ -773,7 +773,7 @@ def count_objects():
 ## ----------------------------------- END ------------------------------------------------------------------------
 ## ----------------------------------- END ------------------------------------------------------------------------
 
-urn = add_file_from_file('Object', 'urn:instagram:user:praddc', 'image/jpeg', 'test.jpg')
+#urn = add_file_from_file('Object', 'urn:instagram:user:praddc', 'image/jpeg', 'test.jpg')
 
 #count_objects()
 

@@ -6,6 +6,7 @@ import BaseHTTPServer
 import snapbundle_instagram_fxns
 import snapbundle_helpers
 import datetime
+from operator import itemgetter
 
 HOST_NAME = 'localhost'
 PORT_NUMBER = 9000
@@ -200,7 +201,8 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             s.wfile.write('<TABLE BORDER="3">')
             s.wfile.write('<CAPTION>' + "<b>Instagram User Object Info (" + str(len(response)) + ")" + '</b></CAPTION>')
             s.wfile.write('<TR><TH>objectType</TH><TH>objectUrn</TH><TH>Name</TH><TH>urn</TH></TR>')
-            for current in response:
+            sorted_response = sorted(response, key=itemgetter('objectUrn'))
+            for current in sorted_response:
                 s.wfile.write("<TR><TD>" + str(current['objectType'])
                               + '</TD><TD><a href="/instagram/' + str(current['objectUrn']) + '">' + str(current['objectUrn']) + '</a>'
                               + '</TD><TD>' + str(current['name'])
@@ -253,12 +255,18 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         if response:
             s.wfile.write('<TABLE BORDER="3">')
             s.wfile.write('<CAPTION>' + "<b>Instagram Geospatial Info (" + str(len(response)) + ")" + '</b></CAPTION>')
-            s.wfile.write('<TR><TH>georectificationType</TH><TH>name</TH><TH>description</TH><TH>urn</TH></TR>')
-            for current in response:
+            s.wfile.write('<TR><TH>georectificationType</TH><TH>name</TH><TH>description</TH><TH>urn</TH><TH>Coordinates</TH></TR>')
+            sorted_response = sorted(response, key=itemgetter('name'))
+            for current in sorted_response:
+                lon = current['geometricShape']['coordinates'][0]
+                lat = current['geometricShape']['coordinates'][1]
+                lat_lon = str(lat) + ',' + str(lon)
+                geo_link = "<a href='http://maps.google.com/maps?q=" + lat_lon + "+(My+Point)&z=14&ll=" + lat_lon + "'>" + str(current['geometricShape']['coordinates']) + '</a>'
                 s.wfile.write("<TR><TD>" + str(current['georectificationType'])
                               + '</TD><TD>' + str(current['name'])
                               + '</TD><TD>' + str(current['description'])
                               + "</TD><TD>" + str(current['urn'])
+                              + "</TD><TD>" + geo_link
                               + "</TD></TR>")
             s.wfile.write('</TABLE><BR>')
         else:
