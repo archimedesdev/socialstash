@@ -526,7 +526,7 @@ class User(object):
         pylab.show()
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-    def check_recent_media_exists_in_snapbundle(self, user_username=None, user_id=None, update_if_found=False):
+    def check_recent_media_exists_in_snapbundle(self, user_username=None, user_id=None, update_if_found=False, max_update_count=10000):
         posts_udated = 0
         post_dictionary = {}
         keep_going = True
@@ -555,6 +555,10 @@ class User(object):
 
         # Now let's deal with each individual post in the dictionary of posts we've gotten!!
         for key in post_dictionary:
+            #Exit out of we've reached our max update count
+            if posts_udated > max_update_count:
+                return posts_udated
+
             url = base_instagram_url_media + str(key) + '?access_token=' + self.access_token
             logging.info("Looking for Instagram Post at URL: " + str(url))
             response = requests.get(url)
@@ -744,14 +748,14 @@ class User(object):
         return posts_udated
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-    def update_user_feed_in_snapbundle(self, username, update_if_found=False):
+    def update_user_feed_in_snapbundle(self, username, update_if_found=False, max_update_count=10000):
         logging.info("Looking to update user " + str(username) + "'s media feed in SnapBundle")
         if username in global_instagram_user_dictionary:
             user = global_instagram_user_dictionary[username]
             if user.api is None:
                 user.authenticate()
             logging.info("Using API from user X to update posts from user Y (" + str(user.username) + ":" + str(username) + ")")
-            num_updates = user.check_recent_media_exists_in_snapbundle(update_if_found=update_if_found)
+            num_updates = user.check_recent_media_exists_in_snapbundle(update_if_found=update_if_found, max_update_count=max_update_count)
             return num_updates
         else:
             logging.info("User not found in cached user dictionary, seeing if we can pull their user id out of snapbundle")
@@ -759,7 +763,7 @@ class User(object):
             if user_id:
                 logging.info("User ID for user " + username + " found: (" + str(user_id) + ")")
                 logging.info("Using API from user X to update posts from user Y (" + str(self.username) + ":" + str(username) + ")")
-                num_updates = self.check_recent_media_exists_in_snapbundle(user_username=username, user_id=user_id, update_if_found=update_if_found)
+                num_updates = self.check_recent_media_exists_in_snapbundle(user_username=username, user_id=user_id, update_if_found=update_if_found, max_update_count=max_update_count)
                 return num_updates
         return 0
 
