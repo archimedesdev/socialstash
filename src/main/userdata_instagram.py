@@ -1,9 +1,9 @@
 __author__ = 'prad'
 
 import ConfigParser
+import logging
 import ast
 import socialstash_instagram
-import logging
 
 
 logging.debug('Starting: ' + __name__)
@@ -76,7 +76,7 @@ filename = 'test.gml'
 
 #instagram_user.check_recent_media_exists_in_snapbundle(update_if_found=True)
 update_user = 'amandadamisch'
-updates = instagram_user.update_user_feed_in_snapbundle(update_user, update_if_found=False, max_update_count=75)
+updates = instagram_user.update_user_feed_in_snapbundle(update_user, update_if_found=False, max_update_count=200)
 print "Made " + str(updates) + " post updates for user " + str(update_user)
 #instagram_user.update_cached_users_media_feed(max_media=60, update_if_found=False)
 exit()

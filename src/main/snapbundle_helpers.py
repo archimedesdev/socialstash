@@ -6,9 +6,6 @@ import ConfigParser
 import logging
 import ast
 import os
-import urllib2
-import poster.encode
-import poster.streaminghttp
 
 # == Start the logger ==
 # == Because of this logger, this should be the first library we import ==

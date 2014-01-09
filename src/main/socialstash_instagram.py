@@ -7,11 +7,11 @@ import ConfigParser
 import requests
 import json
 import urlparse
-import snapbundle_instagram_fxns
 import traceback
 import networkx as nx
 import matplotlib.pyplot as plt
 import pylab
+import snapbundle_instagram_fxns
 
 logging.debug('Starting: ' + __name__)
 
