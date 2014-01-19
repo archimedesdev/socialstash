@@ -4,7 +4,8 @@ import ConfigParser
 import logging
 import ast
 import socialstash_instagram
-
+import time
+import datetime
 
 logging.debug('Starting: ' + __name__)
 
@@ -29,6 +30,8 @@ snapbundle_user_object = 'paulr'
 
 
 #---------------------------------------------------------------------------------------------------------------------
+start_time = time.time()
+
 #instagram_handle = 'AnEloquentDane'
 instagram_handle = 'praddc'
 
@@ -75,10 +78,28 @@ filename = 'test.gml'
 #instagram_user.graph_relationship_gml(filename=filename)
 
 #instagram_user.check_recent_media_exists_in_snapbundle(update_if_found=True)
-update_user = 'chelsey_dc'
-updates = instagram_user.update_user_feed_in_snapbundle(update_user, update_if_found=False, max_update_count=550)
-print "Made " + str(updates) + " post updates for user " + str(update_user)
-#instagram_user.update_cached_users_media_feed(max_media=60, update_if_found=False)
+#update_user = 'loshea17'
+update_user_list = ['cgaginis']
+update_user_updates = {}
+total_posts_made = 0
+for update_user in update_user_list:
+	updates = instagram_user.update_user_feed_in_snapbundle(update_user, update_if_found=False, max_update_count=1000)
+	update_user_updates[update_user] = updates
+	total_posts_made += updates
+	print "Made " + str(updates) + " post updates for user " + str(update_user)
+
+print "Updates made: " + str(update_user_updates)
+	
+	#instagram_user.update_cached_users_media_feed(max_media=60, update_if_found=False)
+
+# your code
+end_time = time.time()
+elapsed_time = round(end_time - start_time)
+posts_per_min = total_posts_made / (elapsed_time / 60)
+print "Start Time: " + time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(start_time))
+print "End Time: " + time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(end_time))
+print "Running Time: " + str(datetime.timedelta(seconds=elapsed_time))
+print "Posts per minute: " + str(posts_per_min)
 exit()
 
 
