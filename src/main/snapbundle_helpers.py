@@ -1,4 +1,5 @@
 __author__ = 'prad'
+__version__ = '1.0.1'
 
 import json
 import requests
@@ -24,28 +25,28 @@ config.read(config_file)
 # == Local directories
 cache_directory = 'cache' + os.sep + 'instagram'
 
+
 # == Snapbundle Variables ==
 snapbundle_username = config.get('SnapbundleCredentials', 'snapbundle_username')
 snapbundle_password = config.get('SnapbundleCredentials', 'snapbundle_password')
 snapbundle_user_object = config.get('SnapbundleCredentials', 'snapbundle_user_object')
 base_url_server = 'snapbundle'
-#base_url_server = 'stage'
-url_server = 'http://' + base_url_server + '.tagdynamics.net:8080'
-base_url_objects = url_server + '/objects'
-base_url_object_interactions = url_server + '/interactions'
-base_url_relationship = url_server + '/relationships'
-base_url_relationship_query_object = url_server + '/relationships/Object'
-base_url_metadata = url_server + '/metadata'
-base_url_metadata_objects = url_server + '/metadata/Object'
-base_url_metadata_mapper_encode = url_server + '/metadata/mapper/encode/'
-base_url_metadata_mapper_decode = url_server + '/metadata/mapper/decode/'
-base_url_files_metadata_query = url_server + '/files/Metadata/'
-base_url_files = url_server + '/files'
+base_url_server_url = 'http://' + base_url_server + '.tagdynamics.net:8080'
+base_url_objects = base_url_server_url + '/objects'
+base_url_object_interactions = base_url_server_url + '/interactions'
+base_url_relationship = base_url_server_url + '/relationships'
+base_url_relationship_query_object = base_url_server_url + '/relationships/Object'
+base_url_metadata = base_url_server_url + '/metadata'
+base_url_metadata_objects = base_url_server_url + '/metadata/Object'
+base_url_metadata_mapper_encode = base_url_server_url + '/metadata/mapper/encode/'
+base_url_metadata_mapper_decode = base_url_server_url + '/metadata/mapper/decode/'
+base_url_tags = base_url_server_url + '/tags'
+base_url_geospatial = base_url_server_url + '/geospatial'
+base_url_devices = base_url_server_url + '/devices'
+base_url_files_metadata_query = base_url_server_url + '/files/Metadata/'
+base_url_files = base_url_server_url + '/files'
 # The application/octet-stream endpoint is located at a POST at /files/{urn}/octet
 # If you want to continue to try and figure out the multi-part, the endpoint is at /files/{urn}/multipart
-base_url_tags = url_server + '/tags'
-base_url_geospatial = url_server + '/geospatial'
-base_url_devices = url_server + '/devices'
 # == End Snapbundle Variables ==
 
 metadataDataTypes = {'STRING': 'StringType',
@@ -70,7 +71,7 @@ metadataDataTypes = {'STRING': 'StringType',
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def check_for_objects_options(text, objectUrnLike=False, nameLike=False, monikerLike=False, modifiedAfter=False):
+def get_objects_options(text, objectUrnLike=False, nameLike=False, monikerLike=False, modifiedAfter=False):
     #/objects?objectUrnLike=foo
     #/objects?nameLike=foo
     #/objects?monikerLike=foo&view=Full
@@ -101,7 +102,7 @@ def check_for_objects_options(text, objectUrnLike=False, nameLike=False, moniker
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def check_for_object(urn_to_check_for):
+def get_object(urn_to_check_for):
     url = base_url_objects + '/object/' + urn_to_check_for
     logging.info("Looking for object at URL: " + str(url))
     response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
@@ -119,7 +120,7 @@ def check_for_object(urn_to_check_for):
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def add_update_object(name, objectUrn, objectType, description=None):
+def upsert_object(name, objectUrn, objectType, description=None):
     json_info = {"name": name,
                  "active": "true",
                  "objectUrn": objectUrn,
@@ -140,24 +141,6 @@ def add_update_object(name, objectUrn, objectType, description=None):
         # Updating user
         logging.info("Object existed, updated, urn=" + str(urn))
     return urn
-
-
-## ----------------------------------- FXN ------------------------------------------------------------------------
-def get_object(urn_to_check_for):
-    url = base_url_objects + '/object/' + urn_to_check_for
-    logging.info("Looking for object at URL: " + str(url))
-    response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
-    logging.info(str(response))
-    try:
-        if (response.status_code == 404) or (response.json()['objectUrn'] != urn_to_check_for):
-            logging.info("ObjectURN not found!")
-            return False
-        else:
-            logging.info("Object Exists!!")
-            logging.info(response.json())
-            return response.json()
-    except KeyError:
-        return False
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
@@ -245,7 +228,7 @@ def get_raw_value_decoded(var_passed_in, var_type):
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def add_update_metadata(reference_type, referenceURN, dataType, key, value, moniker=None):
+def upsert_metadata(reference_type, referenceURN, dataType, key, value, moniker=None):
     # Moniker check test hopefully temp
     if moniker is None:
         # First need to see if this object even has any metadata, if not, don't want to cause a 500 response
@@ -300,11 +283,11 @@ def add_update_metadata(reference_type, referenceURN, dataType, key, value, moni
             if contents_in_file:
                 print "Metadata URN pre contents file doing: " + str(metadata_urn)
                 text_filename = 'text_for_metadata_urn_' + str(metadata_urn) + '.txt'
-                file_urn = add_file_from_text('Metadata', metadata_urn, text_filename, value)
+                file_urn = insert_file_from_text('Metadata', metadata_urn, text_filename, value)
                 print "File_urn: " + str(file_urn)
                 if file_urn:
                     new_value = '<contents_in_file_urn_' + str(file_urn) + '>'
-                    newly_updated_metadata_urn = add_update_metadata(reference_type, referenceURN, dataType, key, new_value, moniker)
+                    newly_updated_metadata_urn = upsert_metadata(reference_type, referenceURN, dataType, key, new_value, moniker)
                     print "Metadata URN of post contents file doing: " + str(newly_updated_metadata_urn)
                     exit()
                     return newly_updated_metadata_urn
@@ -321,7 +304,7 @@ def add_update_metadata(reference_type, referenceURN, dataType, key, value, moni
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def check_add_update_relationship(entityReferenceType, referenceURN, relationshipType, relatedEntityReferenceType, relatedReferenceURN):
+def insert_relationship(entityReferenceType, referenceURN, relationshipType, relatedEntityReferenceType, relatedReferenceURN):
     # First check to see if it exists before add/update
     url = base_url_relationship + '/' + entityReferenceType + '/' + referenceURN + '/' + relatedEntityReferenceType + '/' + relatedReferenceURN + '/' + relationshipType
     logging.debug("Checking for URL: " + str(url))
@@ -347,6 +330,7 @@ def check_add_update_relationship(entityReferenceType, referenceURN, relationshi
             logging.info("Response (for relationship " + str(referenceURN) + " " + str(relationshipType) + " " + str(relatedReferenceURN) + "): " + str(response.status_code) + " <--> " + str(response.json()))
         except UnicodeEncodeError:
             logging.info("Response (for relationship " + str(referenceURN) + " " + str(relationshipType) + " " + str(relatedReferenceURN) + "): " + str(response.status_code) + " <--> " + str(response.json()))
+        return True
     elif response.status_code == 200:
         return True
     elif response.status_code == 201:
@@ -395,7 +379,7 @@ def delete_relationship(urn_to_delete):
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def create_object_interaction(entityReferenceType, entityUrn, recordedTimestamp, interactedUrn):
+def insert_object_interaction(entityReferenceType, entityUrn, recordedTimestamp, interactedUrn):
     # Back to normal application
     temp_meta_data = {"entityReferenceType": entityReferenceType,
                       "objectUrn": entityUrn,
@@ -419,7 +403,7 @@ def create_object_interaction(entityReferenceType, entityUrn, recordedTimestamp,
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def check_object_interactions_for_urn(data_search):
+def get_object_interaction_urn(data_search):
     url = base_url_object_interactions + "?dataLike=" + data_search + "%25"
     logging.info("Looking for object interactions at url: " + str(url))
     response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
@@ -451,7 +435,7 @@ def get_object_interactions(urn_to_check_for):
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def add_file_from_text(reference_type, referenceURN, text_filename, text):
+def insert_file_from_text(reference_type, referenceURN, text_filename, text):
     mimeType = 'text/plain'
     temp_data = {"entityReferenceType": reference_type,
                  "referenceUrn": referenceURN,
@@ -489,7 +473,7 @@ def add_file_from_text(reference_type, referenceURN, text_filename, text):
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def add_file_from_file(reference_type, referenceURN, mimeType, filename):
+def insert_file_from_file(reference_type, referenceURN, mimeType, filename):
     temp_data = {"entityReferenceType": reference_type,
                  "referenceUrn": referenceURN,
                  "mimeType": mimeType}
@@ -530,7 +514,7 @@ def add_file_from_file(reference_type, referenceURN, mimeType, filename):
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def add_file_from_url(reference_type, referenceURN, mimeType, source_url):
+def insert_file_from_url(reference_type, referenceURN, mimeType, source_url):
     temp_data = {"entityReferenceType": reference_type,
                  "referenceUrn": referenceURN,
                  "mimeType": mimeType,
@@ -551,17 +535,17 @@ def add_file_from_url(reference_type, referenceURN, mimeType, source_url):
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def add_file_from_url_jpg(reference_type, referenceURN, source_url):
-    return add_file_from_url(reference_type, referenceURN, "image/jpeg", source_url)
+def insert_file_from_url_jpg(reference_type, referenceURN, source_url):
+    return insert_file_from_url(reference_type, referenceURN, "image/jpeg", source_url)
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def add_file_from_url_mp4(reference_type, referenceURN, source_url):
-    return add_file_from_url(reference_type, referenceURN, "video/mp4", source_url)
+def insert_file_from_url_mp4(reference_type, referenceURN, source_url):
+    return insert_file_from_url(reference_type, referenceURN, "video/mp4", source_url)
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def search_for_file_object(reference_type, reference_urn):
+def get_file_objects(reference_type, reference_urn):
     # returns a dictionary of urns and timestamps
     url = base_url_files + "/" + reference_type + "/" + reference_urn
     logging.info("Looking for file objects at URL: " + str(url))
@@ -633,7 +617,7 @@ def get_file_object_contents(file_urn, check_cache=False):
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def create_tag_association(entity_reference_type, reference_urn, name):
+def insert_tag_association(entity_reference_type, reference_urn, name):
     temp_data = dict(name=name)
     url = base_url_tags + "/" + entity_reference_type + "/" + reference_urn
     headers = {'content-type': 'application/json'}
@@ -679,7 +663,7 @@ def get_all_objects_linked_to_tag(entity_reference_type, tag_name):
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def create_geospacial(name, description, georectificationType, geometricShape):
+def insert_geospacial(name, description, georectificationType, geometricShape):
     temp_meta_data = {"name": name,
                       "description": description,
                       "georectificationType": georectificationType,
@@ -700,17 +684,17 @@ def create_geospacial(name, description, georectificationType, geometricShape):
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def create_geospacial_place(name, description, geometricShape):
-    return create_geospacial(name=name, description=description,
+def insert_geospacial_place(name, description, geometricShape):
+    return insert_geospacial(name=name, description=description,
                              georectificationType='Place', geometricShape=geometricShape)
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def create_geospacial_place_point(name, description, x, y):
+def insert_geospacial_place_point(name, description, x, y):
     temp_geo_json = {"type": 'Point',
                      "coordinates": [float(x), float(y)]
                      }
-    return create_geospacial_place(name=name, description=description, geometricShape=temp_geo_json)
+    return insert_geospacial_place(name=name, description=description, geometricShape=temp_geo_json)
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
@@ -723,13 +707,13 @@ def check_or_create_geospacial_place_point(name, description, x, y):
         if response.status_code == 200:
             return response.json()[0]['urn']
         else:
-            return create_geospacial_place_point(name, description, x, y)
+            return insert_geospacial_place_point(name, description, x, y)
     except KeyError:
         return False
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def check_geospacial_by_name(search_name):
+def get_geospacial_by_name(search_name):
     url = base_url_geospatial + "?nameLike=" + search_name
     logging.info("Looking for file geospacial object at URL: " + str(url))
     response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
@@ -744,7 +728,7 @@ def check_geospacial_by_name(search_name):
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def check_geospacial_by_urn(search_urn):
+def get_geospacial_by_urn(search_urn):
     url = base_url_geospatial + "/" + search_urn
     logging.info("Looking for file geospacial object at URL: " + str(url))
     response = requests.get(url, auth=(snapbundle_username, snapbundle_password))

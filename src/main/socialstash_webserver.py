@@ -55,7 +55,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                               + "</TD><TD>" + decoded_value
                               + "</TD><TD>" + str(current['urn'])
                               + "</TD><TD>")
-                file_urns = snapbundle_helpers.search_for_file_object('Metadata', current['urn'])
+                file_urns = snapbundle_helpers.get_file_objects('Metadata', current['urn'])
                 if file_urns:
                     s.wfile.write('<TABLE BORDER="1">')
                     s.wfile.write('<TR><TH>Urn</TH><TH>File</TH></TR>')
@@ -197,7 +197,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     ############# FXN ######################################################################################################
     @staticmethod
     def index_write_all_users(s):
-        response = snapbundle_helpers.check_for_objects_options(snapbundle_instagram_fxns.snapbundle_base_urn_instagram_user,objectUrnLike=True)
+        response = snapbundle_helpers.get_objects_options(snapbundle_instagram_fxns.snapbundle_base_urn_instagram_user,objectUrnLike=True)
         if response:
             s.wfile.write('<TABLE BORDER="3">')
             s.wfile.write('<CAPTION>' + "<b>Instagram User Object Info (" + str(len(response)) + ")" + '</b></CAPTION>')
@@ -216,7 +216,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     ################## FXN ######################################################################################################
     @staticmethod
     def index_write_all_posts(s):
-        response = snapbundle_helpers.check_for_objects_options(snapbundle_instagram_fxns.snapbundle_base_urn_instagram_post, objectUrnLike=True)
+        response = snapbundle_helpers.get_objects_options(snapbundle_instagram_fxns.snapbundle_base_urn_instagram_post, objectUrnLike=True)
         if response:
             s.wfile.write('<TABLE BORDER="3">')
             s.wfile.write('<CAPTION>' + "<b>Instagram Post Object Info (" + str(len(response)) + ")" + '</b></CAPTION>')
@@ -234,7 +234,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     ################## FXN ######################################################################################################
     @staticmethod
     def index_write_all_comments(s):
-        response = snapbundle_helpers.check_for_objects_options(snapbundle_instagram_fxns.snapbundle_base_urn_instagram_comment, objectUrnLike=True)
+        response = snapbundle_helpers.get_objects_options(snapbundle_instagram_fxns.snapbundle_base_urn_instagram_comment, objectUrnLike=True)
         if response:
             s.wfile.write('<TABLE BORDER="3">')
             s.wfile.write('<CAPTION>' + "<b>Instagram Comment Object Info (" + str(len(response)) + ")" + '</b></CAPTION>')
@@ -252,7 +252,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     ################## FXN ######################################################################################################
     @staticmethod
     def index_write_all_locations(s):
-        response = snapbundle_helpers.check_geospacial_by_name(snapbundle_instagram_fxns.snapbundle_base_instagram_location_name)
+        response = snapbundle_helpers.get_geospacial_by_name(snapbundle_instagram_fxns.snapbundle_base_instagram_location_name)
         if response:
             s.wfile.write('<TABLE BORDER="3">')
             s.wfile.write('<CAPTION>' + "<b>Instagram Geospatial Info (" + str(len(response)) + ")" + '</b></CAPTION>')
