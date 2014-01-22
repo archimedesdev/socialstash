@@ -204,7 +204,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             s.wfile.write('<TR><TH>objectType</TH><TH>objectUrn</TH><TH>Name</TH><TH>urn</TH></TR>')
             sorted_response = sorted(response, key=itemgetter('objectUrn'))
             for current in sorted_response:
-                s.wfile.write("<TR><TD>" + str(current['objectType'])
+                s.wfile.write("<TR><TD>" + str(current['type'])
                               + '</TD><TD><a href="/instagram/' + str(current['objectUrn']) + '">' + str(current['objectUrn']) + '</a>'
                               + '</TD><TD>' + str(current['name'])
                               + "</TD><TD>" + str(current['urn'])
@@ -222,7 +222,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             s.wfile.write('<CAPTION>' + "<b>Instagram Post Object Info (" + str(len(response)) + ")" + '</b></CAPTION>')
             s.wfile.write('<TR><TH>objectType</TH><TH>objectUrn</TH><TH>Name</TH><TH>urn</TH></TR>')
             for current in response:
-                s.wfile.write("<TR><TD>" + str(current['objectType'])
+                s.wfile.write("<TR><TD>" + str(current['type'])
                               + '</TD><TD><a href="/instagram/' + str(current['objectUrn']) + '">' + str(current['objectUrn']) + '</a>'
                               + '</TD><TD>' + str(current['name'])
                               + "</TD><TD>" + str(current['urn'])
@@ -240,7 +240,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             s.wfile.write('<CAPTION>' + "<b>Instagram Comment Object Info (" + str(len(response)) + ")" + '</b></CAPTION>')
             s.wfile.write('<TR><TH>objectType</TH><TH>objectUrn</TH><TH>Name</TH><TH>urn</TH></TR>')
             for current in response:
-                s.wfile.write("<TR><TD>" + str(current['objectType'])
+                s.wfile.write("<TR><TD>" + str(current['type'])
                               + '</TD><TD><a href="/instagram/' + str(current['objectUrn']) + '">' + str(current['objectUrn']) + '</a>'
                               + '</TD><TD>' + str(current['name'])
                               + "</TD><TD>" + str(current['urn'])

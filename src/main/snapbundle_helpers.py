@@ -90,7 +90,7 @@ def get_objects_options(text, objectUrnLike=False, nameLike=False, monikerLike=F
     response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
     logging.info(str(response))
     try:
-        if (response.status_code == 404) or (response.status_code == 204):
+        if response.status_code in (204, 404):
             logging.info("No records found not found!")
             return False
         else:
@@ -108,7 +108,7 @@ def get_object(urn_to_check_for):
     response = requests.get(url, auth=(snapbundle_username, snapbundle_password))
     logging.info(str(response))
     try:
-        if (response.status_code == 404) or (response.json()['objectUrn'] != urn_to_check_for):
+        if (response.status_code == 204) or (response.json()['objectUrn'] != urn_to_check_for):
             logging.info("ObjectURN not found!")
             return False
         else:
@@ -120,11 +120,11 @@ def get_object(urn_to_check_for):
 
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
-def upsert_object(name, objectUrn, objectType, description=None):
+def upsert_object(name, objectUrn, type, description=None):
     json_info = {"name": name,
                  "active": "true",
                  "objectUrn": objectUrn,
-                 "objectType": objectType,
+                 "type": type,
                  "description": description
                  }
     url = base_url_objects
@@ -315,7 +315,7 @@ def insert_relationship(entityReferenceType, referenceURN, relationshipType, rel
         temp_meta_data = dict(
             entityReferenceType=entityReferenceType,
             referenceURN=referenceURN,
-            relationshipType=relationshipType,
+            type=relationshipType,
             relatedEntityReferenceType=relatedEntityReferenceType,
             relatedReferenceUrn=relatedReferenceURN
         )

@@ -16,6 +16,7 @@ config.read(config_file)
 # == Start Snapbundle Variables ==
 snapbundle_username = config.get('SnapbundleCredentials', 'snapbundle_username')
 snapbundle_password = config.get('SnapbundleCredentials', 'snapbundle_password')
+snapbundle_type_object_user = 'user:instagram'
 snapbundle_base_urn_instagram = "urn:instagram:"
 snapbundle_base_urn_instagram_user = snapbundle_base_urn_instagram + "user:"
 snapbundle_base_urn_instagram_post = snapbundle_base_urn_instagram + "post:"
@@ -179,7 +180,7 @@ def get_tag_list_by_post(post_urn):
 
 ## ----------------------------------- FXN ------------------------------------------------------------------------
 def add_update_new_instagram_user_object(instagram_handle, instagram_user_sb_object_urn):
-    return snapbundle_helpers.upsert_object(instagram_handle, instagram_user_sb_object_urn, "Person",
+    return snapbundle_helpers.upsert_object(instagram_handle, instagram_user_sb_object_urn, snapbundle_type_object_user,
                                                 description='Instagram User')
 
 
